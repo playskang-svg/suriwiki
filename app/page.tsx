@@ -139,7 +139,7 @@ export default function HomePage() {
   };
 
   const heroImage = siteImages.find((img) => img.section === "hero")?.url ||
-    "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1600&q=80";
+    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80";
 
   return (
     <div className="min-h-screen bg-[#0d1724] text-slate-100 flex flex-col font-sans selection:bg-[#c5a059] selection:text-white relative">
