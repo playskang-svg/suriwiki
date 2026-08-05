@@ -311,7 +311,7 @@ export default function HomePage() {
           <div className="border-b border-slate-800 pb-4">
             <span className="text-xs font-bold text-[#c5a059] uppercase tracking-wider">REGIONAL CONSTRUCTION INQUIRY</span>
             <h2 className="text-3xl font-extrabold text-white mt-1">
-              📍 수도권 지역별 대표 시공문의 (DB 실시간 연동)
+              📍 수도권 지역별 대표 시공문의
             </h2>
             <p className="text-xs text-slate-400 mt-1">
               원하시는 지역 박스 내 시공 아이템을 선택하시면 해당 지역 전용 1:1 상담 접수로 바로 연결됩니다.
