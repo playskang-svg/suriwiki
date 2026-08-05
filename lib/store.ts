@@ -79,7 +79,7 @@ const initialSiteImages: SiteImage[] = [
     id: "img_hero_main",
     section: "hero",
     title: "메인 히어로 전문가 복원 현장 배너",
-    url: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80",
+    url: "/korean_technician_hero.png",
     alt: "수리위키 출장복원 대표 이미지",
     isWatermarked: true,
     updatedAt: "2026-08-05",
