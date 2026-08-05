@@ -13,6 +13,7 @@ interface Lead {
   customerName: string;
   customerPhone: string;
   content: string;
+  imageUrl?: string;
   submittedAt: string;
   status: "new" | "contacted" | "completed" | "cancelled";
   utmSource?: string;
@@ -23,6 +24,7 @@ export default function AdminDashboardPage() {
   const suggestions = getKeywordSuggestions();
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loadingLeads, setLoadingLeads] = useState(true);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const fetchLeads = async () => {
     setLoadingLeads(true);
@@ -59,42 +61,56 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const handleDeleteLead = async (id: string) => {
+    if (!confirm("정말 이 상담 신청 내역을 삭제하시겠습니까?")) return;
+    try {
+      const res = await fetch(`/api/consultations?id=${id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (data.success) {
+        alert("삭제되었습니다.");
+        fetchLeads();
+      }
+    } catch (err) {
+      alert("삭제 실패");
+    }
+  };
+
   return (
     <div className="space-y-8 pb-12 font-sans">
       {/* Top Title & User Info */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-            수리위키 운영 대시보드 (PRD 12.1)
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+            <span>⚙️ 수리위키 통합 운영 & 상담·이미지 관리 대시보드</span>
           </h1>
           <p className="text-sm text-slate-600 dark:text-slate-400 mt-0.5">
-            22개 메인사이트 · 964개 키워드 페이지 실시간 운영 및 1:1 상담 접수 인박스
+            22개 메인사이트 · 964개 키워드 페이지 실시간 운영 및 고객 첨부 사진 1:1 상담 접수함
           </p>
         </div>
 
         <div className="flex flex-wrap gap-2">
           <Link
-            href="/admin/rankings"
-            className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold shadow-sm transition"
+            href="/admin/images"
+            className="px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold shadow-sm transition flex items-center gap-1"
           >
-            💚 네이버 순위 & 키워드 제안
-          </Link>
-          <Link
-            href="/admin/contacts"
-            className="px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold shadow-sm transition"
-          >
-            ⚙️ 회사정보 배포 설정
+            <span>🖼️ 메인/섹션 이미지 교체</span>
           </Link>
           <Link
             href="/admin/keywords"
-            className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-xs font-semibold transition"
+            className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-xs font-semibold transition flex items-center gap-1"
           >
-            📋 키워드 콤보박스 편집
+            <span>📋 키워드 본문 수정</span>
+          </Link>
+          <Link
+            href="/admin/contacts"
+            className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold shadow-sm transition flex items-center gap-1"
+          >
+            <span>⚙️ 회사정보 배포</span>
           </Link>
         </div>
       </div>
 
-      {/* KPI Cards (PRD 12.1) */}
+      {/* KPI Cards */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
         <KpiCard label="메인사이트" value={kpi.siteCount} delta={kpi.siteCountDelta} />
         <KpiCard label="세부사이트 (키워드 페이지)" value={kpi.keywordPageCount} delta={kpi.keywordPageCountDelta} />
@@ -137,18 +153,18 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* Live Consultation Leads Inbox */}
+      {/* Live Consultation Leads Inbox with Customer Attached Photo Preview */}
       <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-sm space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-              <span>📥 1:1 상담 신청 실시간 수신함</span>
-              <span className="px-2 py-0.5 bg-blue-600 text-white text-xs font-mono rounded-full">
+              <span>📥 1:1 상담 신청 & 고객 첨부 사진 실시간 수신함</span>
+              <span className="px-2.5 py-0.5 bg-blue-600 text-white text-xs font-mono rounded-full font-bold">
                 {leads.length}건
               </span>
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              세부 키워드 페이지 1:1 상담페이지에서 수신된 고객 실시간 문의 목록
+              고객이 상담폼에서 전송한 성함, 연락처, 현장 상태 내용 및 첨부 현장 사진 확인 가능
             </p>
           </div>
 
@@ -156,12 +172,16 @@ export default function AdminDashboardPage() {
             onClick={fetchLeads}
             className="px-3 py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded text-xs transition"
           >
-            새로고침
+            🔄 새로고침
           </button>
         </div>
 
         {loadingLeads ? (
-          <div className="py-8 text-center text-xs text-slate-400">상담 내역 로딩 중...</div>
+          <div className="py-8 text-center text-xs text-slate-400">상담 내역 불러오는 중...</div>
+        ) : leads.length === 0 ? (
+          <div className="p-8 text-center text-xs text-slate-400 bg-slate-900/50 rounded-xl border border-slate-700">
+            현재 수신된 상담 내역이 없습니다.
+          </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
@@ -171,8 +191,9 @@ export default function AdminDashboardPage() {
                   <th className="py-3 px-4">유입 키워드 (공정/지역)</th>
                   <th className="py-3 px-4">고객명 / 연락처</th>
                   <th className="py-3 px-4">문의 내용</th>
-                  <th className="py-3 px-4">UTM 소스</th>
+                  <th className="py-3 px-4">📸 고객 첨부 사진</th>
                   <th className="py-3 px-4">진행 상태</th>
+                  <th className="py-3 px-4 text-right">관리</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200 dark:divide-slate-700/60">
@@ -190,11 +211,23 @@ export default function AdminDashboardPage() {
                           {lead.customerPhone}
                         </a>
                       </td>
-                      <td className="py-3 px-4 text-slate-600 dark:text-slate-300 max-w-xs truncate">
+                      <td className="py-3 px-4 text-slate-600 dark:text-slate-300 max-w-xs leading-relaxed">
                         {lead.content}
                       </td>
-                      <td className="py-3 px-4 font-mono text-[11px] text-slate-400">
-                        {lead.utmSource || "direct"}
+                      <td className="py-3 px-4">
+                        {lead.imageUrl ? (
+                          <button
+                            onClick={() => setPreviewImage(lead.imageUrl || null)}
+                            className="relative group w-16 h-16 rounded-lg overflow-hidden border border-slate-700 bg-slate-900 block"
+                          >
+                            <img src={lead.imageUrl} alt="첨부 사진" className="w-full h-full object-cover group-hover:scale-110 transition" />
+                            <span className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition flex items-center justify-center text-[10px] text-white font-bold">
+                              🔍 크게보기
+                            </span>
+                          </button>
+                        ) : (
+                          <span className="text-slate-500 text-[11px]">사진 미첨부</span>
+                        )}
                       </td>
                       <td className="py-3 px-4">
                         <select
@@ -214,6 +247,14 @@ export default function AdminDashboardPage() {
                           <option value="cancelled">취소됨 (cancelled)</option>
                         </select>
                       </td>
+                      <td className="py-3 px-4 text-right">
+                        <button
+                          onClick={() => handleDeleteLead(lead.id)}
+                          className="px-2.5 py-1 bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white rounded text-[11px] font-semibold transition"
+                        >
+                          삭제
+                        </button>
+                      </td>
                     </tr>
                   );
                 })}
@@ -222,6 +263,31 @@ export default function AdminDashboardPage() {
           </div>
         )}
       </div>
+
+      {/* Customer Attached Photo Full Modal Preview */}
+      {previewImage && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 relative">
+            <div className="flex items-center justify-between border-b border-slate-700 pb-3">
+              <h3 className="font-bold text-base text-white">📷 고객 첨부 현장 사진 크게보기</h3>
+              <button onClick={() => setPreviewImage(null)} className="text-slate-400 hover:text-white text-lg font-bold">
+                ✕
+              </button>
+            </div>
+            <div className="max-h-[70vh] overflow-hidden rounded-xl border border-slate-800 bg-black flex items-center justify-center">
+              <img src={previewImage} alt="고객 첨부 현장 사진" className="max-h-[70vh] w-auto object-contain" />
+            </div>
+            <div className="pt-2 flex justify-end">
+              <button
+                onClick={() => setPreviewImage(null)}
+                className="px-5 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-bold transition"
+              >
+                닫기
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
