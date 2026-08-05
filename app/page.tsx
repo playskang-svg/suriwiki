@@ -6,7 +6,7 @@ import { SiteHeader } from "@/components/public/site-header";
 import { SiteFooter } from "@/components/public/site-footer";
 import { MAIN_CATEGORIES, REGIONS_DATA, getDistributedCompanyProfile, getSiteImages } from "@/lib/store";
 
-// Popular Before/After Showcase Items with Direct Links
+// Popular Before/After Showcase Items with Direct Links to Landing Pages
 const POPULAR_SHOWCASE_ITEMS = [
   {
     id: "case_01",
@@ -178,10 +178,10 @@ export default function HomePage() {
 
             <div className="pt-4 flex flex-wrap items-center gap-4">
               <a
-                href="#consult-regions"
+                href="#services"
                 className="px-8 py-4 bg-gradient-to-r from-[#c5a059] to-[#b08b38] hover:from-[#d4af37] hover:to-[#c5a059] text-slate-950 font-black rounded-full shadow-2xl transition duration-200 text-sm flex items-center justify-center gap-2"
               >
-                <span>⚡ 지역별 시공문의 신청</span>
+                <span>🏗️ 22개 시공 공정 홈 관람</span>
                 <span className="text-lg">&rarr;</span>
               </a>
 
@@ -235,7 +235,7 @@ export default function HomePage() {
                 🔥 수리위키 인기 시공사례 (BEFORE & AFTER)
               </h2>
               <p className="text-xs text-slate-400 mt-1">
-                클릭하시면 해당 시공 및 지역 전용 상세 페이지로 즉시 이동합니다.
+                클릭하시면 해당 시공 및 지역 전용 상세 안내 페이지(홈)로 이동합니다.
               </p>
             </div>
             <a href="#services" className="text-xs text-[#e8c87b] hover:underline font-bold">
@@ -296,7 +296,7 @@ export default function HomePage() {
                   </div>
 
                   <div className="pt-2 flex items-center justify-between text-xs text-slate-400 font-medium">
-                    <span className="group-hover:text-white transition">상세 사례 및 견적 확인</span>
+                    <span className="group-hover:text-white transition">공정 전용 안내 홈으로 이동</span>
                     <span className="text-[#c5a059] font-bold group-hover:translate-x-1 transition font-mono">&rarr;</span>
                   </div>
                 </div>
@@ -305,7 +305,44 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* 3. REGIONAL CONSTRUCTION INQUIRY GRID ("시공문의 - 지역 대표 아이템 DB 연동") */}
+        {/* 3. ALL 22 CATEGORIES SECTION (PLACED ABOVE REGIONAL SECTION PER USER REQUEST) */}
+        <section id="services" className="mx-auto max-w-7xl px-4 space-y-6">
+          <div className="flex items-end justify-between border-b border-slate-800 pb-4">
+            <div>
+              <span className="text-xs font-semibold text-[#c5a059] uppercase tracking-wider">ALL 22 CATEGORIES</span>
+              <h2 className="text-3xl font-extrabold text-white mt-1">
+                🏗️ 22개 시공 공정별 전용 안내 홈 바로가기
+              </h2>
+            </div>
+            <span className="text-xs text-slate-400 hidden sm:inline">공정을 선택하시면 해당 공정 전용 안내 페이지(홈)로 연결된 후 상담 신청이 진행됩니다.</span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {MAIN_CATEGORIES.map((cat) => (
+              <Link
+                key={cat.slug}
+                href={`/services/${cat.slug}/gangnam`}
+                className="group p-4 bg-[#142334]/80 hover:bg-[#1a2d42] border border-slate-700/80 hover:border-[#c5a059] rounded-2xl transition duration-200 flex flex-col justify-between space-y-3 shadow-lg"
+              >
+                <div className="w-10 h-10 rounded-xl bg-[#c5a059]/20 text-[#e8c87b] border border-[#c5a059]/30 flex items-center justify-center font-bold text-sm group-hover:scale-110 transition">
+                  {cat.name.substring(0, 1)}
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm text-white group-hover:text-[#e8c87b] transition">
+                    {cat.name}
+                  </h3>
+                  <p className="text-[11px] text-slate-400 font-mono mt-0.5 truncate">{cat.domain}</p>
+                </div>
+                <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
+                  <span>{cat.teamLeader}</span>
+                  <span className="text-[#e8c87b] font-bold font-mono">{cat.activeCount}개</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* 4. REGIONAL CONSTRUCTION INQUIRY GRID ("수도권 지역별 대표 시공문의") */}
         <section id="consult-regions" className="mx-auto max-w-7xl px-4 space-y-8">
           <div className="border-b border-slate-800 pb-4">
             <span className="text-xs font-bold text-[#c5a059] uppercase tracking-wider">REGIONAL CONSTRUCTION INQUIRY</span>
@@ -313,59 +350,60 @@ export default function HomePage() {
               📍 수도권 지역별 대표 시공문의
             </h2>
             <p className="text-xs text-slate-400 mt-1">
-              원하시는 지역 박스 내 시공 아이템을 선택하시면 해당 지역 전용 1:1 상담 접수로 바로 연결됩니다.
+              원하시는 지역 박스 내 시공 아이템을 선택하시면 해당 지역 전용 안내 페이지(홈)로 바로 연결됩니다.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {REGIONS_DATA.map((reg) => {
-              // Get DB registered categories for this region
               const regionCategories = MAIN_CATEGORIES.slice(0, 5);
 
               return (
                 <div
                   key={reg.slug}
-                  className="bg-[#142334]/90 border border-slate-700 rounded-2xl p-5 space-y-4 shadow-xl hover:border-[#c5a059] transition duration-200"
+                  className="bg-[#142334]/90 border border-slate-700 rounded-2xl p-5 space-y-4 shadow-xl hover:border-[#c5a059] transition duration-200 flex flex-col justify-between"
                 >
-                  <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                    <div>
-                      <span className="text-[10px] font-bold text-[#c5a059] uppercase font-mono">{reg.parentRegionSlug}</span>
-                      <h3 className="font-extrabold text-lg text-white">{reg.name} 시공센터</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                      <div>
+                        <span className="text-[10px] font-bold text-[#c5a059] uppercase font-mono">{reg.parentRegionSlug}</span>
+                        <h3 className="font-extrabold text-lg text-white">{reg.name} 시공센터</h3>
+                      </div>
+                      <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold rounded">
+                        당일 출동 가능
+                      </span>
                     </div>
-                    <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold rounded">
-                      당일 출동 가능
-                    </span>
+
+                    {/* Representative Registered Items linking to Landing Page first */}
+                    <div className="space-y-2 text-xs">
+                      <span className="text-slate-400 text-[11px] block font-semibold">대표 시공 항목 (클릭 시 전용 홈 이동):</span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {regionCategories.map((cat) => (
+                          <Link
+                            key={cat.slug}
+                            href={`/services/${cat.slug}/${reg.slug}`}
+                            className="px-2.5 py-1 bg-slate-900 hover:bg-[#c5a059] hover:text-slate-950 border border-slate-700 hover:border-[#c5a059] text-slate-200 rounded-lg font-bold transition duration-150"
+                          >
+                            {cat.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Representative Registered Items from DB */}
-                  <div className="space-y-2 text-xs">
-                    <span className="text-slate-400 text-[11px] block font-semibold">대표 시공 항목 (클릭 시 1:1 문의):</span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {regionCategories.map((cat) => (
-                        <Link
-                          key={cat.slug}
-                          href={`/services/${cat.slug}/${reg.slug}/consult`}
-                          className="px-2.5 py-1 bg-slate-900 hover:bg-[#c5a059] hover:text-slate-950 border border-slate-700 hover:border-[#c5a059] text-slate-200 rounded-lg font-bold transition duration-150"
-                        >
-                          {cat.name}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between">
+                  <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between mt-2">
                     <Link
                       href={`/services/moontle-gyoche/${reg.slug}`}
                       className="text-xs text-slate-400 hover:text-white"
                     >
-                      지역 전체 공정 관람 &rarr;
+                      전용 홈 입장 &rarr;
                     </Link>
 
                     <Link
                       href={`/services/moontle-gyoche/${reg.slug}/consult`}
                       className="px-3.5 py-1.5 bg-[#c5a059] hover:bg-[#b08b38] text-slate-950 font-extrabold rounded-lg text-xs transition shadow"
                     >
-                      시공 문의하기
+                      상담 신청하기
                     </Link>
                   </div>
                 </div>
@@ -374,7 +412,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* 4. COLLABORATION & PARTNER MASTER INQUIRY SECTION ("협업문의") */}
+        {/* 5. COLLABORATION & PARTNER MASTER INQUIRY SECTION ("협업문의") */}
         <section id="collaborate" className="mx-auto max-w-7xl px-4">
           <div className="bg-gradient-to-br from-[#142334] via-[#0f1b29] to-[#172b40] border-2 border-[#c5a059]/40 rounded-3xl p-8 md:p-12 shadow-2xl space-y-8">
             <div className="max-w-3xl space-y-3">
@@ -469,7 +507,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* 5. 4-STEP STANDARD PROCESS ("시공 절차") */}
+        {/* 6. 4-STEP STANDARD PROCESS ("시공 절차") */}
         <section id="process" className="mx-auto max-w-7xl px-4 space-y-8">
           <div className="text-center max-w-2xl mx-auto space-y-2">
             <span className="text-xs font-bold text-[#c5a059] uppercase tracking-wider">STANDARD PROCESS</span>
@@ -516,7 +554,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* 6. WHY SOORI WIKI & REGIONAL EXPERT TRAINING ("왜 좋은지 & 지역별 전문가 양성") */}
+        {/* 7. WHY SOORI WIKI & REGIONAL EXPERT TRAINING ("왜 좋은지 & 지역별 전문가 양성") */}
         <section id="why-us" className="mx-auto max-w-7xl px-4 space-y-12">
           <div className="bg-[#142334]/60 border border-slate-700 rounded-3xl p-8 md:p-12 space-y-8">
             <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-slate-800 pb-4 gap-4">
@@ -575,43 +613,6 @@ export default function HomePage() {
                 마스터 교육 & 파트너 가입 문의 &rarr;
               </a>
             </div>
-          </div>
-        </section>
-
-        {/* 7. ALL 22 CATEGORIES OVERVIEW */}
-        <section id="services" className="mx-auto max-w-7xl px-4 space-y-6">
-          <div className="flex items-end justify-between border-b border-slate-800 pb-4">
-            <div>
-              <span className="text-xs font-semibold text-[#c5a059] uppercase tracking-wider">ALL 22 CATEGORIES</span>
-              <h2 className="text-2xl font-bold text-white mt-1">
-                22개 메인 공정 카테고리
-              </h2>
-            </div>
-            <span className="text-xs text-slate-400 hidden sm:inline">원하는 공정을 클릭하시면 전용 출장관으로 연결됩니다.</span>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {MAIN_CATEGORIES.map((cat) => (
-              <Link
-                key={cat.slug}
-                href={`/services/${cat.slug}/gangnam`}
-                className="group p-4 bg-[#142334]/80 hover:bg-[#1a2d42] border border-slate-700/80 hover:border-[#c5a059] rounded-2xl transition duration-200 flex flex-col justify-between space-y-3 shadow-lg"
-              >
-                <div className="w-10 h-10 rounded-xl bg-[#c5a059]/20 text-[#e8c87b] border border-[#c5a059]/30 flex items-center justify-center font-bold text-sm group-hover:scale-110 transition">
-                  {cat.name.substring(0, 1)}
-                </div>
-                <div>
-                  <h3 className="font-bold text-sm text-white group-hover:text-[#e8c87b] transition">
-                    {cat.name}
-                  </h3>
-                  <p className="text-[11px] text-slate-400 font-mono mt-0.5 truncate">{cat.domain}</p>
-                </div>
-                <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
-                  <span>{cat.teamLeader}</span>
-                  <span className="text-[#e8c87b] font-bold font-mono">{cat.activeCount}개</span>
-                </div>
-              </Link>
-            ))}
           </div>
         </section>
       </main>

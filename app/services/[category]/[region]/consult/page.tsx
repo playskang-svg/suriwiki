@@ -40,12 +40,20 @@ function ConsultContent({ params }: { params: { category: string; region: string
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Show instant preview
+    // File Size Validation - Max 10MB
+    const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+    if (file.size > MAX_SIZE) {
+      alert("⚠️ 파일 용량이 너무 큽니다! (최대 10MB 이하의 이미지 파일만 첨부 가능합니다)");
+      e.target.value = "";
+      return;
+    }
+
+    // Instant local preview
     const reader = new FileReader();
     reader.onloadend = () => setPhotoPreview(reader.result as string);
     reader.readAsDataURL(file);
 
-    // Upload to server pipeline
+    // Server upload pipeline
     setUploading(true);
     try {
       const formData = new FormData();
@@ -58,12 +66,14 @@ function ConsultContent({ params }: { params: { category: string; region: string
 
       const data = await res.json();
       if (res.ok && data.success) {
-        setUploadedUrl(data.url);
+        const publicUrl = data.url || data.data?.url;
+        if (publicUrl) setUploadedUrl(publicUrl);
       } else {
-        alert(data.message || "이미지 업로드에 실패했습니다.");
+        alert(data.message || "이미지 업로드 용량 제한을 초과했습니다. 10MB 이하로 첨부해 주세요.");
       }
     } catch (err) {
-      console.error("Image upload failed:", err);
+      console.error("Image upload error:", err);
+      // Fallback: local reader preview remains available!
     } finally {
       setUploading(false);
     }
@@ -219,7 +229,7 @@ function ConsultContent({ params }: { params: { category: string; region: string
             {/* Photo Attachment Preview & Server Upload */}
             <div>
               <label className="block font-semibold text-slate-300 mb-1">
-                현장 사진 첨부 (선택 - 견적 정확도 향상)
+                현장 사진 첨부 (최대 10MB 용량 제한)
               </label>
               <input
                 type="file"
@@ -227,9 +237,9 @@ function ConsultContent({ params }: { params: { category: string; region: string
                 onChange={handlePhotoUpload}
                 className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500"
               />
-              {uploading && <p className="text-[11px] text-blue-400 mt-1">서버 업로드 처리 중...</p>}
+              {uploading && <p className="text-[11px] text-blue-400 mt-1 animate-pulse">📂 현장 사진 서버 업로드 처리 중...</p>}
               {photoPreview && (
-                <div className="mt-3 relative w-32 h-32 rounded-lg border border-slate-700 overflow-hidden bg-slate-950">
+                <div className="mt-3 relative w-36 h-36 rounded-xl border border-slate-700 overflow-hidden bg-slate-950 shadow-md">
                   <img src={photoPreview} alt="현장 사진 미리보기" className="w-full h-full object-cover" />
                   <button
                     type="button"
@@ -237,7 +247,7 @@ function ConsultContent({ params }: { params: { category: string; region: string
                       setPhotoPreview(null);
                       setUploadedUrl(null);
                     }}
-                    className="absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px]"
+                    className="absolute top-1.5 right-1.5 bg-red-600 hover:bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shadow"
                   >
                     ✕
                   </button>
@@ -266,7 +276,7 @@ function ConsultContent({ params }: { params: { category: string; region: string
 
         <div className="text-center pt-2">
           <Link href={parentHref} className="text-xs text-slate-400 hover:text-slate-200 transition underline">
-            ← {region.name} {category.name} 키워드 안내 페이지로 돌아가기
+            ← {region.name} {category.name} 전용 시공 안내 페이지(홈)로 이동하기
           </Link>
         </div>
       </main>
