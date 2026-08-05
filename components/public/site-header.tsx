@@ -1,0 +1,84 @@
+import Link from "next/link";
+import { CompanyProfile } from "@/lib/types";
+
+export function SiteHeader({
+  companyProfile,
+  categorySlug,
+  regionSlug,
+  categoryName,
+}: {
+  companyProfile?: CompanyProfile;
+  categorySlug?: string;
+  regionSlug?: string;
+  categoryName?: string;
+}) {
+  const title = categoryName || "수리위키";
+  const consultHref =
+    categorySlug && regionSlug
+      ? `/services/${categorySlug}/${regionSlug}/consult`
+      : "#consult-regions";
+
+  return (
+    <header className="sticky top-0 z-50 bg-[#0f1b29]/95 backdrop-blur-md border-b border-slate-800 text-slate-100 shadow-md font-sans transition">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
+        {/* Brand Logo - SooriWiki */}
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#1c334b] to-[#0f1b29] text-[#d4af37] border border-[#c5a059]/50 flex items-center justify-center font-extrabold text-lg shadow-md group-hover:scale-105 transition">
+            W
+          </div>
+          <div>
+            <div className="flex items-center gap-1.5">
+              <span className="text-lg font-black tracking-tight text-white block leading-none">
+                {title}
+              </span>
+              <span className="px-1.5 py-0.5 bg-[#c5a059]/20 border border-[#c5a059]/40 text-[#e8c87b] text-[9px] font-bold rounded">
+                공식
+              </span>
+            </div>
+            <span className="text-[10px] font-mono tracking-wider text-slate-400 block mt-0.5">
+              대한민국 1등 집수리·복원 지식백과
+            </span>
+          </div>
+        </Link>
+
+        {/* Top Header Navigation Items */}
+        <nav className="hidden lg:flex items-center gap-6 text-sm font-semibold text-slate-200">
+          <Link href="/" className="hover:text-[#c5a059] transition">
+            홈
+          </Link>
+          <a href="/#showcase" className="hover:text-[#c5a059] transition">
+            인기 시공사례
+          </a>
+          <a href="/#consult-regions" className="hover:text-[#c5a059] transition">
+            시공문의
+          </a>
+          <a href="/#collaborate" className="hover:text-[#c5a059] transition">
+            협업문의
+          </a>
+          <a href="/#process" className="hover:text-[#c5a059] transition">
+            진행 과정
+          </a>
+          <a href="/#why-us" className="hover:text-[#c5a059] transition">
+            왜 수리위키인가
+          </a>
+          <Link href="/sitemap" className="hover:text-[#c5a059] transition">
+            사이트맵
+          </Link>
+          <Link href="/admin" className="text-xs text-slate-400 hover:text-slate-200 transition font-mono">
+            [관리자]
+          </Link>
+        </nav>
+
+        {/* Call to Action Button */}
+        <div className="flex items-center gap-3">
+          <a
+            href={consultHref}
+            className="px-5 py-2.5 bg-[#142638] hover:bg-[#1c334b] text-white border-2 border-[#c5a059] rounded-full text-xs font-extrabold shadow-md hover:shadow-lg transition duration-200 tracking-wide flex items-center justify-center gap-1.5"
+          >
+            <span>⚡ 실시간 시공문의</span>
+          </a>
+        </div>
+      </div>
+    </header>
+  );
+}
