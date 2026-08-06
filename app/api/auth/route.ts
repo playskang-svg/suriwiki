@@ -38,6 +38,7 @@ export async function POST(request: Request) {
       name: user.name,
       role: user.role,
       allowedCategorySlugs: user.allowedCategorySlugs || [],
+      allowedAdminPages: user.allowedAdminPages || [],
     };
 
     const response = NextResponse.json({

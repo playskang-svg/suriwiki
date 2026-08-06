@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
+import { AdminPageGuard } from "@/components/admin/admin-page-guard";
 import { getDistributedCompanyProfile } from "@/lib/store";
 
 export const metadata: Metadata = {
@@ -13,7 +14,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <div className="flex min-h-screen bg-slate-900 text-slate-100 font-sans">
       <AdminSidebar />
       <div className="flex-1 bg-slate-900 p-8 overflow-y-auto flex flex-col justify-between">
-        <div>{children}</div>
+        <div>
+          <AdminPageGuard>{children}</AdminPageGuard>
+        </div>
 
         <footer className="mt-16 pt-6 border-t border-slate-800 text-xs text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-2">
           <div>

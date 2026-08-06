@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { NewRank1KeywordsShowcase } from "@/components/admin/new-rank1-keywords";
+import { TopRankKeywordsWidget } from "@/components/admin/top-rank-keywords";
 import {
   getKeywordPages,
   getKeywordSuggestions,
@@ -100,6 +101,9 @@ export default function AdminRankingsPage() {
 
       {/* NEW: 이번 주 새로운 1위 키워드 40 NEW Showcase */}
       <NewRank1KeywordsShowcase />
+
+      {/* 검색 1위 키워드 전체 (실데이터 기반, 클릭 시 네이버 검색으로 이동) */}
+      <TopRankKeywordsWidget />
 
       {/* AI Keyword Suggestions Section */}
       <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">

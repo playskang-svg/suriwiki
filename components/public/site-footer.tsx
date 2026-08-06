@@ -51,7 +51,7 @@ export function SiteFooter({ company }: { company: CompanyProfile }) {
             {company.phoneNumber}
           </a>
           <p className="text-[11px] text-slate-400 leading-normal mb-3">
-            {company.prepInstructions || "파손 부위 전경 사진 2장을 전송해주시면 빠른 견적 산출이 가능합니다."}
+            {company.prepInstructions || "전화 상담으로 현장 상황을 알려주시면 빠른 견적 산출이 가능합니다."}
           </p>
           <div className="flex gap-3 text-xs text-slate-400">
             <Link href="/sitemap.xml" className="hover:underline">

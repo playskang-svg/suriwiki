@@ -22,6 +22,7 @@ interface SessionUser {
   name: string;
   role: string;
   allowedCategorySlugs?: string[];
+  allowedAdminPages?: string[];
 }
 
 export function AdminSidebar() {
@@ -54,7 +55,9 @@ export function AdminSidebar() {
     }
   };
 
-  const isSuperAdmin = !currentUser || currentUser.role === "super_admin";
+  const isMasterAdmin = currentUser?.role === "master_admin";
+  const restrictedPages = currentUser?.allowedAdminPages;
+  const hasPageRestriction = !isMasterAdmin && !!restrictedPages && restrictedPages.length > 0;
 
   return (
     <aside className="w-64 shrink-0 border-r border-slate-800 bg-slate-900 text-slate-200 p-5 flex flex-col justify-between min-h-screen font-sans">
@@ -80,7 +83,12 @@ export function AdminSidebar() {
             시스템 메뉴
           </p>
           {NAV_ITEMS.map((item) => {
-            if (item.href === "/admin/users" && !isSuperAdmin) {
+            // 계정 관리(사용자 승인·페이지 권한 배정)는 마스터 관리자만 볼 수 있다.
+            if (item.href === "/admin/users" && !isMasterAdmin) {
+              return null;
+            }
+            // 마스터 관리자가 특정 계정의 페이지 접근을 명시적으로 제한한 경우에만 숨긴다.
+            if (item.href !== "/admin/users" && hasPageRestriction && !restrictedPages!.includes(item.href)) {
               return null;
             }
 
@@ -109,7 +117,11 @@ export function AdminSidebar() {
           <div className="flex items-center justify-between">
             <p className="text-xs font-bold text-slate-200">{currentUser?.name || "관리자"}</p>
             <span className="text-[10px] px-1.5 py-0.5 bg-blue-500/10 text-blue-400 rounded font-mono font-bold">
-              {currentUser?.role === "super_admin" ? "최고관리자" : "전담팀장"}
+              {currentUser?.role === "master_admin"
+                ? "마스터 관리자"
+                : currentUser?.role === "super_admin"
+                ? "최고관리자"
+                : "전담팀장"}
             </span>
           </div>
           <p className="text-[10px] text-slate-400 font-mono mt-0.5">@{currentUser?.username || "admin"}</p>

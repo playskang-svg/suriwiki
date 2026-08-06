@@ -18,7 +18,7 @@ export const mockCompanyProfile: CompanyProfile = {
   phoneNumber: "010-2529-1726",
   operatingHours: "매일 08:00 ~ 21:00",
   serviceRegions: ["서울", "경기", "인천"],
-  prepInstructions: "문틀 사진, 지역(시·구·동), 수리 내용을 미리 알려주세요.",
+  prepInstructions: "지역(시·구·동)과 수리 내용을 전화로 알려주시면 바로 안내해드립니다.",
 };
 
 export const mockSites: Site[] = [

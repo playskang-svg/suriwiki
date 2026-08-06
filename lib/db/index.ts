@@ -4,6 +4,8 @@ import {
   KeywordPage,
   User,
   SiteImage,
+  CategoryCase,
+  SiteFranchise,
 } from "@/lib/types";
 
 export interface ConsultationLead {
@@ -26,6 +28,8 @@ export interface DatabaseSchema {
   consultationLeads: ConsultationLead[];
   keywordPages: KeywordPage[];
   siteImages: SiteImage[];
+  categoryCases: CategoryCase[];
+  siteFranchises: SiteFranchise[];
 }
 
 export function loadDatabase(defaultData: DatabaseSchema): DatabaseSchema {
@@ -60,6 +64,14 @@ export function loadDatabase(defaultData: DatabaseSchema): DatabaseSchema {
 
     if (!parsed.siteImages || !Array.isArray(parsed.siteImages)) {
       parsed.siteImages = defaultData.siteImages;
+    }
+
+    if (!parsed.categoryCases || !Array.isArray(parsed.categoryCases)) {
+      parsed.categoryCases = defaultData.categoryCases;
+    }
+
+    if (!parsed.siteFranchises || !Array.isArray(parsed.siteFranchises)) {
+      parsed.siteFranchises = defaultData.siteFranchises;
     }
 
     return parsed;

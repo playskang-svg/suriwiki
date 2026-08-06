@@ -26,3 +26,4 @@ public/uploads/*
 # Temporary & Cache files
 .cache/
 .vercel
+tsconfig.tsbuildinfo

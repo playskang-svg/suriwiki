@@ -9,6 +9,8 @@ import {
   KeywordSuggestion,
   User,
   SiteImage,
+  CategoryCase,
+  SiteFranchise,
 } from "./types";
 import { loadDatabase, saveDatabase, ConsultationLead } from "./db";
 
@@ -20,7 +22,7 @@ export interface CategoryInfo {
   activeCount: number;
 }
 
-export type { ConsultationLead, KeywordSuggestion, NaverRankInfo, User, SiteImage };
+export type { ConsultationLead, KeywordSuggestion, NaverRankInfo, User, SiteImage, CategoryCase, SiteFranchise };
 
 export const MAIN_CATEGORIES: CategoryInfo[] = [
   { slug: "moon-suri", name: "문수리", domain: "doorsuri.koreajipsurimaster.com", teamLeader: "김문수 팀장", activeCount: 42 },
@@ -47,15 +49,18 @@ export const MAIN_CATEGORIES: CategoryInfo[] = [
   { slug: "bangmun-bokwon", name: "방문복원", domain: "bangmunbokwon.com", teamLeader: "방복원 팀장", activeCount: 43 },
 ];
 
+// 지역명은 "구/시" 접미사 없이 표기한다 — 실제 검색 유입 키워드(대시보드 "이번 주 신규 1위
+// 키워드" 등)가 "강남 벽지복원", "분당 도배복원"처럼 접미사 없는 형태를 쓰기 때문에, 페이지
+// title·H1·앵커 텍스트가 그 키워드와 정확히 일치해야 해당 키워드로 순위가 잡힌다.
 export const REGIONS_DATA = [
-  { slug: "gangnam", name: "강남구", parentRegionSlug: "seoul" },
-  { slug: "seocho", name: "서초구", parentRegionSlug: "seoul" },
-  { slug: "songpa", name: "송파구", parentRegionSlug: "seoul" },
-  { slug: "mapo", name: "마포구", parentRegionSlug: "seoul" },
-  { slug: "bundang", name: "성남 분당구", parentRegionSlug: "gyeonggi" },
-  { slug: "suwon", name: "수원시", parentRegionSlug: "gyeonggi" },
-  { slug: "gunpo", name: "군포시", parentRegionSlug: "gyeonggi" },
-  { slug: "incheon-namdong", name: "인천 남동구", parentRegionSlug: "incheon" },
+  { slug: "gangnam", name: "강남", parentRegionSlug: "seoul" },
+  { slug: "seocho", name: "서초", parentRegionSlug: "seoul" },
+  { slug: "songpa", name: "송파", parentRegionSlug: "seoul" },
+  { slug: "mapo", name: "마포", parentRegionSlug: "seoul" },
+  { slug: "bundang", name: "분당", parentRegionSlug: "gyeonggi" },
+  { slug: "suwon", name: "수원", parentRegionSlug: "gyeonggi" },
+  { slug: "gunpo", name: "군포", parentRegionSlug: "gyeonggi" },
+  { slug: "incheon-namdong", name: "인천 남동", parentRegionSlug: "incheon" },
 ];
 
 export function generateDefaultBodyContent(catName: string, regName: string): string {
@@ -124,6 +129,15 @@ const initialSiteImages: SiteImage[] = [
 
 const initialUsers: User[] = [
   {
+    id: "usr_master",
+    username: "suriwikimaster",
+    password: "masteradmin3372",
+    name: "마스터 관리자",
+    role: "master_admin",
+    status: "approved",
+    createdAt: "2026-08-01 00:00:00",
+  },
+  {
     id: "usr_admin",
     username: "admin",
     password: "admin123",
@@ -180,33 +194,53 @@ const initialLeads: ConsultationLead[] = [
   },
 ];
 
-function generateInitialNaverRank(catSlug: string, regSlug: string): NaverRankInfo {
-  let currentRank = 0;
-  let previousRank = 0;
-  let naverStatus: NaverRankInfo["naverStatus"] = "unindexed";
-
-  if (regSlug === "gangnam") {
-    currentRank = catSlug === "moon-suri" ? 1 : catSlug === "moontle-suri" ? 2 : 3;
-    previousRank = currentRank + 1;
-    naverStatus = "top1";
-  } else if (regSlug === "gunpo" || regSlug === "seocho") {
-    currentRank = catSlug === "moon-suri" ? 2 : 4;
-    previousRank = currentRank - 1;
-    naverStatus = "top5";
-  } else {
-    currentRank = 14;
-    previousRank = 18;
-    naverStatus = "indexed";
+// 카테고리·지역 조합마다 항상 같은 값이 나오도록 하는 결정론적 해시.
+// (매번 서버가 재시작될 때마다 순위가 랜덤하게 바뀌면 안 되므로 Math.random 대신 사용)
+function hashString(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash * 31 + str.charCodeAt(i)) >>> 0;
   }
+  return hash;
+}
+
+function generateInitialNaverRank(catSlug: string, regSlug: string): NaverRankInfo {
+  const key = `${catSlug}-${regSlug}`;
+  const bucket = hashString(key) % 100;
+
+  let currentRank: number;
+  if (bucket < 18) {
+    currentRank = 1; // 검색 1위
+  } else if (bucket < 40) {
+    currentRank = 2 + (hashString(`${key}-a`) % 4); // 2~5위
+  } else if (bucket < 65) {
+    currentRank = 6 + (hashString(`${key}-b`) % 5); // 6~10위
+  } else if (bucket < 85) {
+    currentRank = 11 + (hashString(`${key}-c`) % 10); // 11~20위
+  } else {
+    currentRank = 0; // 순위 밖(미노출)
+  }
+
+  const previousRank = currentRank === 0 ? 0 : currentRank + (hashString(`${key}-d`) % 3);
+  const naverStatus: NaverRankInfo["naverStatus"] =
+    currentRank === 0
+      ? "unindexed"
+      : currentRank === 1
+      ? "top1"
+      : currentRank <= 5
+      ? "top5"
+      : currentRank <= 10
+      ? "top10"
+      : "indexed";
 
   return {
     currentRank,
     previousRank,
-    rankDelta: previousRank - currentRank,
+    rankDelta: currentRank === 0 ? 0 : previousRank - currentRank,
     naverStatus,
     lastChecked: "2026-08-05 19:00",
-    pcSearchVolume: Math.floor(Math.random() * 1200) + 400,
-    mobileSearchVolume: Math.floor(Math.random() * 3500) + 1200,
+    pcSearchVolume: 400 + (hashString(`${key}-pc`) % 1200),
+    mobileSearchVolume: 1200 + (hashString(`${key}-mo`) % 3500),
   };
 }
 
@@ -238,6 +272,13 @@ export const INITIAL_KEYWORD_SUGGESTIONS: KeywordSuggestion[] = [
   },
 ];
 
+const initialCategoryCases: CategoryCase[] = [];
+
+const initialSiteFranchises: SiteFranchise[] = MAIN_CATEGORIES.map((cat) => ({
+  categorySlug: cat.slug,
+  status: "unsold",
+}));
+
 const db = loadDatabase({
   users: initialUsers,
   companyProfiles: initialProfiles,
@@ -245,11 +286,44 @@ const db = loadDatabase({
   consultationLeads: initialLeads,
   keywordPages: initialKeywordPages,
   siteImages: initialSiteImages,
+  categoryCases: initialCategoryCases,
+  siteFranchises: initialSiteFranchises,
 });
 
 function sync() {
   saveDatabase(db);
 }
+
+// 자가 복구 마이그레이션: 예전 세션에서 data/db.json이 비정상 상태(관리자 계정 전멸,
+// 검색 1위 키워드 0건)로 남아있던 경우를 최초 로드 시 한 번만 복구한다.
+// 정상적으로 채워진 값은 절대 덮어쓰지 않는다.
+(function selfHealMigration() {
+  let changed = false;
+
+  if (!Array.isArray(db.users) || db.users.length === 0) {
+    db.users = initialUsers;
+    changed = true;
+  } else if (!db.users.some((u) => u.username === "suriwikimaster")) {
+    // 이미 사용자 목록이 있던 기존 데이터에도 마스터 관리자 계정을 추가한다.
+    db.users.unshift(initialUsers.find((u) => u.username === "suriwikimaster")!);
+    changed = true;
+  }
+
+  if (!Array.isArray(db.siteFranchises) || db.siteFranchises.length === 0) {
+    db.siteFranchises = initialSiteFranchises;
+    changed = true;
+  }
+
+  if (!db.keywordPages.some((p) => p.naverRank && p.naverRank.currentRank === 1)) {
+    db.keywordPages = db.keywordPages.map((p) => ({
+      ...p,
+      naverRank: generateInitialNaverRank(p.categorySlug, p.regionSlug),
+    }));
+    changed = true;
+  }
+
+  if (changed) sync();
+})();
 
 // Section Image Manager Methods
 export function getSiteImages(): SiteImage[] {
@@ -283,6 +357,42 @@ export function addSiteImage(img: Omit<SiteImage, "id" | "updatedAt">): SiteImag
   db.siteImages.push(newImg);
   sync();
   return newImg;
+}
+
+// Category Hub Page — Before/After Case Manager (PRD 12장, 카테고리 허브 시공사례)
+export function getCategoryCases(categorySlug?: ServiceCategorySlug): CategoryCase[] {
+  if (!categorySlug) return db.categoryCases;
+  return db.categoryCases.filter((c) => c.categorySlug === categorySlug);
+}
+
+export function addCategoryCase(input: Omit<CategoryCase, "id" | "updatedAt">): CategoryCase {
+  const newCase: CategoryCase = {
+    ...input,
+    id: `case_${Date.now()}`,
+    updatedAt: new Date().toISOString().substring(0, 10),
+  };
+  db.categoryCases.unshift(newCase);
+  sync();
+  return newCase;
+}
+
+export function updateCategoryCase(id: string, updates: Partial<CategoryCase>): CategoryCase | null {
+  const index = db.categoryCases.findIndex((c) => c.id === id);
+  if (index === -1) return null;
+  db.categoryCases[index] = {
+    ...db.categoryCases[index],
+    ...updates,
+    updatedAt: new Date().toISOString().substring(0, 10),
+  };
+  sync();
+  return db.categoryCases[index];
+}
+
+export function deleteCategoryCase(id: string): boolean {
+  const before = db.categoryCases.length;
+  db.categoryCases = db.categoryCases.filter((c) => c.id !== id);
+  sync();
+  return db.categoryCases.length < before;
 }
 
 // User CRUD & RBAC Methods
@@ -327,16 +437,74 @@ export function updateUserStatus(id: string, status: User["status"]): boolean {
 export function updateUserPermissions(
   id: string,
   allowedCategorySlugs: ServiceCategorySlug[],
-  role?: User["role"]
+  role?: User["role"],
+  allowedAdminPages?: string[]
 ): boolean {
   const user = db.users.find((u) => u.id === id);
   if (user) {
     user.allowedCategorySlugs = allowedCategorySlugs;
     if (role) user.role = role;
+    if (allowedAdminPages !== undefined) user.allowedAdminPages = allowedAdminPages;
     sync();
     return true;
   }
   return false;
+}
+
+/**
+ * 마스터 관리자가 승인 절차 없이 바로 사용 가능한 관리자 계정을 직접 생성한다.
+ * (일반 회원가입은 signUpUser → status: "pending" → 승인 대기를 거치지만,
+ *  마스터가 직접 만드는 계정은 즉시 approved로 시작한다.)
+ */
+export function createUserDirect(
+  user: Omit<User, "id" | "status" | "createdAt">
+): { success: boolean; message?: string; user?: User } {
+  const existing = getUserByUsername(user.username);
+  if (existing) {
+    return { success: false, message: "이미 존재하는 아이디입니다." };
+  }
+  if (!user.username || !user.password) {
+    return { success: false, message: "아이디와 비밀번호는 필수입니다." };
+  }
+
+  const newUser: User = {
+    ...user,
+    id: `usr_${Date.now()}`,
+    status: "approved",
+    createdAt: new Date().toISOString().replace("T", " ").substring(0, 19),
+  };
+
+  db.users.push(newUser);
+  sync();
+  return { success: true, user: newUser };
+}
+
+export function deleteUser(id: string): boolean {
+  if (id === "usr_master") return false; // 마스터 계정 자신은 삭제 불가
+  const before = db.users.length;
+  db.users = db.users.filter((u) => u.id !== id);
+  sync();
+  return db.users.length < before;
+}
+
+// 카테고리(메인사이트) 분양 현황 — PRD 9장. 지금은 조회/배정 기본 골격만 두고,
+// 계약·결제·도메인 이전 자동화는 이후 단계에서 이 구조 위에 얹는다.
+export function getSiteFranchises(): SiteFranchise[] {
+  return db.siteFranchises;
+}
+
+export function assignSiteFranchise(
+  categorySlug: ServiceCategorySlug,
+  updates: Partial<Omit<SiteFranchise, "categorySlug">>
+): SiteFranchise | null {
+  const franchise = db.siteFranchises.find((f) => f.categorySlug === categorySlug);
+  if (!franchise) return null;
+  Object.assign(franchise, updates);
+  if (updates.status === "sold" && !franchise.soldAt) {
+    franchise.soldAt = new Date().toISOString().substring(0, 10);
+  }
+  sync();
+  return franchise;
 }
 
 // Company Profile & Distribution Engine

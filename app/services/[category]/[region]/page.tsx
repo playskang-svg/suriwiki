@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Script from "next/script";
+import { redirect } from "next/navigation";
 import { SiteHeader } from "@/components/public/site-header";
 import { SiteFooter } from "@/components/public/site-footer";
 import { Breadcrumb } from "@/components/public/breadcrumb";
@@ -12,6 +13,10 @@ import {
   generateDefaultBodyContent,
 } from "@/lib/store";
 import { generateKeywordPageMetadata, generateJsonLd } from "@/lib/seo";
+
+// 관리자가 회사정보·연락처 배포(12.4)를 바꾸면 재배포 없이도 바로 반영되어야 하므로
+// 빌드 시점 정적 캐싱을 쓰지 않고 매 요청마다 새로 렌더링한다.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -42,25 +47,29 @@ export default function KeywordLandingPage({
 }: {
   params: { category: string; region: string };
 }) {
-  const category = MAIN_CATEGORIES.find((c) => c.slug === params.category) || {
-    name: "문수리",
-    slug: params.category,
-    domain: "doorsuri.com",
-    teamLeader: "김문수 팀장",
-  };
-  const region = REGIONS_DATA.find((r) => r.slug === params.region) || {
-    name: params.region === "gangnam" ? "강남구" : params.region === "gunpo" ? "군포시" : params.region,
-    slug: params.region,
-  };
+  // PRD 5.3 SEO 발행 품질 게이트: 실제 시공 데이터가 없거나 아직 발행되지 않은 지역×공정 조합은
+  // 조합형 문구로 채운 빈 랜딩페이지를 보여주지 않고 상위 허브로 보낸다.
+  const category = MAIN_CATEGORIES.find((c) => c.slug === params.category);
+  if (!category) {
+    redirect("/");
+  }
+
+  const region = REGIONS_DATA.find((r) => r.slug === params.region);
+  if (!region) {
+    redirect(`/services/${params.category}`);
+  }
 
   const allKeywordPages = getKeywordPages();
   const keywordPage = allKeywordPages.find(
     (p) => p.categorySlug === params.category && p.regionSlug === params.region
   );
 
-  const pageTitle = keywordPage?.title || `${region.name} ${category.name} 전문 시공 및 복원`;
-  const bodyContent =
-    keywordPage?.bodyContent || generateDefaultBodyContent(category.name, region.name);
+  if (!keywordPage || keywordPage.status !== "published") {
+    redirect(`/services/${params.category}`);
+  }
+
+  const pageTitle = keywordPage.title;
+  const bodyContent = keywordPage.bodyContent || generateDefaultBodyContent(category.name, region.name);
 
   const companyProfile = getDistributedCompanyProfile(params.category, params.region);
   const consultHref = `/services/${params.category}/${params.region}/consult`;
@@ -116,7 +125,7 @@ export default function KeywordLandingPage({
             <p className="text-base md:text-lg text-slate-300 leading-relaxed">
               파손·부식·스크래치·소음 문제부터 교체 없이 깔끔한 원상복구까지!{" "}
               <strong className="text-white">{companyProfile.companyName}</strong>의 검증된 현장 전문가 팀이 
-              사진 접수 후 5분 내 정확한 견적을 산출하고 {region.name} 전지역으로 즉시 출동합니다.
+              전화 상담 후 5분 내 정확한 견적을 안내하고 {region.name} 전지역으로 즉시 출동합니다.
             </p>
 
             <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
@@ -124,7 +133,7 @@ export default function KeywordLandingPage({
                 href={consultHref}
                 className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg shadow-blue-600/40 text-center transition duration-200 text-base flex items-center justify-center gap-2"
               >
-                <span>📷 사진 보내고 5분 견적 받기</span>
+                <span>📞 전화로 5분 견적 상담받기</span>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
@@ -263,8 +272,8 @@ export default function KeywordLandingPage({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
               <div className="p-4 bg-slate-900/80 rounded-lg border border-slate-700/60 space-y-1">
                 <span className="text-xs font-bold text-blue-400">STEP 1</span>
-                <h4 className="font-semibold text-sm text-white">사진 기반 정밀 진단</h4>
-                <p className="text-xs text-slate-400">고객님이 전송해주신 사진으로 자재 타입, 파손 깊이, 색상 파악</p>
+                <h4 className="font-semibold text-sm text-white">전화 상담 기반 정밀 진단</h4>
+                <p className="text-xs text-slate-400">전화로 자재 타입, 파손 부위, 정도를 여쭤보고 파악합니다</p>
               </div>
               <div className="p-4 bg-slate-900/80 rounded-lg border border-slate-700/60 space-y-1">
                 <span className="text-xs font-bold text-blue-400">STEP 2</span>
@@ -329,7 +338,7 @@ export default function KeywordLandingPage({
               영업시간: {companyProfile.operatingHours}
             </p>
             <p className="text-xs text-blue-400 italic">
-              &quot;{companyProfile.prepInstructions || "사진 2장으로 5분 내 정밀 견적을 안내해드립니다."}&quot;
+              &quot;{companyProfile.prepInstructions || "전화 상담으로 5분 내 정밀 견적을 안내해드립니다."}&quot;
             </p>
           </div>
 

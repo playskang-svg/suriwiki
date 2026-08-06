@@ -46,6 +46,9 @@ export function SiteHeader({
           <Link href="/" className="hover:text-[#c5a059] transition">
             홈
           </Link>
+          <a href="/#services" className="hover:text-[#c5a059] transition">
+            22개 공정 전체보기
+          </a>
           <a href="/#showcase" className="hover:text-[#c5a059] transition">
             인기 시공사례
           </a>

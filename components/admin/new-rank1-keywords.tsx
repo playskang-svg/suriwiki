@@ -1,6 +1,9 @@
 "use client";
 
-import Link from "next/link";
+/** 키워드를 클릭하면 실제 네이버 검색 결과 화면이 새 탭으로 열리도록 한다. */
+function naverSearchUrl(keyword: string): string {
+  return `https://search.naver.com/search.naver?query=${encodeURIComponent(keyword)}`;
+}
 
 const NEW_RANK1_KEYWORDS = [
   { keyword: "강남 벽지복원", catSlug: "byeokji-bokwon", regSlug: "gangnam" },
@@ -62,10 +65,12 @@ export function NewRank1KeywordsShowcase() {
       <div className="bg-rose-500/5 dark:bg-rose-950/20 border-2 border-rose-400/40 dark:border-rose-500/40 rounded-2xl p-5 md:p-6 shadow-sm">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
           {NEW_RANK1_KEYWORDS.map((item, idx) => (
-            <Link
+            <a
               key={idx}
-              href={`/services/${item.catSlug}/${item.regSlug}`}
+              href={naverSearchUrl(item.keyword)}
               target="_blank"
+              rel="noopener noreferrer"
+              title={`네이버에서 "${item.keyword}" 검색 결과 보기`}
               className="bg-white dark:bg-slate-900 hover:bg-rose-50 dark:hover:bg-rose-950/50 border border-rose-200 dark:border-rose-800/60 rounded-xl p-3 flex items-center justify-between shadow-xs transition duration-200 group"
             >
               <div className="flex items-center gap-1.5 truncate">
@@ -77,7 +82,7 @@ export function NewRank1KeywordsShowcase() {
               <span className="px-1.5 py-0.5 bg-red-500 text-white text-[9px] font-black rounded tracking-tighter shrink-0 ml-1">
                 NEW
               </span>
-            </Link>
+            </a>
           ))}
         </div>
       </div>

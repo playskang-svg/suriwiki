@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { KpiCard } from "@/components/admin/kpi-card";
 import { NewRank1KeywordsShowcase } from "@/components/admin/new-rank1-keywords";
+import { TopRankKeywordsWidget } from "@/components/admin/top-rank-keywords";
 import { getDashboardKpi, MAIN_CATEGORIES, getKeywordSuggestions } from "@/lib/store";
 
 interface Lead {
@@ -24,7 +25,6 @@ export default function AdminDashboardPage() {
   const suggestions = getKeywordSuggestions();
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loadingLeads, setLoadingLeads] = useState(true);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const fetchLeads = async () => {
     setLoadingLeads(true);
@@ -84,7 +84,7 @@ export default function AdminDashboardPage() {
             <span>⚙️ 수리위키 통합 운영 & 상담·이미지 관리 대시보드</span>
           </h1>
           <p className="text-sm text-slate-600 dark:text-slate-400 mt-0.5">
-            22개 메인사이트 · 964개 키워드 페이지 실시간 운영 및 고객 첨부 사진 1:1 상담 접수함
+            22개 메인사이트 · 964개 키워드 페이지 실시간 운영 및 1:1 전화 상담 신청 접수함
           </p>
         </div>
 
@@ -128,6 +128,9 @@ export default function AdminDashboardPage() {
       {/* NEW: 이번 주 새로운 1위 키워드 40 NEW Showcase */}
       <NewRank1KeywordsShowcase />
 
+      {/* 검색 1위 키워드 전체 (실데이터 기반, 클릭 시 네이버 검색으로 이동) */}
+      <TopRankKeywordsWidget />
+
       {/* AI Keyword Suggestions Preview Banner */}
       <div className="bg-gradient-to-r from-slate-800 via-slate-800 to-blue-950/80 border border-slate-700 rounded-xl p-5 space-y-3 shadow-lg">
         <div className="flex items-center justify-between">
@@ -153,18 +156,18 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* Live Consultation Leads Inbox with Customer Attached Photo Preview */}
+      {/* Live Consultation Leads Inbox (전화 상담 신청) */}
       <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-sm space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-              <span>📥 1:1 상담 신청 & 고객 첨부 사진 실시간 수신함</span>
+              <span>📥 1:1 상담 신청 실시간 수신함</span>
               <span className="px-2.5 py-0.5 bg-blue-600 text-white text-xs font-mono rounded-full font-bold">
                 {leads.length}건
               </span>
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              고객이 상담폼에서 전송한 성함, 연락처, 현장 상태 내용 및 첨부 현장 사진 확인 가능
+              고객이 상담폼에서 전송한 성함, 연락처, 현장 상태 내용을 확인하고 전화로 안내하세요.
             </p>
           </div>
 
@@ -191,7 +194,6 @@ export default function AdminDashboardPage() {
                   <th className="py-3 px-4">유입 키워드 (공정/지역)</th>
                   <th className="py-3 px-4">고객명 / 연락처</th>
                   <th className="py-3 px-4">문의 내용</th>
-                  <th className="py-3 px-4">📸 고객 첨부 사진</th>
                   <th className="py-3 px-4">진행 상태</th>
                   <th className="py-3 px-4 text-right">관리</th>
                 </tr>
@@ -213,21 +215,6 @@ export default function AdminDashboardPage() {
                       </td>
                       <td className="py-3 px-4 text-slate-600 dark:text-slate-300 max-w-xs leading-relaxed">
                         {lead.content}
-                      </td>
-                      <td className="py-3 px-4">
-                        {lead.imageUrl ? (
-                          <button
-                            onClick={() => setPreviewImage(lead.imageUrl || null)}
-                            className="relative group w-16 h-16 rounded-lg overflow-hidden border border-slate-700 bg-slate-900 block"
-                          >
-                            <img src={lead.imageUrl} alt="첨부 사진" className="w-full h-full object-cover group-hover:scale-110 transition" />
-                            <span className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition flex items-center justify-center text-[10px] text-white font-bold">
-                              🔍 크게보기
-                            </span>
-                          </button>
-                        ) : (
-                          <span className="text-slate-500 text-[11px]">사진 미첨부</span>
-                        )}
                       </td>
                       <td className="py-3 px-4">
                         <select
@@ -264,30 +251,6 @@ export default function AdminDashboardPage() {
         )}
       </div>
 
-      {/* Customer Attached Photo Full Modal Preview */}
-      {previewImage && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 relative">
-            <div className="flex items-center justify-between border-b border-slate-700 pb-3">
-              <h3 className="font-bold text-base text-white">📷 고객 첨부 현장 사진 크게보기</h3>
-              <button onClick={() => setPreviewImage(null)} className="text-slate-400 hover:text-white text-lg font-bold">
-                ✕
-              </button>
-            </div>
-            <div className="max-h-[70vh] overflow-hidden rounded-xl border border-slate-800 bg-black flex items-center justify-center">
-              <img src={previewImage} alt="고객 첨부 현장 사진" className="max-h-[70vh] w-auto object-contain" />
-            </div>
-            <div className="pt-2 flex justify-end">
-              <button
-                onClick={() => setPreviewImage(null)}
-                className="px-5 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-bold transition"
-              >
-                닫기
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

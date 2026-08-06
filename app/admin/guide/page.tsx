@@ -17,7 +17,7 @@ const ROLE_GUIDES = [
     steps: [
       "키워드·페이지 운영(12.2)에서 콤보박스로 세부 키워드를 선택하고 제목 및 맞춤 바디글(본문)을 수정·저장합니다.",
       "964개 세부 키워드 페이지의 발행 상태(published, draft, seo_check 등)를 일괄/개별로 변경합니다.",
-      "1:1 상담 수신함에서 방문자가 신청한 파손 사진 및 견적 문의 내역을 확인하고 진행 상태(new &rarr; contacted &rarr; completed)를 변경합니다.",
+      "1:1 상담 수신함에서 방문자가 신청한 견적 문의 내역을 확인하고 전화로 안내한 뒤 진행 상태(new &rarr; contacted &rarr; completed)를 변경합니다.",
     ],
   },
   {
@@ -96,7 +96,7 @@ export default function AdminGuidePage() {
             <strong className="text-white">회사정보 배포 우선순위:</strong> 세부 키워드 페이지 지정(Page Override) &gt; 메인사이트 전체 지정(Site Default) &gt; 수리위키 마스터 본사 프로필 (대표자: 홍길동).
           </li>
           <li>
-            <strong className="text-white">1:1 상담 수신 확인:</strong> 고객이 세부 키워드 상담 페이지에서 접수한 사진 및 연락처는 관리자 대시보드([대시보드 KPI]) 실시간 수신함에서 확인할 수 있습니다.
+            <strong className="text-white">1:1 상담 수신 확인:</strong> 고객이 세부 키워드 상담 페이지에서 접수한 연락처와 문의 내용은 관리자 대시보드([대시보드 KPI]) 실시간 수신함에서 확인할 수 있습니다. 사진 첨부는 실효성이 낮아 폐지했고, 전화 상담으로만 접수합니다.
           </li>
         </ul>
       </section>
