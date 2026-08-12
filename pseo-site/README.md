@@ -36,11 +36,8 @@ Supabase SQL Editor에서 실행하면, 예시 페이지(`/leak-detection/cheona
 npm run build     # out/ 폴더에 순수 정적 파일 생성
 ```
 
-Cloudflare Pages 대시보드에서:
-- Framework preset: **Next.js (Static HTML Export)**
-- Build command: `npm run build`
-- Build output directory: `out`
-- 환경변수에 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SITE_URL` 등록
+Supabase 프로젝트 준비 → DB 스키마 실행 → Cloudflare Pages 연결 → 배경 이미지 추가까지
+단계별로 전부 정리해 둔 문서: **[docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md)**
 
 DB 내용을 바꾼 뒤에는 **Cloudflare Pages에서 재배포(재빌드)해야** 반영됩니다 — 순수 정적
 export라 ISR/실시간 갱신은 없습니다(서버가 없으므로 무료로 호스팅되는 대신 생기는 트레이드오프).
