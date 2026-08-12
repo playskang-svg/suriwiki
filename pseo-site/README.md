@@ -19,6 +19,17 @@ npm run dev                        # http://localhost:3100
 DB에 아직 아무것도 없다면 `supabase/schema.sql` → `supabase/seed.example.sql` 순서로
 Supabase SQL Editor에서 실행하면, 예시 페이지(`/leak-detection/cheonan` 등)가 바로 뜹니다.
 
+> ⚠️ **알려진 제약**: Next.js 14.2.35에서 `output:'export'` + 2단 이상 중첩된 동적 세그먼트
+> (`/[keyword]/[slug]`) 조합은 `next dev`로 직접 열면 "missing exported function
+> generateStaticParams()" 에러가 난다(실제로는 함수가 있어도 발생하는 dev 서버 자체 버그 —
+> Supabase 연동이나 데이터와는 무관함을 확인함). 홈(`/`)처럼 동적 세그먼트가 없는 페이지는
+> `npm run dev`로도 정상 동작한다. 키워드/지역 상세 페이지를 로컬에서 보려면 대신:
+> ```bash
+> npm run build && npm run start   # out/를 정적 서빙, http://localhost:3100
+> ```
+> `next build`(=실제 배포에 쓰이는 경로)에는 이 문제가 없다 — 정적 export된 결과물을 그대로
+> 서빙하면 어떤 페이지든 정상 동작한다.
+
 ## 2. 정적 빌드 & 배포 (Cloudflare Pages)
 
 ```bash

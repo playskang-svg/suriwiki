@@ -6,6 +6,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
       "port": 3000
+    },
+    {
+      "name": "pseo-site-static",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": ["-c", "cd pseo-site && npm run build && npm run start"],
+      "port": 3100
     }
   ]
 }
