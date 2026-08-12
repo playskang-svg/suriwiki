@@ -1,0 +1,21 @@
+# Dependencies & Build Outputs
+node_modules
+.next
+out
+
+# Environment Variables & Secrets
+.env
+.env.local
+.env.production
+.env.development
+
+# Log files & OS metadata
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+
+# Temporary & Cache files
+.cache/
+.vercel
+tsconfig.tsbuildinfo
