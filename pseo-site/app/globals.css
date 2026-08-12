@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #ffffff;
+  color: #0f172a;
+}
+
+/*
+ * 광고 슬롯 절대 방어선 (요구사항 5).
+ * ad-container가 붙은 요소는 브라우저 차원에서 "이 박스 내부의 변화가 바깥
+ * 레이아웃에 영향을 주지 않는다"고 선언한다(CSS contain). 본문이 아무리
+ * 길어지든, 광고 스크립트가 늦게 로드되든, 모바일/데스크톱 어떤 뷰포트든
+ * 이 박스의 높이는 흔들리지 않는다. AdSlot.tsx의 인라인 높이 고정과 이중 방어.
+ */
+.ad-container {
+  contain: layout paint size;
+  flex-shrink: 0;
+}
