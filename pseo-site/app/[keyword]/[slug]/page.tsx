@@ -20,6 +20,7 @@ import { getPageData, getStaticParamsList } from '@/lib/supabase'
 import { renderTemplate, sanitizeGeneratedText, splitParagraphs } from '@/lib/content'
 import { SITE_NAME, SITE_URL } from '@/lib/constants'
 import AdSlot from '@/components/AdSlot'
+import Breadcrumb from '@/components/Breadcrumb'
 import ContactBanner from '@/components/ContactBanner'
 import TableOfContents, { type TocItem } from '@/components/TableOfContents'
 import InternalLinks from '@/components/InternalLinks'
@@ -123,6 +124,9 @@ export default async function KeywordRegionPage({ params }: PageProps) {
       {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- JSON-LD 스크립트, 링크 아님 */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbList) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }} />
+
+      {/* 홈 → 상위 지역 → 현재 지역 브레드크럼 — 상위 지역 페이지로 올라가는 화면상 유일한 경로 */}
+      <Breadcrumb items={data.breadcrumb} />
 
       {/* H1: 시맨틱 구조의 최상단, 페이지당 반드시 1개만 존재 (요구사항 2-2) */}
       <h1 className="text-3xl font-extrabold leading-tight text-slate-900 md:text-4xl">{h1}</h1>
