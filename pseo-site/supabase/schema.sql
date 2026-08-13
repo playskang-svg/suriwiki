@@ -46,14 +46,19 @@ create table pseo_keyword_variants (
 create index idx_pseo_variants_keyword on pseo_keyword_variants(keyword_id);
 
 -- 2) 지역 트리 (SIDO > SIGUNGU > DONG > APT), 자기참조. 이 표를 갈아끼우면 커버리지가 바뀐다.
+--    slug는 전국 유일이 아니라 "형제(같은 parent_id) 안에서만" 유일하면 된다 —
+--    실제로 "중구"(부산·대구·대전 등), "고성군"(강원·경남)처럼 시/도가 다르면
+--    같은 이름의 시/군/구가 흔하다. URL 경로 해석(resolveRegionByPath)도 형제
+--    범위 안에서만 slug를 비교하므로 전역 유일성이 필요 없다.
 create table pseo_regions (
   id uuid primary key default gen_random_uuid(),
   parent_id uuid references pseo_regions(id) on delete cascade,
   type pseo_region_type not null,
   name text not null,                        -- 노출용. 예: '불당동', '불당아이파크'
-  slug text not null unique,                 -- URL 세그먼트 (flat). 예: 'buldang-dong'
+  slug text not null,                        -- URL 세그먼트 (flat). 형제 안에서만 유일하면 된다.
   display_order int not null default 0,
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  unique (parent_id, slug)
 );
 create index idx_pseo_regions_parent on pseo_regions(parent_id);
 create index idx_pseo_regions_type on pseo_regions(type);
