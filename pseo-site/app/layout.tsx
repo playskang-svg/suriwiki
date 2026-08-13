@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import './globals.css'
 import AdSlot from '@/components/AdSlot'
 import { SITE_NAME, SITE_URL } from '@/lib/constants'
+import { getAllData } from '@/lib/supabase'
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -13,13 +15,37 @@ export const metadata: Metadata = {
   description: `${SITE_NAME} - 지역별 전문 시공 정보와 무료 상담`,
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // 상단 메뉴: 키워드마다 허브 페이지(app/[keyword]/page.tsx — 그 키워드의 전체 지역을
+  // 썸네일 카드로 나열)로 링크한다. 발행된 조합이 하나도 없는 키워드는 허브 자체가
+  // generateStaticParams에서 빠지므로(존재하지 않는 페이지) 메뉴에서도 제외한다.
+  const { keywords, listings } = await getAllData()
+  const publishedKeywordIds = new Set(listings.map((l) => l.keyword_id))
+  const navItems = keywords
+    .filter((keyword) => publishedKeywordIds.has(keyword.id))
+    .map((keyword) => ({ keyword, href: `/${keyword.slug}` }))
+
   return (
     <html lang="ko">
       <body className="flex min-h-screen flex-col bg-white text-slate-900 antialiased">
         <header className="w-full border-b border-slate-100">
-          <div className="mx-auto flex h-14 w-full max-w-3xl items-center px-4">
-            <span className="text-lg font-extrabold tracking-tight text-brand">{SITE_NAME}</span>
+          <div className="mx-auto flex w-full max-w-3xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
+            {/* 로고 배지 — 메인 수리위키 앱(site-header.tsx)과 같은 남색+골드 "W" 배지를 그대로 맞춘다 */}
+            <Link href="/" className="flex items-center gap-2.5">
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#c5a059]/50 bg-gradient-to-br from-[#1c334b] to-[#0f1b29] text-base font-extrabold text-[#d4af37] shadow-sm">
+                W
+              </span>
+              <span className="text-lg font-extrabold tracking-tight text-brand">{SITE_NAME}</span>
+            </Link>
+            {navItems.length > 0 ? (
+              <nav aria-label="주요 시공 항목" className="flex flex-wrap gap-x-5 gap-y-1 text-sm text-slate-600">
+                {navItems.map(({ keyword, href }) => (
+                  <Link key={keyword.id} href={href} className="hover:text-brand hover:underline underline-offset-2">
+                    {keyword.display_name}
+                  </Link>
+                ))}
+              </nav>
+            ) : null}
           </div>
         </header>
 

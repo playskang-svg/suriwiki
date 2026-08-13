@@ -5,7 +5,9 @@
  * ------------------------------------------------------------------------
  */
 
-export const SITE_NAME = '지역시공 정보센터'
+// 메인 수리위키 앱(components/public/site-header.tsx)과 동일한 브랜드를 쓴다.
+// 템플릿을 다른 브랜드로 재사용할 땐 이 값과 app/layout.tsx의 로고 배지만 바꾸면 된다.
+export const SITE_NAME = '수리위키'
 
 /** canonical 태그, OG 이미지 절대경로 생성에 쓰이는 배포 도메인. */
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://example-pseo.pages.dev').replace(/\/$/, '')

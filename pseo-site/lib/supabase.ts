@@ -83,6 +83,8 @@ export interface PageListingRow {
   /** 썸네일(OG 이미지)에만 박힐 전화번호. 비우면 phone_override → keyword.phone 순으로 대체된다. */
   thumbnail_phone: string | null
   is_published: boolean
+  /** 키워드 허브 페이지(app/[keyword]/page.tsx) 카드에 실제 날짜로 노출 — 지어낸 값이 아니라 DB 값 그대로. */
+  created_at: string
 }
 
 // ------------------------------------------------------------------------
@@ -140,12 +142,22 @@ export const getStaticParamsList = cache(async () => {
 // 페이지 1개(keyword × region) 렌더링에 필요한 모든 데이터 조립
 // ------------------------------------------------------------------------
 
+/** 화면에 보이는 브레드크럼 한 칸. href가 null이면 그 (키워드×지역) 조합이 아직
+ *  발행되지 않았다는 뜻이라 링크 없이 텍스트로만 표시한다(끊긴 링크 방지). */
+export interface BreadcrumbItem {
+  id: string
+  name: string
+  href: string | null
+}
+
 export interface PageData {
   keyword: KeywordRow
   region: RegionNode
   regionLabel: string
   /** 루트(SIDO) → 바로 위 부모까지의 조상 목록. JSON-LD BreadcrumbList 생성에 쓴다. */
   ancestorRegions: RegionNode[]
+  /** 홈 → ... → 현재 지역까지, 화면에 그대로 그리면 되는 브레드크럼 목록 (요청: 상위 지역 페이지 탐색) */
+  breadcrumb: BreadcrumbItem[]
   /** 본문(연락처 배너 tel: 링크, CTA 텍스트 등)에 쓰는 상담 전화번호 */
   phone: string
   /** 썸네일(OG 이미지)에 박히는 전화번호. thumbnail_phone이 없으면 phone과 동일한 값이 된다. */
@@ -179,12 +191,19 @@ export const getPageData = cache(async (keywordSlug: string, regionSlug: string)
   const thumbnailPhone = listingRow?.thumbnail_phone || phone
 
   const keywordSections = sections.filter((s) => s.keyword_id === keyword.id)
+  const ancestorRegions = getAncestors(regionNode, tree.nodeMap)
+  const breadcrumb: BreadcrumbItem[] = [...ancestorRegions, regionNode].map((r) => ({
+    id: r.id,
+    name: r.name,
+    href: isPublished(keyword.id, r.id) ? `/${keyword.slug}/${r.slug}` : null,
+  }))
 
   return {
     keyword,
     region: regionNode,
     regionLabel: getRegionLabel(regionNode, tree.nodeMap),
-    ancestorRegions: getAncestors(regionNode, tree.nodeMap),
+    ancestorRegions,
+    breadcrumb,
     phone,
     thumbnailPhone,
     intro: keywordSections.filter((s) => s.section_type === 'INTRO'),
