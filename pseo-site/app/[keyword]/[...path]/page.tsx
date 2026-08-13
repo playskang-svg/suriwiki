@@ -49,8 +49,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const vars = { region: data.regionLabel, keyword: data.keyword.display_name, phone: data.phone }
   // sanitizeGeneratedText가 "블로그제목:" 같은 라벨 접두사·따옴표를 전부 걷어내고
   // 순수 텍스트만 남긴다 (요구사항 1-2).
-  const title = sanitizeGeneratedText(renderTemplate(data.keyword.title_template, vars))
-  const description = sanitizeGeneratedText(renderTemplate(data.keyword.meta_description_template, vars))
+  const title = sanitizeGeneratedText(renderTemplate(data.titleTemplate, vars))
+  const description = sanitizeGeneratedText(renderTemplate(data.metaDescriptionTemplate, vars))
   const urlPath = `/${data.keyword.slug}/${data.path.join('/')}`
   const ogImagePath = ogImageHref(data.keyword.slug, data.path)
 
@@ -87,7 +87,7 @@ export default async function KeywordRegionPage({ params }: PageProps) {
   const siteName = keywords[0]?.display_name ?? data.keyword.display_name
 
   const vars = { region: data.regionLabel, keyword: data.keyword.display_name, phone: data.phone }
-  const h1 = sanitizeGeneratedText(renderTemplate(data.keyword.h1_template, vars))
+  const h1 = sanitizeGeneratedText(renderTemplate(data.h1Template, vars))
   const ogImagePath = ogImageHref(data.keyword.slug, data.path)
   const pageUrl = `${SITE_URL}/${data.keyword.slug}/${data.path.join('/')}`
 

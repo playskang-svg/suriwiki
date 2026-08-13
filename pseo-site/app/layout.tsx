@@ -25,9 +25,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   // 상단 메뉴: 키워드마다 허브 페이지(app/[keyword]/page.tsx — 그 키워드의 전체 지역을
   // 썸네일 카드로 나열)로 링크한다. 발행된 조합이 하나도 없는 키워드는 허브 자체가
   // generateStaticParams에서 빠지므로(존재하지 않는 페이지) 메뉴에서도 제외한다.
+  //
+  // 브랜드로 쓰는 키워드(keywords[0])는 이미 로고/사이트명 자리에 나오므로 메뉴에서
+  // 또 한 번 보여주지 않는다 — "상단메뉴가 페이지(브랜드)랑 똑같으면 안 된다" 반영.
   const { keywords, listings } = await getAllData()
   const publishedKeywordIds = new Set(listings.map((l) => l.keyword_id))
-  const navEntries = buildNavEntries(keywords.filter((keyword) => publishedKeywordIds.has(keyword.id)))
+  const brandKeywordId = keywords[0]?.id
+  const navEntries = buildNavEntries(
+    keywords.filter((keyword) => publishedKeywordIds.has(keyword.id) && keyword.id !== brandKeywordId)
+  )
   const siteName = keywords[0]?.display_name ?? FALLBACK_SITE_NAME
 
   return (
@@ -35,8 +41,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="flex min-h-screen flex-col bg-white text-slate-900 antialiased">
         <header className="w-full border-b border-slate-100">
           <div className="mx-auto flex w-full max-w-3xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
-            <Link href="/" className="text-lg font-extrabold tracking-tight text-brand">
-              {siteName}
+            {/* 로고 배지 — 사이트명 첫 글자를 브랜드 컬러 배지로. 실제 로고 이미지가
+                생기면 이 span을 <img>로 바꾸기만 하면 된다. */}
+            <Link href="/" className="flex items-center gap-2.5">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand text-base font-extrabold text-white">
+                {siteName.charAt(0)}
+              </span>
+              <span className="text-lg font-extrabold tracking-tight text-brand">{siteName}</span>
             </Link>
             <TopNav entries={navEntries} />
           </div>
