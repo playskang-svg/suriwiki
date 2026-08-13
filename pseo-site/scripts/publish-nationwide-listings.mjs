@@ -23,10 +23,22 @@ const admin = createClient(url, serviceKey, { auth: { persistSession: false } })
 
 const BATCH_SIZE = 500
 
+// ⚠️ Supabase/PostgREST는 .range()를 안 주면 한 번에 최대 1000행만 돌려준다 —
+// 조용히 잘려서 에러 없이 "일부만" 온다. pseo_page_listings처럼 1000행을
+// 넘는 표를 그냥 select()만 하면 "이미 있는 조합"을 실제보다 적게 알게 되고,
+// 이미 있는 걸 또 넣으려다 unique 제약 충돌이 난다(실제로 겪은 버그).
+// 그래서 빈 페이지가 나올 때까지 range를 밀며 전부 끌어온다.
+const PAGE_SIZE = 1000
+
 async function fetchAll(table, columns) {
-  const { data, error } = await admin.from(table).select(columns)
-  if (error) throw new Error(`[${table} 조회 실패] ${error.message}`)
-  return data
+  const rows = []
+  for (let from = 0; ; from += PAGE_SIZE) {
+    const { data, error } = await admin.from(table).select(columns).range(from, from + PAGE_SIZE - 1)
+    if (error) throw new Error(`[${table} 조회 실패] ${error.message}`)
+    rows.push(...data)
+    if (data.length < PAGE_SIZE) break
+  }
+  return rows
 }
 
 async function main() {

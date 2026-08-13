@@ -22,6 +22,7 @@ import { buildRegionTree, getAncestors, getRegionLabel, getRegionPathSegments } 
 import { SITE_URL } from '@/lib/constants'
 import { ogImageHref } from '@/lib/og-url'
 import { decodeParam } from '@/lib/params'
+import HeroBanner from '@/components/HeroBanner'
 
 export const dynamicParams = false
 
@@ -115,54 +116,55 @@ export default async function KeywordHubPage({ params }: PageProps) {
   if (!data) notFound()
 
   const showJumpNav = data.sections.length > 1
+  const heroTitle = `${data.keyword.display_name} 지역별 시공 정보`
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 py-10 md:py-14">
-      <h1 className="text-2xl font-extrabold text-slate-900 md:text-3xl">{data.keyword.display_name} 지역별 시공 정보</h1>
-      <p className="mt-2 text-sm text-slate-500">
-        전국 {data.sections.length}개 시/도, {data.totalCount}개 지역 — 원하는 지역을 선택하면 상세 안내와 하위 지역 목록을 볼 수 있습니다.
-      </p>
+    <div>
+      <HeroBanner title={heroTitle} />
+      <div className="mx-auto w-full max-w-5xl px-4 py-10 md:py-14">
+        {/* 시/도 바로가기 — 지역이 많아져도 누락 없이 한눈에 훑고 원하는 시/도로 바로 이동 */}
+        {showJumpNav ? (
+          <nav aria-label="시/도 바로가기" className="flex flex-wrap gap-2">
+            {data.sections.map((section) => (
+              <a
+                key={section.anchorId}
+                href={`#${section.anchorId}`}
+                className="rounded-full border border-slate-200 px-3 py-1.5 text-sm text-slate-600 hover:border-brand hover:text-brand"
+              >
+                {section.sidoName} ({section.cards.length})
+              </a>
+            ))}
+          </nav>
+        ) : null}
 
-      {/* 시/도 바로가기 — 지역이 많아져도 누락 없이 한눈에 훑고 원하는 시/도로 바로 이동 */}
-      {showJumpNav ? (
-        <nav aria-label="시/도 바로가기" className="mt-6 flex flex-wrap gap-2">
+        <div className="mt-8 space-y-12">
           {data.sections.map((section) => (
-            <a
-              key={section.anchorId}
-              href={`#${section.anchorId}`}
-              className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600 hover:border-brand hover:text-brand"
-            >
-              {section.sidoName} ({section.cards.length})
-            </a>
+            <section key={section.anchorId} id={section.anchorId} className="scroll-mt-20">
+              <h2 className="text-xl font-bold text-slate-900">
+                {section.sidoName} <span className="font-normal text-slate-400">({section.cards.length})</span>
+              </h2>
+              {/* 모바일에서는 한 줄에 카드 1개씩(요청: "썸네일을 한줄에 하나씩") —
+                  화면이 커질수록 점진적으로 여러 열로 늘어난다. */}
+              <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                {section.cards.map((card) => (
+                  <Link
+                    key={card.href}
+                    href={card.href}
+                    className="group block aspect-[1200/960] w-full overflow-hidden rounded-xl border border-slate-200 shadow-sm transition-shadow hover:shadow-md"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element -- 정적 export, next/image 최적화 서버 없음 */}
+                    <img
+                      src={card.thumbnail}
+                      alt={`${card.regionLabel} ${data.keyword.display_name}`}
+                      loading="lazy"
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                  </Link>
+                ))}
+              </div>
+            </section>
           ))}
-        </nav>
-      ) : null}
-
-      <div className="mt-8 space-y-12">
-        {data.sections.map((section) => (
-          <section key={section.anchorId} id={section.anchorId} className="scroll-mt-20">
-            <h2 className="text-lg font-bold text-slate-900">
-              {section.sidoName} <span className="font-normal text-slate-400">({section.cards.length})</span>
-            </h2>
-            <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-              {section.cards.map((card) => (
-                <Link
-                  key={card.href}
-                  href={card.href}
-                  className="group block aspect-[1200/630] w-full overflow-hidden rounded-xl border border-slate-200 shadow-sm transition-shadow hover:shadow-md"
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element -- 정적 export, next/image 최적화 서버 없음 */}
-                  <img
-                    src={card.thumbnail}
-                    alt={`${card.regionLabel} ${data.keyword.display_name}`}
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                </Link>
-              ))}
-            </div>
-          </section>
-        ))}
+        </div>
       </div>
     </div>
   )
