@@ -39,7 +39,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="ko">
       <body className="flex min-h-screen flex-col bg-white text-slate-900 antialiased">
-        <header className="w-full border-b border-slate-100">
+        <header className="sticky top-0 z-20 w-full border-b border-slate-100 bg-white/95 backdrop-blur">
           <div className="mx-auto flex w-full max-w-3xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
             {/* 로고 배지 — 사이트명 첫 글자를 브랜드 컬러 배지로. 실제 로고 이미지가
                 생기면 이 span을 <img>로 바꾸기만 하면 된다. */}
