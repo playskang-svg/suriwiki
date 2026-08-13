@@ -24,6 +24,7 @@ import { pickBgImageDataUrl } from '@/lib/bg-images'
 import { getOgFont } from '@/lib/og-font'
 import { stripOgExtension, withOgExtension } from '@/lib/og-url'
 import { decodeParam, decodeParamPath } from '@/lib/params'
+import { OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH } from '@/lib/constants'
 
 // 썸네일 문구/색상 상수 — 필요하면 이 두 값만 바꾸면 톤이 통째로 바뀐다.
 const THUMBNAIL_LABEL = '무료 상담 문의' // 참고 이미지의 "24시간 상담 문의" 같은 자리. 사실 확인이 안 되는 "24시간" 등은 넣지 않았다 — 실제 운영시간에 맞게 바꿔서 쓰면 된다.
@@ -124,8 +125,8 @@ export async function GET(_request: Request, { params }: RouteContext) {
           <img
             src={bgDataUrl}
             alt=""
-            width={1200}
-            height={630}
+            width={OG_IMAGE_WIDTH}
+            height={OG_IMAGE_HEIGHT}
             style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
           />
         ) : null}
@@ -152,7 +153,10 @@ export async function GET(_request: Request, { params }: RouteContext) {
             padding: '40px',
           }}
         >
-          {/* 1줄: 지역명(포인트 컬러) + 키워드(흰색) — 굵은 글자 + 검정 외곽선(stroke) (요구사항 3-2) */}
+          {/* 1줄: 지역명(포인트 컬러) + 키워드(흰색) — 굵은 글자 + 검정 외곽선(stroke) (요구사항 3-2)
+              지역명이 길면(예: "전남광주통합특별시") 자동으로 줄바꿈될 수 있다 — 그래서
+              캔버스 자체를 세로로 넉넉하게 키우고(OG_IMAGE_HEIGHT), 아래 라벨과의 간격도
+              넓게 잡아 2줄이 되어도 겹치지 않게 한다. */}
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'baseline' }}>
             <div style={{ display: 'flex', marginRight: 24 }}>
               <StrokedText text={thumbnailRegionName} color={ACCENT_COLOR} fontSize={titleFontSize} strokeWidth={6} />
@@ -161,7 +165,7 @@ export async function GET(_request: Request, { params }: RouteContext) {
           </div>
 
           {/* 2줄: 상담 문의 라벨 */}
-          <div style={{ display: 'flex', marginTop: 40 }}>
+          <div style={{ display: 'flex', marginTop: 64 }}>
             <StrokedText text={THUMBNAIL_LABEL} color="#FFFFFF" fontSize={44} strokeWidth={3} />
           </div>
 
@@ -173,8 +177,8 @@ export async function GET(_request: Request, { params }: RouteContext) {
       </div>
     ),
     {
-      width: 1200,
-      height: 630,
+      width: OG_IMAGE_WIDTH,
+      height: OG_IMAGE_HEIGHT,
       fonts: fontData ? [{ name: 'OgFont', data: fontData, weight: 400, style: 'normal' }] : undefined,
     }
   )

@@ -15,7 +15,7 @@ import type { BreadcrumbItem } from '@/lib/supabase'
 
 export default function Breadcrumb({ items }: { items: BreadcrumbItem[] }) {
   return (
-    <nav aria-label="현재 위치" className="mb-4 flex flex-wrap items-center gap-x-1 gap-y-1 text-xs text-slate-500">
+    <nav aria-label="현재 위치" className="mb-4 flex flex-wrap items-center gap-x-1 gap-y-1 text-sm text-slate-500">
       <Link href="/" className="hover:text-brand hover:underline underline-offset-2">
         홈
       </Link>

@@ -115,16 +115,40 @@ export interface PageListingRow {
 }
 
 // ------------------------------------------------------------------------
-// 원본 데이터 일괄 로드 (테이블당 쿼리 1회, 빌드 렌더 트리 내 메모이즈)
+// 원본 데이터 일괄 로드 (테이블당 쿼리 1회 "요청"처럼 보이지만, 실제로는
+// 1000행씩 나눠 끝까지 페이지네이션한다 — 빌드 렌더 트리 내 메모이즈)
 // ------------------------------------------------------------------------
+
+/** Supabase/PostgREST는 .range()가 없으면 한 번에 최대 1000행만 돌려준다(에러 없이 조용히
+ *  잘린다). pseo_page_listings·pseo_regions처럼 지역/발행 범위가 넓어지면 쉽게 1000행을
+ *  넘는 표가 있어서, 빈 페이지가 나올 때까지 range를 밀며 전부 끌어온다.
+ *  (실제로 이걸 안 해서 페이지 상당수가 조용히 빌드에서 누락되는 사고가 있었다.) */
+const PAGE_SIZE = 1000
+
+async function fetchAllRows<T>(
+  buildQuery: () => PromiseLike<{ data: T[] | null; error: { message: string } | null }>
+): Promise<{ data: T[]; error: { message: string } | null }> {
+  const rows: T[] = []
+  for (let from = 0; ; from += PAGE_SIZE) {
+    const { data, error } = await (buildQuery() as any).range(from, from + PAGE_SIZE - 1)
+    if (error) return { data: rows, error }
+    rows.push(...((data ?? []) as T[]))
+    if (!data || data.length < PAGE_SIZE) break
+  }
+  return { data: rows, error: null }
+}
 
 export const getAllData = cache(async () => {
   const [keywordsRes, variantsRes, regionsRes, listingsRes, sectionsRes] = await Promise.all([
-    supabase.from('pseo_keywords').select('*').eq('is_active', true),
-    supabase.from('pseo_keyword_variants').select('*').order('sort_order', { ascending: true }),
-    supabase.from('pseo_regions').select('*'),
-    supabase.from('pseo_page_listings').select('*').eq('is_published', true),
-    supabase.from('pseo_content_sections').select('*').order('sort_order', { ascending: true }),
+    fetchAllRows<KeywordRow>(() => supabase.from('pseo_keywords').select('*').eq('is_active', true)),
+    fetchAllRows<KeywordVariantRow>(() =>
+      supabase.from('pseo_keyword_variants').select('*').order('sort_order', { ascending: true })
+    ),
+    fetchAllRows<RegionRow>(() => supabase.from('pseo_regions').select('*')),
+    fetchAllRows<PageListingRow>(() => supabase.from('pseo_page_listings').select('*').eq('is_published', true)),
+    fetchAllRows<ContentSectionRow>(() =>
+      supabase.from('pseo_content_sections').select('*').order('sort_order', { ascending: true })
+    ),
   ])
 
   const results = [
@@ -141,11 +165,11 @@ export const getAllData = cache(async () => {
   }
 
   return {
-    keywords: (keywordsRes.data ?? []) as KeywordRow[],
-    variants: (variantsRes.data ?? []) as KeywordVariantRow[],
-    regions: (regionsRes.data ?? []) as RegionRow[],
-    listings: (listingsRes.data ?? []) as PageListingRow[],
-    sections: (sectionsRes.data ?? []) as ContentSectionRow[],
+    keywords: keywordsRes.data,
+    variants: variantsRes.data,
+    regions: regionsRes.data,
+    listings: listingsRes.data,
+    sections: sectionsRes.data,
   }
 })
 

@@ -61,7 +61,7 @@ export default function InternalLinks({
               <li key={region.id}>
                 <Link
                   href={`/${keyword.slug}/${[...path, region.slug].join('/')}`}
-                  className="block rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 transition-colors hover:border-brand hover:text-brand"
+                  className="block rounded-lg border border-slate-200 px-3 py-2.5 text-base text-slate-700 transition-colors hover:border-brand hover:text-brand"
                 >
                   {region.name} {keyword.display_name} →
                 </Link>
@@ -79,7 +79,7 @@ export default function InternalLinks({
               <li key={region.id}>
                 <Link
                   href={`/${keyword.slug}/${[...parentPath, region.slug].join('/')}`}
-                  className="block rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 transition-colors hover:border-brand hover:text-brand"
+                  className="block rounded-lg border border-slate-200 px-3 py-2.5 text-base text-slate-700 transition-colors hover:border-brand hover:text-brand"
                 >
                   {region.name} {keyword.display_name} →
                 </Link>
@@ -97,7 +97,7 @@ export default function InternalLinks({
               <li key={kw.id}>
                 <Link
                   href={`/${kw.slug}/${path.join('/')}`}
-                  className="block rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 transition-colors hover:border-brand hover:text-brand"
+                  className="block rounded-lg border border-slate-200 px-3 py-2.5 text-base text-slate-700 transition-colors hover:border-brand hover:text-brand"
                 >
                   {currentRegion.name} {kw.display_name} →
                 </Link>

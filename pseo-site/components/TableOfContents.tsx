@@ -20,8 +20,8 @@ export default function TableOfContents({ items }: { items: TocItem[] }) {
 
   return (
     <nav aria-label="목차" className="my-8 rounded-xl border border-slate-200 bg-slate-50 p-5">
-      <p className="text-sm font-bold text-slate-900">목차</p>
-      <ol className="mt-3 space-y-1.5 text-sm">
+      <p className="text-base font-bold text-slate-900">목차</p>
+      <ol className="mt-3 space-y-2 text-base">
         {numbered.map((item) => (
           <li key={item.id} className={item.level === 'h3' ? 'ml-5 text-slate-500' : 'text-slate-700'}>
             <a href={`#${item.id}`} className="hover:text-brand hover:underline underline-offset-2">
