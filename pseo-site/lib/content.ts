@@ -32,9 +32,14 @@ export function sanitizeGeneratedText(input: string | null | undefined): string 
   return input.replace(LABEL_PREFIX_RE, '').replace(WRAPPING_QUOTES_RE, '').replace(/\s+/g, ' ').trim()
 }
 
-/** 본문 body_template을 빈 줄(\n\n) 기준으로 문단 분리. 빈 문단은 제거. */
+/** 본문 body_template을 빈 줄(\n\n) 기준으로 문단 분리. 빈 문단은 제거.
+ *  DB에 실제 줄바꿈 대신 "\n\n"이라는 두 글자(백슬래시+n)가 그대로 들어오는
+ *  경우가 있다 — SQL 문자열 리터럴은 백슬래시를 이스케이프로 처리하지 않아서,
+ *  작성 과정에서 실제 줄바꿈이 문자 그대로의 "\n"으로 바뀌어 저장될 수 있다.
+ *  화면에 "\n"이 글자 그대로 노출되는 걸 막기 위해 먼저 실제 줄바꿈으로 정규화한다. */
 export function splitParagraphs(text: string): string[] {
   return text
+    .replace(/\\n/g, '\n')
     .split(/\n\s*\n/)
     .map((p) => p.trim())
     .filter(Boolean)

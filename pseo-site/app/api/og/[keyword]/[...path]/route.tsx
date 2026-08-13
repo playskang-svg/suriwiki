@@ -1,23 +1,20 @@
 /**
- * app/api/og/[keyword]/[slug]/route.tsx
+ * app/api/og/[keyword]/[...path]/route.tsx
  * ------------------------------------------------------------------------
  * "{지역}+{키워드}" / "상담 문의 라벨" / "전화번호" 3단 구성을 배경 이미지 위에
  * 합성한 동적 썸네일. (동네 시공 현수막 스타일 — 지역은 포인트 컬러, 나머지는
  * 흰색, 전부 굵은 글자 + 검정 외곽선으로 어떤 배경 사진 위에서도 눈에 띄게 한다)
  *
- *  1) 메타 태그의 OG Image로 쓰인다 (app/[keyword]/[slug]/page.tsx의 generateMetadata)
+ *  1) 메타 태그의 OG Image로 쓰인다 (app/[keyword]/[...path]/page.tsx의 generateMetadata)
  *  2) 본문 서론과 본론(H2) 사이 '연락처 배너'로도 그대로 재사용된다 (components/ContactBanner.tsx)
  *
  * 전화번호는 PageData.thumbnailPhone을 쓴다 — pseo_page_listings.thumbnail_phone에
  * 값을 넣으면 본문 상담번호(phone)와 별개로 썸네일에만 다른 번호를 박을 수 있다.
- * (예: 본문은 대표번호, 썸네일 이미지는 캠페인 추적용 번호 등으로 분리하고 싶을 때)
  *
- * ⚠️ 원래 요구사항 문서의 경로는 app/api/og/route.tsx(쿼리스트링 방식: /api/og?region=..&keyword=..)
- * 였지만, output:'export'(순수 정적 export)는 "요청마다 동적으로 값을 읽는" Route Handler를
- * 지원하지 않는다 — 쿼리스트링은 빌드 시점엔 존재하지 않는 값이라 정적 파일로 구울 수 없다.
- * 그래서 app/[keyword]/[slug]/page.tsx와 동일하게 동적 "세그먼트"(/api/og/[keyword]/[slug])로
- * 바꾸고 generateStaticParams로 모든 조합을 빌드 시점에 전부 구워낸다. 최종적으로 여전히
- * "/api/og/..."로 시작하는 URL을 그대로 쓸 수 있다.
+ * [...path]인 이유: 페이지가 지역 계층을 전부 슬래시로 펼치는 구조라
+ * (/도배장판/충청남도/천안시/백석동), 썸네일 경로도 그대로 맞춘다.
+ * output:'export'는 쿼리스트링 방식 API를 지원하지 않아 generateStaticParams로
+ * 모든 조합을 빌드 시점에 정적 이미지로 미리 구워낸다.
  * ------------------------------------------------------------------------
  */
 import { ImageResponse } from 'next/og'
@@ -25,6 +22,8 @@ import sharp from 'sharp'
 import { getPageData, getStaticParamsList } from '@/lib/supabase'
 import { pickBgImageDataUrl } from '@/lib/bg-images'
 import { getOgFont } from '@/lib/og-font'
+import { stripOgExtension, withOgExtension } from '@/lib/og-url'
+import { decodeParam, decodeParamPath } from '@/lib/params'
 
 // 썸네일 문구/색상 상수 — 필요하면 이 두 값만 바꾸면 톤이 통째로 바뀐다.
 const THUMBNAIL_LABEL = '무료 상담 문의' // 참고 이미지의 "24시간 상담 문의" 같은 자리. 사실 확인이 안 되는 "24시간" 등은 넣지 않았다 — 실제 운영시간에 맞게 바꿔서 쓰면 된다.
@@ -36,17 +35,19 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-static'
 
 interface RouteContext {
-  params: { keyword: string; slug: string }
+  params: { keyword: string; path: string[] }
 }
 
 export async function generateStaticParams() {
-  return getStaticParamsList()
+  const list = await getStaticParamsList()
+  // 마지막 세그먼트에 .webp를 심어서, 중첩 경로에서 "충청남도"가 파일이면서
+  // 동시에 폴더여야 하는 충돌(EISDIR)을 피한다 — lib/og-url.ts 설명 참고.
+  return list.map(({ keyword, path }) => ({ keyword, path: withOgExtension(path) }))
 }
 
 // next/og(Satori)는 CSS -webkit-text-stroke를 지원하지 않는다(실제로 빌드해서 확인함 —
 // 아무 외곽선도 안 그려짐). 그래서 같은 글자를 8방향으로 살짝 오프셋한 "외곽선색" 레이어를
 // 깔고, 그 위에 진짜 색상 글자를 한 번 더 올리는 방식으로 스트로크 효과를 흉내낸다.
-// (배경 이미지 밝기와 무관하게 항상 눈에 띄어야 하는 요구사항 3-2를 만족시키기 위한 장치)
 const STROKE_OFFSETS: [number, number][] = [
   [-1, -1], [0, -1], [1, -1],
   [-1, 0], [1, 0],
@@ -89,12 +90,12 @@ function StrokedText({
 }
 
 export async function GET(_request: Request, { params }: RouteContext) {
-  const data = await getPageData(params.keyword, params.slug)
+  const data = await getPageData(decodeParam(params.keyword), stripOgExtension(decodeParamPath(params.path)))
   if (!data) {
     return new Response('Not Found', { status: 404 })
   }
 
-  const seed = `${data.keyword.slug}:${data.region.slug}`
+  const seed = `${data.keyword.slug}:${data.path.join('/')}`
   const bgDataUrl = pickBgImageDataUrl(seed)
   const fontData = await getOgFont()
 
@@ -179,7 +180,6 @@ export async function GET(_request: Request, { params }: RouteContext) {
   )
 
   // next/og(ImageResponse)는 PNG만 만들 수 있어서, sharp로 한 번 더 WebP로 변환한다.
-  // (요청: 썸네일 형식을 WebP로. 같은 화질 대비 용량이 작아 페이지 로딩에도 유리하다)
   const pngBuffer = Buffer.from(await png.arrayBuffer())
   const webpBuffer = await sharp(pngBuffer).webp({ quality: 92 }).toBuffer()
 

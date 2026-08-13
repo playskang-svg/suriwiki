@@ -1,25 +1,27 @@
 /**
- * app/[keyword]/[slug]/page.tsx
+ * app/[keyword]/[...path]/page.tsx
  * ------------------------------------------------------------------------
- * 요구사항 1, 2, 3, 4, 5를 모두 조립하는 메인 동적 페이지.
- * URL: /[keyword]/[region-slug]  (플랫 구조)
+ * 요구사항 1, 2, 3, 4를 모두 조립하는 메인 동적 페이지.
+ * URL: /[키워드]/[시도]/[시군구]/[동]/[아파트]... — 지역 계층을 전부 슬래시로
+ * 펼친다(요청 반영). [...path]는 필수 catch-all이라 최소 1단계(SIDO)는 있어야
+ * 매칭된다 — 지역이 하나도 없는 "/[keyword]"는 app/[keyword]/page.tsx(허브)가 담당한다.
  *
- * 본문 순서(참고 사이트 구조 + 사용자 지시 반영): H1 → 서론 → 목차 → 연락처
- * 배너(썸네일) → 중단 광고 → 본론(H2/H3) → 결론 → 내부링크. 목차는 본론의
- * heading_template에서 그대로 뽑아내므로 항상 실제 본문과 일치한다.
+ * 본문 순서: 브레드크럼 → H1 → 서론 → 목차 → 연락처 배너(썸네일) → 본론(H2/H3) →
+ * 결론 → 내부 링크. 목차는 본론의 heading_template에서 그대로 뽑아내므로 항상
+ * 실제 본문과 일치한다.
  *
- * SEO/GEO: <title>/description은 기존 sanitize 파이프라인 그대로, 여기에
- * BreadcrumbList + Service(LocalBusiness) JSON-LD를 추가해 검색엔진과
- * AI 검색(GEO)이 "이 페이지가 어느 지역·서비스에 대한 것인지" 구조적으로
- * 읽을 수 있게 한다.
+ * SEO/GEO: <title>/description은 sanitize 파이프라인을 거치고, BreadcrumbList +
+ * Service(LocalBusiness) JSON-LD를 추가해 검색엔진과 AI 검색(GEO)이 "이 페이지가
+ * 어느 지역·서비스에 대한 것인지" 구조적으로 읽을 수 있게 한다.
  * ------------------------------------------------------------------------
  */
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getPageData, getStaticParamsList } from '@/lib/supabase'
+import { getAllData, getPageData, getStaticParamsList } from '@/lib/supabase'
 import { renderTemplate, sanitizeGeneratedText, splitParagraphs } from '@/lib/content'
-import { SITE_NAME, SITE_URL } from '@/lib/constants'
-import AdSlot from '@/components/AdSlot'
+import { SITE_URL } from '@/lib/constants'
+import { ogImageHref } from '@/lib/og-url'
+import { decodeParam, decodeParamPath } from '@/lib/params'
 import Breadcrumb from '@/components/Breadcrumb'
 import ContactBanner from '@/components/ContactBanner'
 import TableOfContents, { type TocItem } from '@/components/TableOfContents'
@@ -30,7 +32,7 @@ import InternalLinks from '@/components/InternalLinks'
 export const dynamicParams = false
 
 interface PageProps {
-  params: { keyword: string; slug: string }
+  params: { keyword: string; path: string[] }
 }
 
 export async function generateStaticParams() {
@@ -38,16 +40,19 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const data = await getPageData(params.keyword, params.slug)
+  const data = await getPageData(decodeParam(params.keyword), decodeParamPath(params.path))
   if (!data) return {}
+
+  const { keywords } = await getAllData()
+  const siteName = keywords[0]?.display_name ?? data.keyword.display_name
 
   const vars = { region: data.regionLabel, keyword: data.keyword.display_name, phone: data.phone }
   // sanitizeGeneratedText가 "블로그제목:" 같은 라벨 접두사·따옴표를 전부 걷어내고
   // 순수 텍스트만 남긴다 (요구사항 1-2).
-  const title = sanitizeGeneratedText(renderTemplate(data.keyword.title_template, vars))
-  const description = sanitizeGeneratedText(renderTemplate(data.keyword.meta_description_template, vars))
-  const path = `/${data.keyword.slug}/${data.region.slug}`
-  const ogImagePath = `/api/og/${data.keyword.slug}/${data.region.slug}`
+  const title = sanitizeGeneratedText(renderTemplate(data.titleTemplate, vars))
+  const description = sanitizeGeneratedText(renderTemplate(data.metaDescriptionTemplate, vars))
+  const urlPath = `/${data.keyword.slug}/${data.path.join('/')}`
+  const ogImagePath = ogImageHref(data.keyword.slug, data.path)
 
   return {
     title,
@@ -55,12 +60,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     // 전통적 SEO에서는 영향력이 줄었지만, 페이지 주제를 명시적으로 밝혀두면
     // 비Google 검색엔진과 GEO(생성형 검색) 크롤러가 주제를 파악하는 데 도움이 된다.
     keywords: [data.keyword.display_name, data.regionLabel, `${data.regionLabel} ${data.keyword.display_name}`],
-    alternates: { canonical: `${SITE_URL}${path}` },
+    alternates: { canonical: `${SITE_URL}${urlPath}` },
     openGraph: {
       title,
       description,
-      url: `${SITE_URL}${path}`,
-      siteName: SITE_NAME,
+      url: `${SITE_URL}${urlPath}`,
+      siteName,
       locale: 'ko_KR',
       type: 'article',
       images: [{ url: ogImagePath, width: 1200, height: 630, alt: title, type: 'image/webp' }],
@@ -75,13 +80,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function KeywordRegionPage({ params }: PageProps) {
-  const data = await getPageData(params.keyword, params.slug)
+  const data = await getPageData(decodeParam(params.keyword), decodeParamPath(params.path))
   if (!data) notFound()
 
+  const { keywords } = await getAllData()
+  const siteName = keywords[0]?.display_name ?? data.keyword.display_name
+
   const vars = { region: data.regionLabel, keyword: data.keyword.display_name, phone: data.phone }
-  const h1 = sanitizeGeneratedText(renderTemplate(data.keyword.h1_template, vars))
-  const ogImagePath = `/api/og/${data.keyword.slug}/${data.region.slug}`
-  const pageUrl = `${SITE_URL}/${data.keyword.slug}/${data.region.slug}`
+  const h1 = sanitizeGeneratedText(renderTemplate(data.h1Template, vars))
+  const ogImagePath = ogImageHref(data.keyword.slug, data.path)
+  const pageUrl = `${SITE_URL}/${data.keyword.slug}/${data.path.join('/')}`
 
   // 본론(H2/H3) 소제목을 미리 렌더링 + sanitize해서, 목차와 실제 본문 헤딩이
   // 정확히 같은 id/텍스트를 공유하게 한다 (한쪽만 바꿔서 어긋나는 일이 없도록).
@@ -97,8 +105,6 @@ export default async function KeywordRegionPage({ params }: PageProps) {
     .map((s) => ({ id: s.anchorId, text: s.headingText as string, level: s.section.heading_level === 'h3' ? 'h3' : 'h2' }))
 
   // JSON-LD: 지역 계층(BreadcrumbList) + 이 페이지가 다루는 서비스(Service) 구조화 데이터.
-  // 검색엔진 리치 스니펫과 GEO(생성형 검색) 크롤러 모두, "어디의 무슨 서비스인지"를
-  // 텍스트 파싱 없이 바로 읽어갈 수 있게 한다.
   const breadcrumbList = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -106,7 +112,7 @@ export default async function KeywordRegionPage({ params }: PageProps) {
       '@type': 'ListItem',
       position: i + 1,
       name: region.name,
-      item: `${SITE_URL}/${data.keyword.slug}/${region.slug}`,
+      item: `${SITE_URL}/${data.keyword.slug}/${data.path.slice(0, i + 1).join('/')}`,
     })),
   }
   const serviceJsonLd = {
@@ -115,7 +121,7 @@ export default async function KeywordRegionPage({ params }: PageProps) {
     serviceType: data.keyword.display_name,
     name: h1,
     areaServed: { '@type': 'Place', name: data.regionLabel },
-    provider: { '@type': 'LocalBusiness', name: SITE_NAME, telephone: data.phone },
+    provider: { '@type': 'LocalBusiness', name: siteName, telephone: data.phone },
     url: pageUrl,
   }
 
@@ -153,11 +159,8 @@ export default async function KeywordRegionPage({ params }: PageProps) {
         keyword={data.keyword.display_name}
       />
 
-      {/* 중단 광고 슬롯 — 요구사항 5: page.tsx 위치 */}
-      <AdSlot position="middle" />
-
       {/* 본론: H2/H3 시맨틱 섹션 (요구사항 2-2). id는 목차 앵커와 동일한 값을 공유한다. */}
-      <div className="mt-8 space-y-10">
+      <div className="mt-10 space-y-10">
         {bodySections.map(({ section, headingText, anchorId }) => {
           const Heading = section.heading_level === 'h3' ? 'h3' : 'h2'
           return (
@@ -199,6 +202,7 @@ export default async function KeywordRegionPage({ params }: PageProps) {
       <InternalLinks
         keyword={data.keyword}
         currentRegion={data.region}
+        path={data.path}
         childRegions={data.childRegions}
         siblingRegions={data.siblingRegions}
         otherKeywords={data.otherKeywords}

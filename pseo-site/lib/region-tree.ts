@@ -64,3 +64,29 @@ export function getSiblings(node: RegionNode, tree: RegionTree): RegionNode[] {
   const pool = parent ? parent.children : tree.roots
   return pool.filter((n) => n.id !== node.id)
 }
+
+/**
+ * URL에 그대로 쓰이는 슬러그 경로 배열. ["충청남도","천안시","백석동"] 형태.
+ * /[keyword]/[...path] 라우트가 이 배열을 그대로 URL 세그먼트로 쓴다.
+ */
+export function getRegionPathSegments(node: RegionNode, nodeMap: Map<string, RegionNode>): string[] {
+  return [...getAncestors(node, nodeMap), node].map((r) => r.slug)
+}
+
+/**
+ * URL 경로 세그먼트(["충청남도","천안시","백석동"])를 지역 트리에서 한 단계씩
+ * 내려가며 실제 RegionNode로 변환한다. 중간에 못 찾으면 null(404 처리용).
+ * 형제 지역끼리는 이름이 겹치지 않는다는 전제라, 트리 안에서 "같은 부모 밑" 범위로만
+ * slug를 비교하면 충분하다 — 전국 단위로 늘어나도 전역에서 유일할 필요가 없다.
+ */
+export function resolveRegionByPath(pathSegments: string[], tree: RegionTree): RegionNode | null {
+  if (pathSegments.length === 0) return null
+  let candidates = tree.roots
+  let node: RegionNode | undefined
+  for (const segment of pathSegments) {
+    node = candidates.find((r) => r.slug === segment)
+    if (!node) return null
+    candidates = node.children
+  }
+  return node ?? null
+}
