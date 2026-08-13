@@ -19,7 +19,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getAllData, getPageData, getStaticParamsList } from '@/lib/supabase'
 import { renderTemplate, sanitizeGeneratedText, splitParagraphs } from '@/lib/content'
-import { SITE_URL } from '@/lib/constants'
+import { OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH, SITE_URL } from '@/lib/constants'
 import { ogImageHref } from '@/lib/og-url'
 import { decodeParam, decodeParamPath } from '@/lib/params'
 import Breadcrumb from '@/components/Breadcrumb'
@@ -68,7 +68,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       siteName,
       locale: 'ko_KR',
       type: 'article',
-      images: [{ url: ogImagePath, width: 1200, height: 630, alt: title, type: 'image/webp' }],
+      images: [{ url: ogImagePath, width: OG_IMAGE_WIDTH, height: OG_IMAGE_HEIGHT, alt: title, type: 'image/webp' }],
     },
     twitter: {
       card: 'summary_large_image',
@@ -139,7 +139,7 @@ export default async function KeywordRegionPage({ params }: PageProps) {
 
       {/* 서론 */}
       {data.intro.length > 0 ? (
-        <div className="mt-6 space-y-4 text-[15px] leading-relaxed text-slate-700 md:text-base">
+        <div className="mt-6 space-y-4 text-base leading-relaxed text-slate-700 md:text-lg">
           {data.intro.map((section) =>
             splitParagraphs(renderTemplate(section.body_template, vars)).map((para, i) => (
               <p key={`${section.id}-${i}`}>{para}</p>
@@ -159,9 +159,15 @@ export default async function KeywordRegionPage({ params }: PageProps) {
         keyword={data.keyword.display_name}
       />
 
-      {/* 본론: H2/H3 시맨틱 섹션 (요구사항 2-2). id는 목차 앵커와 동일한 값을 공유한다. */}
-      <div className="mt-10 space-y-10">
-        {bodySections.map(({ section, headingText, anchorId }) => {
+      {/* 본론: H2/H3 시맨틱 섹션 (요구사항 2-2). id는 목차 앵커와 동일한 값을 공유한다.
+          본문이 길어졌으니(요청: H2 4개 이상) 중간에도 상담 배너를 한 번 더 넣는다 —
+          정확히 절반 지점에서 나눠서 그 사이에 배치한다. */}
+      {(() => {
+        const midpoint = Math.ceil(bodySections.length / 2)
+        const firstHalf = bodySections.slice(0, midpoint)
+        const secondHalf = bodySections.slice(midpoint)
+
+        const renderSection = ({ section, headingText, anchorId }: (typeof bodySections)[number]) => {
           const Heading = section.heading_level === 'h3' ? 'h3' : 'h2'
           return (
             <section key={section.id} id={anchorId} className="scroll-mt-20">
@@ -174,29 +180,57 @@ export default async function KeywordRegionPage({ params }: PageProps) {
                   {headingText}
                 </Heading>
               ) : null}
-              <div className="mt-3 space-y-4 text-[15px] leading-relaxed text-slate-700 md:text-base">
+              <div className="mt-3 space-y-4 text-base leading-relaxed text-slate-700 md:text-lg">
                 {splitParagraphs(renderTemplate(section.body_template, vars)).map((para, i) => (
                   <p key={`${section.id}-${i}`}>{para}</p>
                 ))}
               </div>
             </section>
           )
-        })}
+        }
 
-        {/* 결론 */}
-        {data.conclusion.length > 0 ? (
-          <section>
-            <h2 className="text-2xl font-bold text-slate-900">마무리</h2>
-            <div className="mt-3 space-y-4 text-[15px] leading-relaxed text-slate-700 md:text-base">
-              {data.conclusion.map((section) =>
-                splitParagraphs(renderTemplate(section.body_template, vars)).map((para, i) => (
-                  <p key={`${section.id}-${i}`}>{para}</p>
-                ))
-              )}
-            </div>
-          </section>
-        ) : null}
-      </div>
+        return (
+          <div className="mt-10 space-y-10">
+            {firstHalf.map(renderSection)}
+
+            {/* 본문 중간 상담 배너 — H2가 여러 개일 때만(짧은 글에서 배너가 3개 연달아 나오는 걸 방지) */}
+            {secondHalf.length > 0 ? (
+              <ContactBanner
+                imageSrc={ogImagePath}
+                phone={data.phone}
+                regionLabel={data.regionLabel}
+                keyword={data.keyword.display_name}
+                label="본문 중간"
+              />
+            ) : null}
+
+            {secondHalf.map(renderSection)}
+
+            {/* 결론 */}
+            {data.conclusion.length > 0 ? (
+              <section>
+                <h2 className="text-2xl font-bold text-slate-900">마무리</h2>
+                <div className="mt-3 space-y-4 text-base leading-relaxed text-slate-700 md:text-lg">
+                  {data.conclusion.map((section) =>
+                    splitParagraphs(renderTemplate(section.body_template, vars)).map((para, i) => (
+                      <p key={`${section.id}-${i}`}>{para}</p>
+                    ))
+                  )}
+                </div>
+              </section>
+            ) : null}
+
+            {/* 본문 하단 상담 배너 — 글을 끝까지 읽은 사람에게 다시 한번 클릭 유도 */}
+            <ContactBanner
+              imageSrc={ogImagePath}
+              phone={data.phone}
+              regionLabel={data.regionLabel}
+              keyword={data.keyword.display_name}
+              label="본문 하단"
+            />
+          </div>
+        )
+      })()}
 
       {/* 계층형 내부 링크 (거미줄 링크) — 요구사항 4 */}
       <InternalLinks

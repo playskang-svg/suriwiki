@@ -49,7 +49,7 @@ export default function TopNav({ entries }: { entries: NavEntry[] }) {
   if (entries.length === 0) return null
 
   return (
-    <nav aria-label="주요 시공 항목" className="flex flex-wrap items-center gap-x-1 text-sm text-slate-600">
+    <nav aria-label="주요 시공 항목" className="flex flex-wrap items-center gap-x-1 text-base text-slate-600">
       {entries.map((entry) =>
         entry.kind === 'link' ? (
           <Link
@@ -77,7 +77,7 @@ export default function TopNav({ entries }: { entries: NavEntry[] }) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-brand"
+                  className="block px-4 py-2 text-base text-slate-600 hover:bg-slate-50 hover:text-brand"
                 >
                   {item.label}
                 </Link>

@@ -41,32 +41,28 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="flex min-h-screen flex-col bg-white text-slate-900 antialiased">
         <header className="sticky top-0 z-20 w-full border-b border-slate-100 bg-white/95 backdrop-blur">
           <div className="mx-auto flex w-full max-w-3xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
-            {/* 로고 배지 — 사이트명 첫 글자를 브랜드 컬러 배지로. 실제 로고 이미지가
-                생기면 이 span을 <img>로 바꾸기만 하면 된다. */}
+            {/* 로고 배지 — 이모지 기반(도배·장판이 연상되는 집 아이콘). 실제 로고
+                이미지가 생기면 이 span 안의 이모지를 <img>로 바꾸기만 하면 된다. */}
             <Link href="/" className="flex items-center gap-2.5">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand text-base font-extrabold text-white">
-                {siteName.charAt(0)}
+              <span
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand text-xl"
+                aria-hidden="true"
+              >
+                🏠
               </span>
-              <span className="text-lg font-extrabold tracking-tight text-brand">{siteName}</span>
+              <span className="text-xl font-extrabold tracking-tight text-brand">{siteName}</span>
             </Link>
             <TopNav entries={navEntries} />
           </div>
         </header>
 
-        {/* 대표 이미지 배너 — 모든 페이지 공통 상단. 광고 슬롯 자리를 걷어내고 브랜드
-            비주얼(public/bg_images)로 채운다. */}
-        <div className="relative h-32 w-full overflow-hidden bg-brand md:h-40">
-          {/* eslint-disable-next-line @next/next/no-img-element -- 정적 export, next/image 최적화 서버 없음 */}
-          <img src="/bg_images/1.jpg" alt="" className="h-full w-full object-cover" />
-          <div className="absolute inset-0 flex items-center justify-center bg-brand/50">
-            <span className="text-xl font-extrabold tracking-tight text-white md:text-2xl">{siteName}</span>
-          </div>
-        </div>
-
+        {/* 대표 이미지 배너(HeroBanner)는 더 이상 여기(모든 페이지 공통)에 없다 — 항상
+            사이트 브랜드명만 나와서 키워드 허브 페이지 등 실제 제목과 안 맞았다. 이제는
+            각 페이지가 자기 제목으로 직접 렌더링한다(app/page.tsx, app/[keyword]/page.tsx). */}
         <main className="w-full flex-1">{children}</main>
 
         <footer className="w-full border-t border-slate-100 py-8">
-          <p className="mx-auto max-w-3xl px-4 text-center text-xs text-slate-400">
+          <p className="mx-auto max-w-3xl px-4 text-center text-sm text-slate-400">
             © {new Date().getFullYear()} {siteName}. All rights reserved.
           </p>
         </footer>
