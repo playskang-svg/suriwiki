@@ -9,6 +9,10 @@
  *
  * region.type을 하드코딩해서 분기하지 않고 "childRegions 유무"로 판단하므로,
  * 트리 깊이가 몇 단계든(SIDO~APT 4단계든, 더 깊어지든) 그대로 재사용할 수 있다.
+ *
+ * URL은 지역 계층을 전부 슬래시로 펼친다(/키워드/시도/시군구/동/...). 그래서 href를
+ * 조립하려면 "현재 페이지의 전체 경로(path)"가 필요하다 — 하위 링크는 path 뒤에
+ * 한 단계 붙이고, 인근(형제) 링크는 path의 마지막 한 칸만 바꿔치기한다.
  * ------------------------------------------------------------------------
  */
 import Link from 'next/link'
@@ -17,6 +21,8 @@ import type { KeywordRow, RegionRow } from '@/lib/supabase'
 interface InternalLinksProps {
   keyword: KeywordRow
   currentRegion: RegionRow
+  /** 현재 페이지의 URL 슬러그 경로 (예: ["충청남도","천안시","백석동"]) */
+  path: string[]
   /** 현재 지역 바로 아래 단계 지역 목록 (발행된 페이지만) */
   childRegions: RegionRow[]
   /** 같은 부모를 둔 인접 지역 목록 (발행된 페이지만, 자기 자신 제외) */
@@ -35,11 +41,13 @@ const CHILD_SECTION_LABEL: Record<RegionRow['type'], string> = {
 export default function InternalLinks({
   keyword,
   currentRegion,
+  path,
   childRegions,
   siblingRegions,
   otherKeywords,
 }: InternalLinksProps) {
   const hasChildren = childRegions.length > 0
+  const parentPath = path.slice(0, -1) // 형제 지역 href용 — 마지막 한 칸(현재 지역)만 잘라낸 상위 경로
 
   return (
     <nav aria-label="관련 지역 및 시공 항목" className="mt-12 space-y-10 border-t border-slate-100 pt-8">
@@ -52,7 +60,7 @@ export default function InternalLinks({
             {childRegions.map((region) => (
               <li key={region.id}>
                 <Link
-                  href={`/${keyword.slug}/${region.slug}`}
+                  href={`/${keyword.slug}/${[...path, region.slug].join('/')}`}
                   className="block rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 transition-colors hover:border-brand hover:text-brand"
                 >
                   {region.name} {keyword.display_name} →
@@ -70,7 +78,7 @@ export default function InternalLinks({
             {siblingRegions.map((region) => (
               <li key={region.id}>
                 <Link
-                  href={`/${keyword.slug}/${region.slug}`}
+                  href={`/${keyword.slug}/${[...parentPath, region.slug].join('/')}`}
                   className="block rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 transition-colors hover:border-brand hover:text-brand"
                 >
                   {region.name} {keyword.display_name} →
@@ -88,7 +96,7 @@ export default function InternalLinks({
             {otherKeywords.map((kw) => (
               <li key={kw.id}>
                 <Link
-                  href={`/${kw.slug}/${currentRegion.slug}`}
+                  href={`/${kw.slug}/${path.join('/')}`}
                   className="block rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 transition-colors hover:border-brand hover:text-brand"
                 >
                   {currentRegion.name} {kw.display_name} →

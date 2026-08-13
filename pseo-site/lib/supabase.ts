@@ -22,7 +22,15 @@
  */
 import { cache } from 'react'
 import { createClient } from '@supabase/supabase-js'
-import { buildRegionTree, getAncestors, getRegionLabel, getSiblings, type RegionNode } from './region-tree'
+import {
+  buildRegionTree,
+  getAncestors,
+  getRegionLabel,
+  getRegionPathSegments,
+  getSiblings,
+  resolveRegionByPath,
+  type RegionNode,
+} from './region-tree'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -54,6 +62,11 @@ export interface KeywordRow {
   h1_template: string
   phone: string
   is_active: boolean
+  /** 상단 메뉴 드롭다운 묶음 이름 (예: '도배', '도배 견적'). null이면 그룹 없이 평메뉴로 노출.
+   *  메뉴 구조 자체를 DB로 관리해서, 사이트를 복제/재사용할 때 코드 수정 없이 데이터만 바꾸면 된다. */
+  menu_group: string | null
+  /** 그룹 안에서, 그리고 그룹 없는 평메뉴 사이에서 정렬 순서 */
+  menu_order: number
 }
 
 export interface RegionRow {
@@ -120,20 +133,22 @@ export const getAllData = cache(async () => {
 })
 
 // ------------------------------------------------------------------------
-// generateStaticParams용 — 발행 대상 전체 (keyword × region) 조합
-// app/[keyword]/[slug]/page.tsx 와 app/api/og/[keyword]/[slug]/route.tsx가 공유해서 쓴다.
+// generateStaticParams용 — 발행 대상 전체 (keyword × region) 조합.
+// path는 지역 계층을 전부 슬래시로 펼친 세그먼트 배열이다.
+// (예: 백석동 → ["충청남도","천안시","백석동"] → /도배장판/충청남도/천안시/백석동)
+// app/[keyword]/[...path]/page.tsx 와 app/api/og/[keyword]/[...path]/route.tsx가 공유한다.
 // ------------------------------------------------------------------------
 
 export const getStaticParamsList = cache(async () => {
   const { keywords, regions, listings } = await getAllData()
   const keywordMap = new Map(keywords.map((k) => [k.id, k]))
-  const regionMap = new Map(regions.map((r) => [r.id, r]))
+  const tree = buildRegionTree(regions)
 
-  const params: { keyword: string; slug: string }[] = []
+  const params: { keyword: string; path: string[] }[] = []
   for (const listing of listings) {
     const kw = keywordMap.get(listing.keyword_id)
-    const rg = regionMap.get(listing.region_id)
-    if (kw && rg) params.push({ keyword: kw.slug, slug: rg.slug })
+    const regionNode = tree.nodeMap.get(listing.region_id)
+    if (kw && regionNode) params.push({ keyword: kw.slug, path: getRegionPathSegments(regionNode, tree.nodeMap) })
   }
   return params
 })
@@ -158,6 +173,9 @@ export interface PageData {
   ancestorRegions: RegionNode[]
   /** 홈 → ... → 현재 지역까지, 화면에 그대로 그리면 되는 브레드크럼 목록 (요청: 상위 지역 페이지 탐색) */
   breadcrumb: BreadcrumbItem[]
+  /** ["충청남도","천안시","백석동"] — 이 페이지의 URL 슬러그 경로. InternalLinks가
+   *  하위/인근 지역 href를 조립할 때 이 배열 끝에서부터 잘라 붙인다. */
+  path: string[]
   /** 본문(연락처 배너 tel: 링크, CTA 텍스트 등)에 쓰는 상담 전화번호 */
   phone: string
   /** 썸네일(OG 이미지)에 박히는 전화번호. thumbnail_phone이 없으면 phone과 동일한 값이 된다. */
@@ -170,15 +188,14 @@ export interface PageData {
   otherKeywords: KeywordRow[]
 }
 
-export const getPageData = cache(async (keywordSlug: string, regionSlug: string): Promise<PageData | null> => {
+export const getPageData = cache(async (keywordSlug: string, pathSegments: string[]): Promise<PageData | null> => {
   const { keywords, regions, listings, sections } = await getAllData()
   const tree = buildRegionTree(regions)
 
   const keyword = keywords.find((k) => k.slug === keywordSlug)
-  const regionRow = regions.find((r) => r.slug === regionSlug)
-  if (!keyword || !regionRow) return null
+  if (!keyword) return null
 
-  const regionNode = tree.nodeMap.get(regionRow.id)
+  const regionNode = resolveRegionByPath(pathSegments, tree)
   if (!regionNode) return null
 
   const listingSet = new Set(listings.map((l) => `${l.keyword_id}:${l.region_id}`))
@@ -192,10 +209,10 @@ export const getPageData = cache(async (keywordSlug: string, regionSlug: string)
 
   const keywordSections = sections.filter((s) => s.keyword_id === keyword.id)
   const ancestorRegions = getAncestors(regionNode, tree.nodeMap)
-  const breadcrumb: BreadcrumbItem[] = [...ancestorRegions, regionNode].map((r) => ({
+  const breadcrumb: BreadcrumbItem[] = [...ancestorRegions, regionNode].map((r, i) => ({
     id: r.id,
     name: r.name,
-    href: isPublished(keyword.id, r.id) ? `/${keyword.slug}/${r.slug}` : null,
+    href: isPublished(keyword.id, r.id) ? `/${keyword.slug}/${pathSegments.slice(0, i + 1).join('/')}` : null,
   }))
 
   return {
@@ -204,6 +221,7 @@ export const getPageData = cache(async (keywordSlug: string, regionSlug: string)
     regionLabel: getRegionLabel(regionNode, tree.nodeMap),
     ancestorRegions,
     breadcrumb,
+    path: pathSegments,
     phone,
     thumbnailPhone,
     intro: keywordSections.filter((s) => s.section_type === 'INTRO'),

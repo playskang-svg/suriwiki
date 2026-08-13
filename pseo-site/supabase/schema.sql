@@ -17,13 +17,15 @@ create type pseo_section_type as enum ('INTRO', 'BODY', 'CONCLUSION');
 -- 1) 타깃 키워드 — 이 표만 갈아끼우면 사이트 주제가 바뀐다.
 create table pseo_keywords (
   id uuid primary key default gen_random_uuid(),
-  slug text not null unique,                 -- URL 세그먼트. 예: 'leak-detection'
-  display_name text not null,                -- 실제 노출 키워드. 예: '누수탐지'
+  slug text not null unique,                 -- URL 세그먼트. 한글 그대로 써도 된다. 예: '도배장판'
+  display_name text not null,                -- 실제 노출 키워드. 예: '도배장판'
   title_template text not null default '{region} {keyword} 잘하는 곳 | 무료 상담',
   meta_description_template text not null default '{region} {keyword} 전문 마스터 기술자가 직접 진단하고 시공합니다. 지금 무료 상담 신청하세요.',
   h1_template text not null default '{region} {keyword}, 이렇게 해결하세요',
   phone text not null default '1588-0000', -- 기본 상담 전화번호 (지역별로 override 가능)
   is_active boolean not null default true,
+  menu_group text,                            -- 상단 메뉴 드롭다운 묶음 이름(예: '도배 견적'). null이면 평메뉴.
+  menu_order int not null default 0,          -- 메뉴 안에서의 정렬 순서
   created_at timestamptz not null default now()
 );
 
