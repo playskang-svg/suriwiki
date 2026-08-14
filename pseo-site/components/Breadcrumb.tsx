@@ -12,11 +12,14 @@
  */
 import Link from 'next/link'
 import type { BreadcrumbItem } from '@/lib/supabase'
+import { SITE_URL } from '@/lib/constants'
 
 export default function Breadcrumb({ items }: { items: BreadcrumbItem[] }) {
   return (
     <nav aria-label="현재 위치" className="mb-4 flex flex-wrap items-center gap-x-1 gap-y-1 text-sm text-slate-500">
-      <Link href="/" className="hover:text-brand hover:underline underline-offset-2">
+      {/* 홈(루트 "/")은 항상 루트 프로젝트에만 있다 — 다른 키워드 프로젝트에서 렌더링될 때도
+          있으므로(lib/constants.ts KEYWORD_SITE_URL 참고) 상대경로가 아니라 절대 URL로 고정한다. */}
+      <Link href={SITE_URL} className="hover:text-brand hover:underline underline-offset-2">
         홈
       </Link>
       {items.map((item, i) => {

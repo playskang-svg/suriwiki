@@ -12,6 +12,12 @@
       "runtimeExecutable": "sh",
       "runtimeArgs": ["-c", "cd pseo-site && npm run build && npm run start"],
       "port": 3100
+    },
+    {
+      "name": "pseo-site-serve",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": ["-c", "cd pseo-site && npm run start"],
+      "port": 3100
     }
   ]
 }

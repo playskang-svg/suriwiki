@@ -13,6 +13,7 @@
  */
 import Link from 'next/link'
 import type { KeywordRow } from '@/lib/supabase'
+import { getKeywordSiteUrl } from '@/lib/constants'
 
 export interface NavEntry {
   kind: 'link' | 'group'
@@ -21,14 +22,23 @@ export interface NavEntry {
   items?: { href: string; label: string }[]
 }
 
-/** keywords(발행된 것만) → 메뉴 그룹으로 묶은 NavEntry[]. menu_group·menu_order 순으로 정렬. */
+/**
+ * keywords(발행된 것만) → 메뉴 그룹으로 묶은 NavEntry[]. menu_group·menu_order 순으로 정렬.
+ *
+ * href는 항상 절대 URL(getKeywordSiteUrl 기준)이다 — 키워드마다 서로 다른 Cloudflare
+ * Pages 프로젝트에 배포되므로(lib/constants.ts의 KEYWORD_SITE_URL 주석 참고),
+ * 상단메뉴는 모든 페이지(모든 키워드의 모든 지역)에 공통으로 노출되는 컴포넌트라
+ * "지금 어느 프로젝트에서 렌더링 중인지"를 알 수 없다. 상대경로였다면 다른 키워드
+ * 프로젝트에는 그 파일이 아예 없어서 클릭 시 404가 난다. 같은 도메인으로 가는
+ * 절대 URL도 Next <Link>가 정상적으로 클라이언트 네비게이션 처리하므로 문제없다.
+ */
 export function buildNavEntries(keywords: KeywordRow[]): NavEntry[] {
   const sorted = [...keywords].sort((a, b) => a.menu_order - b.menu_order)
   const groups = new Map<string, NavEntry>()
   const entries: NavEntry[] = []
 
   for (const keyword of sorted) {
-    const href = `/${keyword.slug}`
+    const href = `${getKeywordSiteUrl(keyword.slug)}/${keyword.slug}`
     if (!keyword.menu_group) {
       entries.push({ kind: 'link', label: keyword.display_name, href })
       continue
@@ -55,7 +65,7 @@ export default function TopNav({ entries }: { entries: NavEntry[] }) {
           <Link
             key={entry.label}
             href={entry.href!}
-            className="rounded-md px-3 py-2 hover:bg-slate-50 hover:text-brand"
+            className="rounded-md px-3 py-2 font-bold hover:bg-slate-50 hover:text-brand"
           >
             {entry.label}
           </Link>
@@ -63,7 +73,7 @@ export default function TopNav({ entries }: { entries: NavEntry[] }) {
           <div key={entry.label} className="group relative">
             <button
               type="button"
-              className="flex items-center gap-1 rounded-md px-3 py-2 hover:bg-slate-50 hover:text-brand focus:outline-none"
+              className="flex items-center gap-1 rounded-md px-3 py-2 font-bold hover:bg-slate-50 hover:text-brand focus:outline-none"
             >
               {entry.label}
               <span aria-hidden="true" className="text-xs text-slate-400">
