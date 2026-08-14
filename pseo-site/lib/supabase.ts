@@ -203,6 +203,31 @@ export const getStaticParamsList = cache(async () => {
     const regionNode = tree.nodeMap.get(listing.region_id)
     if (kw && regionNode) params.push({ keyword: kw.slug, path: getRegionPathSegments(regionNode, tree.nodeMap) })
   }
+
+  // 개발/검증용 샘플 빌드 — output:'export'는 증분 빌드가 없어서 파일 하나만 바꿔도
+  // 전체 2만6천+ 페이지를 처음부터 다시 굽는다. 작은 변경을 눈으로 빨리 확인만 하고
+  // 싶을 때는 `SAMPLE_BUILD_LIMIT=200 npm run build`처럼 환경변수를 주면 그 개수만큼만
+  // (여러 키워드에 고르게 분산해서) 만든다 — 실제 배포용 빌드는 이 값을 비워두면 된다.
+  const sampleLimit = Number(process.env.SAMPLE_BUILD_LIMIT)
+  if (sampleLimit > 0 && sampleLimit < params.length) {
+    // 키워드 하나로만 몰리지 않게, 키워드별로 라운드로빈으로 골고루 뽑는다.
+    const byKeyword = new Map<string, typeof params>()
+    for (const p of params) {
+      if (!byKeyword.has(p.keyword)) byKeyword.set(p.keyword, [])
+      byKeyword.get(p.keyword)!.push(p)
+    }
+    const buckets = [...byKeyword.values()]
+    const sampled: typeof params = []
+    for (let i = 0; sampled.length < sampleLimit; i++) {
+      const bucket = buckets[i % buckets.length]
+      const item = bucket[Math.floor(i / buckets.length)]
+      if (item) sampled.push(item)
+      if (buckets.every((b, idx) => Math.floor(i / buckets.length) >= b.length)) break
+    }
+    console.warn(`[getStaticParamsList] SAMPLE_BUILD_LIMIT=${sampleLimit} — 샘플 ${sampled.length}개만 빌드합니다(실제 배포 전엔 꼭 이 값 없이 전체 빌드하세요).`)
+    return sampled
+  }
+
   return params
 })
 

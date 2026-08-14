@@ -17,6 +17,7 @@
  */
 import Link from 'next/link'
 import type { KeywordRow, RegionRow } from '@/lib/supabase'
+import { getKeywordSiteUrl } from '@/lib/constants'
 
 interface InternalLinksProps {
   keyword: KeywordRow
@@ -95,8 +96,11 @@ export default function InternalLinks({
           <ul className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
             {otherKeywords.map((kw) => (
               <li key={kw.id}>
+                {/* 다른 키워드 = 다른 Cloudflare Pages 프로젝트일 수 있어서 절대 URL로 링크한다
+                    (lib/constants.ts KEYWORD_SITE_URL 참고). 위 두 섹션(하위/인근 지역)은
+                    같은 키워드라 상대경로 그대로 둔다. */}
                 <Link
-                  href={`/${kw.slug}/${path.join('/')}`}
+                  href={`${getKeywordSiteUrl(kw.slug)}/${kw.slug}/${path.join('/')}`}
                   className="block rounded-lg border border-slate-200 px-3 py-2.5 text-base text-slate-700 transition-colors hover:border-brand hover:text-brand"
                 >
                   {currentRegion.name} {kw.display_name} →

@@ -6,7 +6,7 @@
  */
 import Link from 'next/link'
 import { getAllData } from '@/lib/supabase'
-import { FALLBACK_SITE_NAME } from '@/lib/constants'
+import { FALLBACK_SITE_NAME, getKeywordSiteUrl } from '@/lib/constants'
 import HeroBanner from '@/components/HeroBanner'
 
 export default async function HomePage() {
@@ -24,8 +24,10 @@ export default async function HomePage() {
         <ul className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3">
           {activeKeywords.map((keyword) => (
             <li key={keyword.id}>
+              {/* 키워드마다 서로 다른 Cloudflare Pages 프로젝트에 배포되므로(lib/constants.ts
+                  KEYWORD_SITE_URL 참고) 항상 절대 URL로 링크한다. */}
               <Link
-                href={`/${keyword.slug}`}
+                href={`${getKeywordSiteUrl(keyword.slug)}/${keyword.slug}`}
                 className="block rounded-lg border border-slate-200 px-4 py-3 text-center font-semibold text-slate-700 transition-colors hover:border-brand hover:text-brand"
               >
                 {keyword.display_name}

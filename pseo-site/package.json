@@ -5,7 +5,10 @@
   "description": "타깃 키워드 × 지역/아파트 DB만 교체하면 무한 확장되는 템플릿형 pSEO 정적 사이트 (Cloudflare Pages 배포용, 수리위키 메인 앱과 독립)",
   "scripts": {
     "dev": "next dev -p 3100",
-    "build": "next build",
+    "build": "node scripts/generate-sitemap.mjs && next build",
+    "build:sample": "SAMPLE_BUILD_LIMIT=200 next build",
+    "split": "node scripts/split-by-keyword.mjs",
+    "deploy": "node scripts/deploy-all.mjs",
     "start": "npx serve out -l 3100",
     "lint": "next lint"
   },

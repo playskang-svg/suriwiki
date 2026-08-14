@@ -59,3 +59,12 @@ export function pickBgImageDataUrl(seed: string): string | null {
 export function hasBgImages(): boolean {
   return listBgFiles().length > 0
 }
+
+/** pickBgImageDataUrl과 같은 로테이션 로직이지만, OG(Satori)용 base64 data URL이 아니라
+ *  일반 페이지에서 <img src>로 바로 쓸 공개 경로(/bg_images/1.jpg)를 반환한다 — data URL을
+ *  쓰면 페이지마다 이미지 바이트가 HTML에 그대로 박혀 브라우저 캐시 이점을 잃는다. */
+export function pickBgImagePath(seed: string): string | null {
+  const files = listBgFiles()
+  if (files.length === 0) return null
+  return `/bg_images/${files[hashSeed(seed) % files.length]}`
+}

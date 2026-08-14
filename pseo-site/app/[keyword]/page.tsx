@@ -19,7 +19,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getAllData } from '@/lib/supabase'
 import { buildRegionTree, getAncestors, getRegionLabel, getRegionPathSegments } from '@/lib/region-tree'
-import { SITE_URL } from '@/lib/constants'
+import { getKeywordSiteUrl } from '@/lib/constants'
 import { ogImageHref } from '@/lib/og-url'
 import { decodeParam } from '@/lib/params'
 import HeroBanner from '@/components/HeroBanner'
@@ -99,15 +99,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const data = await getHubData(decodeParam(params.keyword))
   if (!data) return {}
 
-  const title = `${data.keyword.display_name} 지역별 시공 정보 모음`
-  const description = `${data.keyword.display_name} 관련 지역별 시공 안내를 한눈에 모아봤습니다. 원하는 지역을 선택해서 상세 정보를 확인하세요.`
-  const path = `/${data.keyword.slug}`
+  const title = `${data.keyword.display_name} 지역별 전문상담`
+  const description = `${data.keyword.display_name} 관련 지역별 전문상담을 한눈에 모아봤습니다. 원하는 지역을 선택해서 상세 정보를 확인하세요.`
+  // 이 키워드가 실제로 배포되는 도메인 기준 절대 URL (lib/constants.ts KEYWORD_SITE_URL 참고).
+  const url = `${getKeywordSiteUrl(data.keyword.slug)}/${data.keyword.slug}`
 
   return {
     title,
     description,
-    alternates: { canonical: `${SITE_URL}${path}` },
-    openGraph: { title, description, url: `${SITE_URL}${path}`, locale: 'ko_KR' },
+    alternates: { canonical: url },
+    openGraph: { title, description, url, locale: 'ko_KR' },
   }
 }
 
@@ -116,7 +117,7 @@ export default async function KeywordHubPage({ params }: PageProps) {
   if (!data) notFound()
 
   const showJumpNav = data.sections.length > 1
-  const heroTitle = `${data.keyword.display_name} 지역별 시공 정보`
+  const heroTitle = `${data.keyword.display_name} 지역별 전문상담`
 
   return (
     <div>
