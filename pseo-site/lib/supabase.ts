@@ -204,6 +204,33 @@ export const getStaticParamsList = cache(async () => {
     if (kw && regionNode) params.push({ keyword: kw.slug, path: getRegionPathSegments(regionNode, tree.nodeMap) })
   }
 
+  // 지역 단위 증분 배포(scripts/incremental-deploy.mjs)용 필터 — 특정 키워드(+선택적으로
+  // 특정 지역 경로들)만 골라서 빌드한다. 전체 53,295페이지 대신 딱 바뀐 페이지 몇 개만
+  // next build가 생성하게 만드는 핵심 장치 — 이게 없으면 지역 하나만 바뀌어도 항상
+  // 전체를 다시 구워야 한다(output:'export'는 프레임워크 차원의 증분 빌드가 없음).
+  // INCREMENTAL_KEYWORD만 있으면 그 키워드의 전체 지역, REGION_PATHS까지 있으면 그 중
+  // 지정한 지역만. (주의: 이 필터는 "어떤 페이지를 만들지"만 정하고, getPageData()가 쓰는
+  // childRegions/siblingRegions/otherKeywords는 항상 전체 DB 기준이라 개별 페이지 내용
+  // 자체는 정확하다 — 다만 리빌드 대상이 아닌 "인접 페이지"의 이미 배포된 HTML에는 새로
+  // 추가된 지역으로 가는 링크가 그 페이지를 나중에 다시 빌드하기 전까진 안 보일 수 있다.)
+  const incrementalKeyword = process.env.INCREMENTAL_KEYWORD
+  if (incrementalKeyword) {
+    const regionPaths = (process.env.INCREMENTAL_REGION_PATHS || '')
+      .split('|')
+      .map((p) => p.trim())
+      .filter(Boolean)
+    const filtered = params.filter((p) => {
+      if (p.keyword !== incrementalKeyword) return false
+      return regionPaths.length === 0 || regionPaths.includes(p.path.join('/'))
+    })
+    console.warn(
+      `[getStaticParamsList] INCREMENTAL 모드 — 키워드 "${incrementalKeyword}"` +
+        (regionPaths.length ? ` 중 지역 ${regionPaths.length}개` : ' 전체') +
+        ` = 페이지 ${filtered.length}개만 빌드합니다.`
+    )
+    return filtered
+  }
+
   // 개발/검증용 샘플 빌드 — output:'export'는 증분 빌드가 없어서 파일 하나만 바꿔도
   // 전체 2만6천+ 페이지를 처음부터 다시 굽는다. 작은 변경을 눈으로 빨리 확인만 하고
   // 싶을 때는 `SAMPLE_BUILD_LIMIT=200 npm run build`처럼 환경변수를 주면 그 개수만큼만
