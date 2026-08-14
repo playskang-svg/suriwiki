@@ -20,10 +20,10 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT_DIR = join(__dirname, '..')
 
 // next build를 거치지 않는 순수 node 스크립트라 Next의 자동 .env 로딩이 안 된다 —
-// generate-sitemap.mjs와 같은 이유로 직접 읽는다. 이걸 빼먹으면 NEXT_PUBLIC_SITE_URL이
-// undefined가 되어 기본값(example-pseo.pages.dev)으로 루트 프로젝트명을 잘못 계산한다
-// (실제로 2026-08-14에 이 버그로 배포가 한 번 실패했다: "The Pages project
-// 'example-pseo' does not exist").
+// generate-sitemap.mjs와 같은 이유로 직접 읽는다. 지금은 이 스크립트 자체가 SITE_URL을
+// 안 써서(루트 프로젝트명은 아래 ROOT_PROJECT_NAME 상수 고정값) 당장 필수는 아니지만,
+// 다른 스크립트들과 패턴을 맞춰 두면 나중에 이 파일이 다른 env 값을 필요로 하게 되어도
+// 바로 쓸 수 있다.
 function loadDotEnvLocal() {
   try {
     const text = readFileSync(join(ROOT_DIR, '.env.local'), 'utf-8')
@@ -37,10 +37,15 @@ function loadDotEnvLocal() {
 }
 loadDotEnvLocal()
 
-// lib/constants.ts KEYWORD_SITE_URL과 동기화 유지 (같은 이유는 split-by-keyword.mjs 참고)
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://example-pseo.pages.dev').replace(/\/$/, '')
+// ⚠️ 루트 Cloudflare Pages 프로젝트명은 SITE_URL에서 거꾸로 추측하지 않는다 — 커스텀
+// 도메인(dj.adbles.com 등)을 프로젝트에 연결한 뒤에는 SITE_URL이 더 이상 *.pages.dev가
+// 아니게 되고, 그러면 "URL의 호스트명 = 프로젝트명"이라는 가정이 깨진다(실제로 2026-08-14
+// 커스텀 도메인 연결 직후 이 가정 때문에 "The Pages project 'dj.adbles.com' does not
+// exist" 에러로 배포가 실패했다). 프로젝트명은 도메인이 뭐로 바뀌든 항상 고정이므로
+// 그냥 상수로 둔다 — lib/constants.ts KEYWORD_SITE_URL의 도배장판 항목과 짝이 맞는 값.
+const ROOT_PROJECT_NAME = 'suriwiki-pseo'
 const DEPLOY_TARGETS = [
-  { dir: 'out', project: new URL(SITE_URL).hostname.replace(/\.pages\.dev$/, '') },
+  { dir: 'out', project: ROOT_PROJECT_NAME },
   ...readdirSync(ROOT_DIR)
     .filter((name) => name.startsWith('out-') && existsSync(join(ROOT_DIR, name)))
     .map((dir) => ({ dir, project: `suriwiki-pseo-${dir.slice('out-'.length)}` })),

@@ -92,6 +92,13 @@ function shardDirName(url) {
   const slug = host.replace(/\.pages\.dev$/, '').replace(/^suriwiki-pseo-?/, '')
   return `out-${slug || 'root'}`
 }
+
+// ⚠️ Cloudflare Pages 프로젝트명은 도메인 URL에서 거꾸로 추측하지 않는다 — 커스텀
+// 도메인(dj.adbles.com 등)을 연결하면 SITE_URL이 더 이상 *.pages.dev가 아니게 되어
+// "호스트명 = 프로젝트명" 가정이 깨진다(실제로 deploy-all.mjs에서 이 가정 때문에
+// "The Pages project 'dj.adbles.com' does not exist" 에러가 났었다). 루트 프로젝트명은
+// 도메인이 뭐로 바뀌든 항상 고정이라 상수로 둔다.
+const ROOT_PROJECT_NAME = 'suriwiki-pseo'
 function projectName(url) {
   return new URL(url).hostname.replace(/\.pages\.dev$/, '')
 }
@@ -180,7 +187,7 @@ function main() {
   }
   const isRoot = keyword === ROOT_KEYWORD
   const mergeTargetDir = isRoot ? OUT_DIR : join(ROOT_DIR, shardDirName(domain))
-  const project = projectName(domain)
+  const project = isRoot ? ROOT_PROJECT_NAME : projectName(domain)
 
   if (!existsSync(mergeTargetDir)) {
     console.error(`[incremental-deploy] ${mergeTargetDir} 이(가) 없습니다.`)

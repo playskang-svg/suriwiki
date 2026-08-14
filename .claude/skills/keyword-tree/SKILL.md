@@ -168,3 +168,4 @@ npm run build     # scripts/generate-sitemap.mjs → next build (output:'export'
 | Cloudflare Pages 2만 파일/배포 | 배포 자체가 거부됨 | 키워드(또는 다른 기준)별 프로젝트 분할 |
 | 증분 배포 시 폴더 통째 교체 | 필터 밖 페이지가 전부 사라짐 | `cpSync` 병합(overwrite-merge), 절대 `rmSync` 후 교체 금지 |
 | 증분 배포 시 `_next/` 미포함 | 라이브에서 `ChunkLoadError` | 공용 정적 자산도 항상 같이 병합 |
+| 루트 프로젝트명을 SITE_URL에서 역산 | 커스텀 도메인 연결 후 "Pages project 'dj.adbles.com' does not exist" | Cloudflare 프로젝트명은 도메인과 별개 — `ROOT_PROJECT_NAME` 상수로 고정, URL에서 추측 금지 |
