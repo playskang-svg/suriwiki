@@ -92,7 +92,12 @@ async function getHubData(keywordSlug: string) {
 export async function generateStaticParams() {
   const { keywords, listings } = await getAllData()
   const publishedKeywordIds = new Set(listings.map((l) => l.keyword_id))
-  return keywords.filter((k) => publishedKeywordIds.has(k.id)).map((k) => ({ keyword: k.slug }))
+  let list = keywords.filter((k) => publishedKeywordIds.has(k.id))
+  // lib/supabase.ts getStaticParamsList()의 INCREMENTAL_KEYWORD와 같은 필터 —
+  // scripts/incremental-deploy.mjs가 허브 페이지도 그 키워드 하나만 다시 만들게 한다.
+  const incrementalKeyword = process.env.INCREMENTAL_KEYWORD
+  if (incrementalKeyword) list = list.filter((k) => k.slug === incrementalKeyword)
+  return list.map((k) => ({ keyword: k.slug }))
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

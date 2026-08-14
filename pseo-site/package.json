@@ -9,6 +9,7 @@
     "build:sample": "SAMPLE_BUILD_LIMIT=200 next build",
     "split": "node scripts/split-by-keyword.mjs",
     "deploy": "node scripts/deploy-all.mjs",
+    "incremental": "node scripts/incremental-deploy.mjs",
     "start": "npx serve out -l 3100",
     "lint": "next lint"
   },
