@@ -49,7 +49,9 @@ async function main() {
   ])
 
   const activeKeywords = keywords.filter((k) => k.is_active)
-  const targetRegions = regions.filter((r) => r.type === 'SIDO' || r.type === 'SIGUNGU')
+  // 읍/면/동(DONG)까지 전부 발행 대상 — 요청: "7개 키워드 전부 읍/면/동까지 발행".
+  // APT(불당아이파크 등 2개)도 포함해 전체 지역 트리를 빠짐없이 다룬다.
+  const targetRegions = regions
   const existingSet = new Set(existingListings.map((l) => `${l.keyword_id}:${l.region_id}`))
 
   console.log(`키워드 ${activeKeywords.length}개 × 지역(SIDO/SIGUNGU) ${targetRegions.length}개 = 최대 ${activeKeywords.length * targetRegions.length}조합`)

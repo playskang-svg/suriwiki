@@ -25,6 +25,7 @@ import { getOgFont } from '@/lib/og-font'
 import { stripOgExtension, withOgExtension } from '@/lib/og-url'
 import { decodeParam, decodeParamPath } from '@/lib/params'
 import { OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH } from '@/lib/constants'
+import { shortenRegionNameForThumbnail } from '@/lib/region-short-name'
 
 // 썸네일 문구/색상 상수 — 필요하면 이 두 값만 바꾸면 톤이 통째로 바뀐다.
 const THUMBNAIL_LABEL = '무료 상담 문의' // 참고 이미지의 "24시간 상담 문의" 같은 자리. 사실 확인이 안 되는 "24시간" 등은 넣지 않았다 — 실제 운영시간에 맞게 바꿔서 쓰면 된다.
@@ -103,7 +104,9 @@ export async function GET(_request: Request, { params }: RouteContext) {
   // 썸네일에는 참고 이미지("서울" + "벽지"처럼)와 동일하게 전체 주소 체인이 아니라
   // "현재 지역명"만 쓴다 — regionLabel(충청남도 천안시 불당동 불당아이파크 같은 풀 체인)은
   // <title>/H1 등 SEO 텍스트용이고, 이미지에 그대로 쓰면 글자가 작아져서 안 어울린다.
-  const thumbnailRegionName = data.region.name
+  // 시/도 중에서도 "서울특별시"/"세종특별자치시"처럼 유난히 긴 정식 명칭은 썸네일 안에서
+  // 줄바꿈되며 아래 문구와 겹쳐 보이므로, 썸네일에서만 축약형을 쓴다(다른 곳은 정식 명칭 그대로).
+  const thumbnailRegionName = shortenRegionNameForThumbnail(data.region.name)
   const titleLength = thumbnailRegionName.length + data.keyword.display_name.length
   // 그래도 지역명이나 키워드가 유난히 길 때를 대비해 단계적으로 줄인다.
   const titleFontSize = titleLength > 16 ? 76 : titleLength > 10 ? 92 : 108

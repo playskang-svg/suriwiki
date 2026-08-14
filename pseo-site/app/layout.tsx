@@ -43,7 +43,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <div className="mx-auto flex w-full max-w-3xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
             {/* 로고 배지 — 이모지 기반(도배·장판이 연상되는 집 아이콘). 실제 로고
                 이미지가 생기면 이 span 안의 이모지를 <img>로 바꾸기만 하면 된다. */}
-            <Link href="/" className="flex items-center gap-2.5">
+            {/* 로고는 항상 루트 프로젝트(홈)로 간다 — 이 레이아웃은 모든 키워드 프로젝트에
+                공통으로 쓰이므로 절대 URL로 고정한다(lib/constants.ts KEYWORD_SITE_URL 참고). */}
+            <Link href={SITE_URL} className="flex items-center gap-2.5">
               <span
                 className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand text-xl"
                 aria-hidden="true"
