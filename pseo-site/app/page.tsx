@@ -4,10 +4,17 @@
  * 썸네일로 나열)로 안내하는 가벼운 진입점. 실제 지역 목록은 허브 페이지가
  * 전담하므로 여기서는 중복해서 나열하지 않는다.
  */
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getAllData } from '@/lib/supabase'
 import { FALLBACK_SITE_NAME, getKeywordSiteUrl } from '@/lib/constants'
 import HeroBanner from '@/components/HeroBanner'
+
+// 네이버 서치어드바이저 사이트 소유 확인용 메타태그. 대문(/)에만 있으면 되므로 여기(홈
+// 페이지 전용 metadata)에 둔다 — app/layout.tsx에 넣으면 모든 페이지에 다 붙어버린다.
+export const metadata: Metadata = {
+  other: { 'naver-site-verification': '29cacf51c21b6595c9608b2b8f151b48b4f66346' },
+}
 
 export default async function HomePage() {
   const { keywords, listings } = await getAllData()
