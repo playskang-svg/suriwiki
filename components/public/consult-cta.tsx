@@ -14,7 +14,7 @@ export function ConsultCta({
   return (
     <Link
       href={consultHref}
-      className="inline-block rounded-full bg-brand px-6 py-3 text-sm font-semibold text-white hover:bg-brand-dark"
+      className="inline-block rounded-full bg-emerald-700 hover:bg-emerald-800 px-6 py-3.5 text-sm font-bold text-white shadow-md hover:shadow-lg transition"
     >
       {label}
     </Link>

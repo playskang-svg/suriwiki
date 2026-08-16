@@ -66,7 +66,7 @@ export default function ServiceCategoryHubPage({
   const jsonLdSchemas = generateCategoryJsonLd({ categoryName: category.name, categorySlug: params.category });
 
   return (
-    <div className="min-h-screen bg-[#0d1724] text-slate-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-white text-slate-900 flex flex-col font-sans">
       {jsonLdSchemas.map((schema, i) => (
         <Script
           key={i}
@@ -79,37 +79,37 @@ export default function ServiceCategoryHubPage({
       <SiteHeader companyProfile={companyProfile} categorySlug={params.category} categoryName={category.name} />
 
       {/* 1. 히어로 사진 블록 — 항상 최상단, 실제 시공 사진 */}
-      <section className="relative h-[420px] md:h-[520px] w-full overflow-hidden border-b border-slate-800">
+      <section className="relative h-[420px] md:h-[520px] w-full overflow-hidden border-b border-slate-200">
         <img
           src={heroImageUrl}
           alt={`${category.name} 대표 시공 사진`}
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0a121d] via-[#0a121d]/60 to-[#0a121d]/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-900/40 to-transparent" />
 
         <div className="relative z-10 h-full mx-auto max-w-7xl px-6 flex flex-col justify-end pb-10 space-y-4">
-          <div className="inline-flex w-fit items-center gap-2 px-3 py-1 bg-[#c5a059]/20 border border-[#c5a059]/40 rounded-full text-[#e8c87b] text-xs font-extrabold">
+          <div className="inline-flex w-fit items-center gap-2 px-3.5 py-1 bg-emerald-100/90 border border-emerald-300 rounded-full text-emerald-900 text-xs font-extrabold shadow-xs">
             <span>★</span>
             <span>수리위키 {category.name} 수도권 전속 출장 센터</span>
           </div>
-          <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight max-w-3xl">
+          <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight max-w-3xl drop-shadow-sm">
             {category.name} 전문 시공 & 0.1mm 정밀 원상복구
           </h1>
-          <p className="text-sm md:text-base text-slate-200 max-w-2xl leading-relaxed">
+          <p className="text-sm md:text-base text-slate-100 max-w-2xl leading-relaxed drop-shadow-sm">
             전체 교체 없이 파손 부위만 국소 복원합니다. {category.teamLeader && (
-              <strong className="text-white">{category.teamLeader}</strong>
+              <strong className="text-white font-bold">{category.teamLeader}</strong>
             )} 전속 시공팀이 비용 절감과 당일 완공을 약속드립니다.
           </p>
           <div className="flex flex-wrap gap-3 pt-2">
             <Link
               href={consultHref}
-              className="px-7 py-3.5 bg-gradient-to-r from-[#c5a059] to-[#b08b38] hover:from-[#d4af37] hover:to-[#c5a059] text-slate-950 font-black rounded-xl shadow-xl transition text-sm"
+              className="px-7 py-3.5 bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold rounded-xl shadow-md transition text-sm"
             >
               상담하기 &rarr;
             </Link>
             <a
               href={`tel:${companyProfile.phoneNumber.replace(/[^0-9]/g, "")}`}
-              className="px-6 py-3.5 bg-slate-900/80 hover:bg-slate-800 text-white font-bold border border-slate-600 rounded-xl transition text-sm"
+              className="px-6 py-3.5 bg-white/90 hover:bg-white text-slate-900 font-bold rounded-xl transition text-sm shadow-xs"
             >
               📞 {companyProfile.phoneNumber}
             </a>
@@ -128,43 +128,43 @@ export default function ServiceCategoryHubPage({
       <main className="flex-1 mx-auto max-w-6xl w-full px-4 py-8 space-y-16">
         {/* 2. 시공 사례 (실데이터 — 관리자가 업로드한 만큼만 표시) */}
         <section className="space-y-6">
-          <div className="border-b border-slate-800 pb-4 flex items-end justify-between">
+          <div className="border-b border-slate-200 pb-4 flex items-end justify-between">
             <div>
-              <span className="text-xs font-bold text-[#c5a059] uppercase tracking-wider">REAL PROOF</span>
-              <h2 className="text-2xl font-extrabold text-white mt-1">
+              <span className="text-xs font-bold text-emerald-800 uppercase tracking-wider">REAL PROOF</span>
+              <h2 className="text-2xl font-extrabold text-slate-900 mt-1">
                 📸 {category.name} 실제 현장 시공 전·후 (BEFORE & AFTER)
               </h2>
             </div>
-            <span className="text-xs text-slate-400">수리위키 검증 완료 사례</span>
+            <span className="text-xs text-slate-500">수리위키 검증 완료 사례</span>
           </div>
 
           {categoryCases.length === 0 ? (
-            <div className="p-10 text-center text-sm text-slate-400 bg-[#142334]/60 border border-dashed border-slate-700 rounded-2xl">
+            <div className="p-10 text-center text-sm text-slate-500 bg-slate-50 border border-dashed border-slate-300 rounded-2xl">
               아직 등록된 {category.name} 시공 사례가 없습니다. 관리자 &gt; 카테고리별 시공사례 관리에서
               전·후 사진을 업로드하면 여기에 바로 표시됩니다.
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {categoryCases.map((item) => (
-                <div key={item.id} className="bg-[#142334]/80 border border-slate-700 rounded-2xl p-5 space-y-4 shadow-xl">
-                  <div className="flex items-center justify-between border-b border-slate-800 pb-2 text-xs">
-                    <span className="font-bold text-[#e8c87b]">{item.regionLabel || `${category.name} 현장`}</span>
+                <div key={item.id} className="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-xs">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-2 text-xs">
+                    <span className="font-bold text-emerald-800">{item.regionLabel || `${category.name} 현장`}</span>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="relative h-40 bg-slate-950 rounded-xl overflow-hidden border border-red-500/30">
+                    <div className="relative h-40 bg-slate-100 rounded-xl overflow-hidden border border-red-300">
                       <img src={item.beforeImageUrl} alt={`${item.title} 시공전`} className="w-full h-full object-cover" />
                       <span className="absolute top-2 left-2 px-2 py-0.5 bg-red-600 text-white text-[10px] font-extrabold rounded">BEFORE</span>
                     </div>
-                    <div className="relative h-40 bg-slate-950 rounded-xl overflow-hidden border border-emerald-500/30">
+                    <div className="relative h-40 bg-slate-100 rounded-xl overflow-hidden border border-emerald-300">
                       <img src={item.afterImageUrl} alt={`${item.title} 시공후`} className="w-full h-full object-cover" />
                       <span className="absolute top-2 left-2 px-2 py-0.5 bg-emerald-600 text-white text-[10px] font-extrabold rounded">AFTER</span>
                     </div>
                   </div>
 
-                  <p className="text-sm font-bold text-white">{item.title}</p>
+                  <p className="text-sm font-bold text-slate-900">{item.title}</p>
                   {item.description && (
-                    <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+                    <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-200">
                       {item.description}
                     </p>
                   )}
@@ -176,25 +176,22 @@ export default function ServiceCategoryHubPage({
 
         {/* 3. 서비스 지역 — 하위 지역×공정 페이지로 연결되는 링크 그리드 */}
         <section className="space-y-6">
-          <div className="border-b border-slate-800 pb-4">
-            <span className="text-xs font-bold text-[#c5a059] uppercase tracking-wider">REGIONAL STATIONS</span>
-            <h2 className="text-2xl font-extrabold text-white mt-1">
+          <div className="border-b border-slate-200 pb-4">
+            <span className="text-xs font-bold text-emerald-800 uppercase tracking-wider">REGIONAL STATIONS</span>
+            <h2 className="text-2xl font-extrabold text-slate-900 mt-1">
               📍 수도권 지역별 {category.name} 전용 페이지
             </h2>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-slate-500 mt-1">
               원하시는 출장 지역을 선택하시면 해당 지역 전용 시공 안내 페이지로 이동합니다.
             </p>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 text-xs">
-            {/* 앵커 텍스트를 "지역+공정" 키워드 그대로 노출한다 (PRD 4.3 앵커 텍스트 규칙) —
-                예: "강남구 문수리". 방문자에게도, 검색엔진에게도 이 링크가 어떤 키워드 페이지로
-                연결되는지 이름 자체로 드러나야 그 키워드로 순위가 붙는다. */}
             {REGIONS_DATA.map((reg) => (
               <Link
                 key={reg.slug}
                 href={`/services/${params.category}/${reg.slug}`}
-                className="p-3 bg-[#142334] hover:bg-[#c5a059] hover:text-slate-950 border border-slate-700 hover:border-[#c5a059] rounded-xl font-bold text-center transition duration-150 flex flex-col justify-between"
+                className="p-3 bg-white hover:bg-emerald-700 hover:text-white border border-slate-200 hover:border-emerald-700 rounded-xl font-bold text-center transition duration-150 flex flex-col justify-between shadow-xs text-slate-800"
               >
                 <span>{reg.name} {category.name}</span>
                 <span className="text-[10px] opacity-70 font-mono mt-1">&rarr; 자세히</span>
@@ -206,74 +203,74 @@ export default function ServiceCategoryHubPage({
         {/* 4. 선택하는 이유 */}
         <section className="space-y-6">
           <div className="text-center max-w-2xl mx-auto space-y-2">
-            <span className="text-xs font-bold text-[#c5a059] uppercase tracking-wider">WHY US</span>
-            <h2 className="text-2xl font-extrabold text-white">{category.name}, 수리위키를 선택하는 이유</h2>
+            <span className="text-xs font-bold text-emerald-800 uppercase tracking-wider">WHY US</span>
+            <h2 className="text-2xl font-extrabold text-slate-900">{category.name}, 수리위키를 선택하는 이유</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="p-6 bg-[#142334]/80 border border-slate-700 rounded-2xl text-center space-y-1">
-              <p className="text-xl font-black text-[#c5a059]">당일 출장</p>
-              <p className="text-xs text-slate-400">연락 후 빠른 현장 방문</p>
+            <div className="p-6 bg-slate-50 border border-slate-200 rounded-2xl text-center space-y-1 shadow-xs">
+              <p className="text-xl font-black text-emerald-700">당일 출장</p>
+              <p className="text-xs text-slate-600">연락 후 빠른 현장 방문</p>
             </div>
-            <div className="p-6 bg-[#142334]/80 border border-slate-700 rounded-2xl text-center space-y-1">
-              <p className="text-xl font-black text-[#c5a059]">부분 시공</p>
-              <p className="text-xs text-slate-400">손상 부위만 정밀 복원, 전체 교체 대비 비용 절감</p>
+            <div className="p-6 bg-slate-50 border border-slate-200 rounded-2xl text-center space-y-1 shadow-xs">
+              <p className="text-xl font-black text-emerald-700">부분 시공</p>
+              <p className="text-xs text-slate-600">손상 부위만 정밀 복원, 전체 교체 대비 비용 절감</p>
             </div>
-            <div className="p-6 bg-[#142334]/80 border border-slate-700 rounded-2xl text-center space-y-1">
-              <p className="text-xl font-black text-[#c5a059]">전지역 출장</p>
-              <p className="text-xs text-slate-400">서울·경기·인천 전 지역 출장 가능</p>
+            <div className="p-6 bg-slate-50 border border-slate-200 rounded-2xl text-center space-y-1 shadow-xs">
+              <p className="text-xl font-black text-emerald-700">전지역 출장</p>
+              <p className="text-xs text-slate-600">서울·경기·인천 전 지역 출장 가능</p>
             </div>
           </div>
         </section>
 
         {/* 5. [카테고리]란 + 표준 시공 프로세스 */}
-        <section className="bg-[#142334]/60 border border-slate-700 rounded-3xl p-8 space-y-6">
+        <section className="bg-slate-50 border border-slate-200 rounded-3xl p-8 space-y-6">
           <div className="space-y-2">
-            <h2 className="text-2xl font-extrabold text-white">{category.name} 서비스란?</h2>
-            <p className="text-sm text-slate-300 leading-relaxed max-w-3xl">
+            <h2 className="text-2xl font-extrabold text-slate-900">{category.name} 서비스란?</h2>
+            <p className="text-sm text-slate-700 leading-relaxed max-w-3xl">
               {category.name} 서비스는 전체 자재를 교체하지 않고, 손상되거나 오염된 부위만 정밀하게 진단·복원하는
               작업입니다. 파손·찍힘·들뜸·부식 등 다양한 손상을 적은 범위로 해결할 수 있어 시간과 비용을
               절약할 수 있습니다.
             </p>
           </div>
 
-          <h3 className="text-lg font-bold text-white pt-2">🛠️ {category.name} 4단계 표준 시공 프로세스</h3>
+          <h3 className="text-lg font-bold text-slate-900 pt-2">🛠️ {category.name} 4단계 표준 시공 프로세스</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
-            <div className="p-5 bg-slate-900/80 rounded-2xl border border-slate-700 space-y-2">
-              <span className="text-xl font-bold text-[#c5a059] font-mono">01</span>
-              <h4 className="font-bold text-white text-sm">전화 상담 & 정밀 진단</h4>
-              <p className="text-slate-400 leading-relaxed">전화로 현장 상황을 들려주시면 마스터가 파손 심도와 자재 종류를 파악합니다.</p>
+            <div className="p-5 bg-white rounded-2xl border border-slate-200 space-y-2 shadow-xs">
+              <span className="text-xl font-black text-emerald-700 font-mono">01</span>
+              <h4 className="font-bold text-slate-900 text-sm">전화 상담 & 정밀 진단</h4>
+              <p className="text-slate-600 leading-relaxed">전화로 현장 상황을 들려주시면 마스터가 파손 심도와 자재 종류를 파악합니다.</p>
             </div>
-            <div className="p-5 bg-slate-900/80 rounded-2xl border border-slate-700 space-y-2">
-              <span className="text-xl font-bold text-[#c5a059] font-mono">02</span>
-              <h4 className="font-bold text-white text-sm">정찰제 견적 확정</h4>
-              <p className="text-slate-400 leading-relaxed">추가 출장비가 없는 정찰제 견적가를 안내해 드리고 일정을 조율합니다.</p>
+            <div className="p-5 bg-white rounded-2xl border border-slate-200 space-y-2 shadow-xs">
+              <span className="text-xl font-black text-emerald-700 font-mono">02</span>
+              <h4 className="font-bold text-slate-900 text-sm">정찰제 견적 확정</h4>
+              <p className="text-slate-600 leading-relaxed">추가 출장비가 없는 정찰제 견적가를 안내해 드리고 일정을 조율합니다.</p>
             </div>
-            <div className="p-5 bg-slate-900/80 rounded-2xl border border-slate-700 space-y-2">
-              <span className="text-xl font-bold text-[#c5a059] font-mono">03</span>
-              <h4 className="font-bold text-white text-sm">특수 퍼티 & 성형 샌딩</h4>
-              <p className="text-slate-400 leading-relaxed">특수 성형 충전재로 원래 단단함 이상으로 보강하고 정밀 수평을 맞춥니다.</p>
+            <div className="p-5 bg-white rounded-2xl border border-slate-200 space-y-2 shadow-xs">
+              <span className="text-xl font-black text-emerald-700 font-mono">03</span>
+              <h4 className="font-bold text-slate-900 text-sm">특수 퍼티 & 성형 샌딩</h4>
+              <p className="text-slate-600 leading-relaxed">특수 성형 충전재로 원래 단단함 이상으로 보강하고 정밀 수평을 맞춥니다.</p>
             </div>
-            <div className="p-5 bg-slate-900/80 rounded-2xl border border-slate-700 space-y-2">
-              <span className="text-xl font-bold text-[#c5a059] font-mono">04</span>
-              <h4 className="font-bold text-white text-sm">패턴 조색 & A/S 발급</h4>
-              <p className="text-slate-400 leading-relaxed">동일 질감 마감 후 1년 무상 품질보증서를 발급합니다.</p>
+            <div className="p-5 bg-white rounded-2xl border border-slate-200 space-y-2 shadow-xs">
+              <span className="text-xl font-black text-emerald-700 font-mono">04</span>
+              <h4 className="font-bold text-slate-900 text-sm">패턴 조색 & A/S 발급</h4>
+              <p className="text-slate-600 leading-relaxed">동일 질감 마감 후 1년 무상 품질보증서를 발급합니다.</p>
             </div>
           </div>
         </section>
 
         {/* 6. FAQ */}
         <section className="space-y-4">
-          <h2 className="text-xl font-bold text-white">자주 묻는 질문</h2>
+          <h2 className="text-xl font-bold text-slate-900">자주 묻는 질문</h2>
           <div className="space-y-3">
-            <div className="bg-slate-800/60 border border-slate-700 rounded-lg p-4 space-y-2">
-              <h3 className="font-semibold text-sm text-blue-400">Q. {category.name} 서비스가 전체 교체와 어떻게 다른가요?</h3>
-              <p className="text-xs text-slate-300 leading-relaxed">
+            <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 space-y-2">
+              <h3 className="font-semibold text-sm text-emerald-800">Q. {category.name} 서비스가 전체 교체와 어떻게 다른가요?</h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
                 손상된 부위만 정밀 복원하기 때문에 작업 시간이 짧고 비용도 크게 절감됩니다.
               </p>
             </div>
-            <div className="bg-slate-800/60 border border-slate-700 rounded-lg p-4 space-y-2">
-              <h3 className="font-semibold text-sm text-blue-400">Q. 지역 상관없이 출장이 가능한가요?</h3>
-              <p className="text-xs text-slate-300 leading-relaxed">
+            <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 space-y-2">
+              <h3 className="font-semibold text-sm text-emerald-800">Q. 지역 상관없이 출장이 가능한가요?</h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
                 서울·경기·인천 전 지역에 전속 출장팀이 배치되어 있어 대부분 당일 방문이 가능합니다.
               </p>
             </div>
@@ -281,14 +278,14 @@ export default function ServiceCategoryHubPage({
         </section>
 
         {/* 7. CTA */}
-        <div className="p-8 bg-gradient-to-r from-blue-900/60 to-slate-900 border border-blue-500/30 rounded-3xl text-center space-y-4">
-          <h3 className="text-2xl font-extrabold text-white">
+        <div className="p-8 bg-gradient-to-r from-emerald-50 via-teal-50 to-slate-50 border border-emerald-200 rounded-3xl text-center space-y-4 shadow-xs">
+          <h3 className="text-2xl font-extrabold text-slate-900">
             {category.name} 빠르게 상담을 받고 싶으신가요?
           </h3>
           <div className="pt-2">
             <Link
               href={consultHref}
-              className="inline-block px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg transition text-sm"
+              className="inline-block px-8 py-4 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-xl shadow-md transition text-sm"
             >
               🚀 {category.name} 1:1 상담 신청서 작성하기
             </Link>

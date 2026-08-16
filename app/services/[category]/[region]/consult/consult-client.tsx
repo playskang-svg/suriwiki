@@ -83,24 +83,24 @@ function ConsultContent({ params }: { params: { category: string; region: string
   const parentHref = `/services/${params.category}/${params.region}`;
 
   if (!company) {
-    return <div className="min-h-screen bg-slate-900 text-white p-8">로딩 중...</div>;
+    return <div className="min-h-screen bg-white text-slate-900 p-8">로딩 중...</div>;
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
       <SiteHeader companyProfile={company} categorySlug={params.category} regionSlug={params.region} />
 
       <main className="flex-1 mx-auto max-w-2xl w-full px-4 py-10 space-y-8">
         {/* Keyword Header Banner */}
-        <div className="text-center space-y-3 bg-gradient-to-br from-slate-800 to-blue-950/60 p-6 md:p-8 rounded-2xl border border-slate-700/80 shadow-xl">
-          <span className="inline-block px-3 py-1 bg-blue-500/10 text-blue-400 border border-blue-500/30 rounded-full text-xs font-semibold">
+        <div className="text-center space-y-3 bg-gradient-to-br from-white via-emerald-50/50 to-teal-50/30 p-6 md:p-8 rounded-2xl border border-emerald-200 shadow-xs">
+          <span className="inline-block px-3 py-1 bg-emerald-100/90 text-emerald-900 border border-emerald-300 rounded-full text-xs font-bold shadow-xs">
             {region.name} × {category.name} 1:1 전용 상담 센터
           </span>
-          <h1 className="text-2xl md:text-3xl font-extrabold text-white">
-            {region.name} <span className="text-blue-400">{category.name}</span> 빠른 상담 및 견적 신청
+          <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">
+            {region.name} <span className="text-emerald-700">{category.name}</span> 빠른 상담 및 견적 신청
           </h1>
-          <p className="text-xs md:text-sm text-slate-300">
-            지역과 현장 상황을 남겨주시면 <strong className="text-white">{company.companyName}</strong>의 담당 마스터가 5분 내 연락드립니다.
+          <p className="text-xs md:text-sm text-slate-600">
+            지역과 현장 상황을 남겨주시면 <strong className="text-slate-900 font-extrabold">{company.companyName}</strong>의 담당 마스터가 5분 내 연락드립니다.
           </p>
         </div>
 
@@ -108,48 +108,48 @@ function ConsultContent({ params }: { params: { category: string; region: string
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <a
             href={`tel:${company.phoneNumber.replace(/[^0-9]/g, "")}`}
-            className="p-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-center transition shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2"
+            className="p-4 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-bold text-center transition shadow-md flex items-center justify-center gap-2"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
             </svg>
             <div className="text-left">
-              <span className="text-[10px] block opacity-80 font-normal">긴급 출동 / 즉시 전화 연결</span>
+              <span className="text-[10px] block opacity-90 font-normal">긴급 출동 / 즉시 전화 연결</span>
               <span className="text-sm font-mono">{company.phoneNumber}</span>
             </div>
           </a>
 
-          <div className="p-4 bg-slate-800/80 border border-slate-700 rounded-xl text-xs space-y-1 flex flex-col justify-center">
-            <span className="font-semibold text-slate-300">운영 및 상담 시간</span>
-            <span className="text-slate-400">{company.operatingHours}</span>
+          <div className="p-4 bg-white border border-slate-200 rounded-xl text-xs space-y-1 flex flex-col justify-center shadow-xs">
+            <span className="font-bold text-slate-800">운영 및 상담 시간</span>
+            <span className="text-slate-600">{company.operatingHours}</span>
           </div>
         </div>
 
         {/* Preparation Guide Card */}
-        <div className="bg-slate-800/60 border border-slate-700 rounded-xl p-5 space-y-2">
-          <h2 className="text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center gap-1">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="bg-white border border-slate-200 rounded-xl p-5 space-y-2 shadow-xs">
+          <h2 className="text-xs font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1">
+            <svg className="w-4 h-4 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span>시공 팀장의 안내 사항</span>
           </h2>
-          <p className="text-xs text-slate-300 leading-relaxed font-mono">
+          <p className="text-xs text-slate-700 leading-relaxed font-mono">
             &quot;{company.prepInstructions || "현장 상황과 지역, 연락 가능한 시간을 남겨주시면 빠르게 안내해 드립니다."}&quot;
           </p>
         </div>
 
-        {/* Consultation Form (사진 첨부 없이 연락처 기반으로만 접수) */}
-        <div className="bg-slate-800/90 border border-slate-700 rounded-2xl p-6 md:p-8 shadow-2xl space-y-6">
-          <h2 className="text-lg font-bold text-white border-b border-slate-700/80 pb-3 flex items-center justify-between">
+        {/* Consultation Form */}
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm space-y-6">
+          <h2 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center justify-between">
             <span>온라인 견적 상담 신청서</span>
-            <span className="text-xs text-slate-400 font-normal">비공개 1:1 안전 접수</span>
+            <span className="text-xs text-slate-500 font-normal">비공개 1:1 안전 접수</span>
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-4 text-xs">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block font-semibold text-slate-300 mb-1">
-                  고객 성함 <span className="text-red-400">*</span>
+                <label className="block font-bold text-slate-700 mb-1">
+                  고객 성함 <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -157,13 +157,13 @@ function ConsultContent({ params }: { params: { category: string; region: string
                   onChange={(e) => setCustomerName(e.target.value)}
                   required
                   placeholder="예: 홍길동"
-                  className="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-300 mb-1">
-                  연락처 <span className="text-red-400">*</span>
+                <label className="block font-bold text-slate-700 mb-1">
+                  연락처 <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -171,14 +171,14 @@ function ConsultContent({ params }: { params: { category: string; region: string
                   onChange={(e) => setCustomerPhone(e.target.value)}
                   required
                   placeholder="010-0000-0000"
-                  className="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 font-mono"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block font-semibold text-slate-300 mb-1">
-                현장 상태 및 수리 요청 내용 <span className="text-red-400">*</span>
+              <label className="block font-bold text-slate-700 mb-1">
+                현장 상태 및 수리 요청 내용 <span className="text-red-500">*</span>
               </label>
               <textarea
                 rows={4}
@@ -186,14 +186,14 @@ function ConsultContent({ params }: { params: { category: string; region: string
                 onChange={(e) => setContent(e.target.value)}
                 required
                 placeholder="예: 안방 문틀 하단이 습기로 부식되어 필름이 일어났습니다. 방문 복원 비용과 가능한 날짜가 궁금합니다."
-                className="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 leading-relaxed"
+                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 leading-relaxed"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg shadow-blue-600/30 transition text-sm flex items-center justify-center gap-2"
+              className="w-full py-4 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-xl shadow-md transition text-sm flex items-center justify-center gap-2"
             >
               {loading ? (
                 <span>접수 처리 중...</span>
@@ -210,7 +210,7 @@ function ConsultContent({ params }: { params: { category: string; region: string
         </div>
 
         <div className="text-center pt-2">
-          <Link href={parentHref} className="text-xs text-slate-400 hover:text-slate-200 transition underline">
+          <Link href={parentHref} className="text-xs text-slate-500 hover:text-slate-900 transition underline">
             ← {region.name} {category.name} 전용 시공 안내 페이지(홈)로 이동하기
           </Link>
         </div>
@@ -218,31 +218,31 @@ function ConsultContent({ params }: { params: { category: string; region: string
 
       {/* Confirmation Modal */}
       {submittedLeadId && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-8 shadow-2xl text-center space-y-5">
-            <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto text-2xl font-bold">
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 rounded-2xl max-w-md w-full p-8 shadow-2xl text-center space-y-5">
+            <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto text-2xl font-bold">
               ✓
             </div>
             <div className="space-y-2">
-              <h3 className="text-xl font-bold text-white">상담 신청이 완료되었습니다!</h3>
-              <p className="text-xs text-slate-300">
-                접수번호: <code className="text-blue-400 font-mono font-bold">{submittedLeadId}</code>
+              <h3 className="text-xl font-bold text-slate-900">상담 신청이 완료되었습니다!</h3>
+              <p className="text-xs text-slate-600">
+                접수번호: <code className="text-emerald-800 font-mono font-bold">{submittedLeadId}</code>
               </p>
-              <p className="text-xs text-slate-400 leading-relaxed pt-2">
-                <strong className="text-white">{company.companyName}</strong>의 마스터 팀장이 내용 확인 후
-                <span className="text-blue-400 font-bold"> {customerPhone}</span> (으)로 5분 이내 전화를 드립니다.
+              <p className="text-xs text-slate-600 leading-relaxed pt-2">
+                <strong className="text-slate-900 font-bold">{company.companyName}</strong>의 마스터 팀장이 내용 확인 후
+                <span className="text-emerald-700 font-bold"> {customerPhone}</span> (으)로 5분 이내 전화를 드립니다.
               </p>
             </div>
-            <div className="pt-4 border-t border-slate-700 flex gap-3">
+            <div className="pt-4 border-t border-slate-100 flex gap-3">
               <Link
                 href={parentHref}
-                className="flex-1 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-semibold transition"
+                className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg text-xs font-semibold transition"
               >
                 확인
               </Link>
               <a
                 href={`tel:${company.phoneNumber.replace(/[^0-9]/g, "")}`}
-                className="flex-1 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold transition"
+                className="flex-1 py-3 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-semibold transition shadow-xs"
               >
                 지금 즉시 전화하기
               </a>
