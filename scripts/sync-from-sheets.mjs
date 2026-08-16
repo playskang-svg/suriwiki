@@ -2,39 +2,7 @@ import { readFileSync, writeFileSync, existsSync } from 'node:fs'
 import path from 'node:path'
 
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID || '13xUm0roOtpRjfe0kMeYO2dlTSkGWnsHvqtCMlDmj5X4'
-let rawUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://rgdejzrlszpesuodjejw.supabase.co'
-const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-
-const projectMatch = rawUrl.match(/project\/([a-z0-9]+)/i)
-if (projectMatch) {
-  rawUrl = `https://${projectMatch}.supabase.co`
-}
-const url = rawUrl.replace(/\/$/, '')
-
-if (!url || !serviceKey) {
-  console.error('[sync-from-sheets] 환경변수(URL 또는 SERVICE_ROLE_KEY)가 없습니다.')
-  process.exit(1)
-}
-
-const headers = {
-  'apikey': serviceKey,
-  'Authorization': `Bearer ${serviceKey}`,
-  'Content-Type': 'application/json',
-}
-
-async function fetchSheetCsv(sheetName) {
-  const csvUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`
-  const res = await fetch(csvUrl)
-  if (!res.ok) throw new Error(`[${sheetName}] 구글 시트 조회 실패 (${res.status})`)
-  return parseCsv(await res.text())
-}
-
-function parseCsv(text) {
-  const lines = text.split('\n').filter((l) => l.trim().length > 0)
-  if (lines.length === 0) return []
-  const headersArr = parseCsvLine(lines[0])
-  const rows = []
-  for (let i = 1; i < lines.length; i++) {
+const url = 'https://rgdejzrlszpesuodjejw.supabase.co'; i < lines.length; i++) {
     const values = parseCsvLine(lines[i])
     if (values.length === 0 || !values.some((v) => v.length > 0)) continue
     const obj = {}
