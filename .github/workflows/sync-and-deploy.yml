@@ -1,0 +1,48 @@
+name: Sync from Google Sheets to GitHub & Supabase
+
+on:
+  schedule:
+    # 매일 한국 시간 오전 6시(UTC 21:00)에 자동 동기화 및 깃허브 자동 커밋
+    - cron: '0 21 * * *'
+  workflow_dispatch:
+    # 깃허브 웹 화면에서 [Run workflow] 버튼으로 언제든 즉시 실행 가능
+
+permissions:
+  contents: write
+
+jobs:
+  sync-sheets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Sync Data from Google Sheets to Supabase
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GOOGLE_SHEET_ID: '13xUm0roOtpRjfe0kMeYO2dlTSkGWnsHvqtCMlDmj5X4'
+        run: node scripts/sync-from-sheets.mjs
+
+      - name: Auto-Commit & Push Changes to GitHub
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add .
+          if git diff --staged --quiet; then
+            echo "No code changes to commit."
+          else
+            git commit -m "chore(auto): sync from Google Sheets [skip ci]"
+            git push origin main
+          fi
