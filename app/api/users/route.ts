@@ -10,7 +10,7 @@ import {
 /** 요청 쿠키에서 세션 사용자를 읽어 role을 확인한다 (마스터 전용 작업 서버측 방어용). */
 function getSessionRole(request: Request): string | null {
   const cookieHeader = request.headers.get("cookie") || "";
-  const match = cookieHeader.match(/sooriwiki_session=([^;]+)/);
+  const match = cookieHeader.match(/suriwiki_session=([^;]+)/);
   if (!match) return null;
   try {
     const session = JSON.parse(decodeURIComponent(match[1]));

@@ -6,7 +6,7 @@ export function middleware(request: NextRequest) {
 
   // Protect /admin routes except /admin/login
   if (pathname.startsWith("/admin") && !pathname.startsWith("/admin/login")) {
-    const sessionCookie = request.cookies.get("sooriwiki_session");
+    const sessionCookie = request.cookies.get("suriwiki_session");
 
     if (!sessionCookie || !sessionCookie.value) {
       const loginUrl = new URL("/admin/login", request.url);

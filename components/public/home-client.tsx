@@ -151,7 +151,7 @@ export function HomeClient({
       <SiteHeader companyProfile={companyProfile} categoryName="수리위키" />
 
       <main className="flex-1 space-y-24 pb-24">
-        {/* 1. HERO BANNER - SooriWiki Official Main Header */}
+        {/* 1. HERO BANNER - suriwiki Official Main Header */}
         <section id="hero" className="relative min-h-[580px] bg-slate-50 flex flex-col justify-between overflow-hidden border-b border-slate-200">
           <div className="absolute inset-0 z-0">
             <img
@@ -560,7 +560,7 @@ export function HomeClient({
           </div>
         </section>
 
-        {/* 7. WHY SOORI WIKI & REGIONAL EXPERT TRAINING ("왜 좋은지 & 지역별 전문가 양성") */}
+        {/* 7. WHY SURI WIKI & REGIONAL EXPERT TRAINING ("왜 좋은지 & 지역별 전문가 양성") */}
         <section id="why-us" className="mx-auto max-w-7xl px-4 space-y-12">
           <div className="bg-slate-50 border border-slate-200 rounded-3xl p-8 md:p-12 space-y-8">
             <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-slate-200 pb-4 gap-4">

@@ -1,4 +1,4 @@
-# 제품 요구사항 정의서(PRD): 수리위키(SooriWiki) 통합 자동화 플랫폼 v2.3
+# 제품 요구사항 정의서(PRD): 수리위키(suriwiki) 통합 자동화 플랫폼 v2.3
 
 > 문서 상태: 상담문의·회사정보 배포 통합 개정본  
 > 기준일: 2026-08-05  
@@ -7,7 +7,7 @@
 
 ## 1. 프로젝트 개요
 
-- **브랜드명:** 수리위키(SooriWiki)
+- **브랜드명:** 수리위키(suriwiki)
 - **슬로건:** 우리 동네 수리 전문가를 찾는 가장 빠른 방법
 - **목적:** 현장 전문가 팀이 업로드한 실제 시공 데이터를 기반으로 지역별·공정별 고품질 페이지를 자동 생성하고, **세부 키워드 단위로 독립 운영 가능한 "메인사이트"를 팀·업체에 분양**하며, 제작·분양·문의·검색노출·성과를 통합 관리하는 웹사이트 빌더 및 운영 플랫폼을 구축한다.
 - **핵심 운영 구조(벤치마킹 기준):**
@@ -72,13 +72,13 @@
 ### 3.2 권장 URL 체계
 
 - 대표 도메인의 검색 권위를 집중하기 위해 공개 검색 페이지는 원칙적으로 **단일 대표 도메인의 디렉터리 구조**를 사용한다.
-- 권장 형식: `https://sooriwiki.com/services/{category}/{region}/`
-- 공정 허브: `https://sooriwiki.com/services/{category}/`
-- 지역 허브: `https://sooriwiki.com/regions/{region}/`
-- 시공 사례: `https://sooriwiki.com/cases/{case-slug}/`
-- 상담문의 페이지: `https://sooriwiki.com/services/{category}/{region}/consult/` — 반드시 상위 지역×공정 페이지 아래의 하위 경로로 생성해 어떤 키워드에서 유입됐는지 URL만으로 식별 가능해야 한다.
+- 권장 형식: `https://suriwiki.com/services/{category}/{region}/`
+- 공정 허브: `https://suriwiki.com/services/{category}/`
+- 지역 허브: `https://suriwiki.com/regions/{region}/`
+- 시공 사례: `https://suriwiki.com/cases/{case-slug}/`
+- 상담문의 페이지: `https://suriwiki.com/services/{category}/{region}/consult/` — 반드시 상위 지역×공정 페이지 아래의 하위 경로로 생성해 어떤 키워드에서 유입됐는지 URL만으로 식별 가능해야 한다.
 - 슬러그는 영문 소문자, 숫자, 하이픈만 허용하며 한 번 발행한 URL은 변경하지 않는 것을 원칙으로 한다.
-- 기존 PRD의 `gangnam.sooriwiki.com/door-repair` 방식은 팀 또는 분양사이트 분리 목적일 때만 허용한다. 동일 콘텐츠를 서브도메인과 대표 도메인에 중복 발행하지 않는다.
+- 기존 PRD의 `gangnam.suriwiki.com/door-repair` 방식은 팀 또는 분양사이트 분리 목적일 때만 허용한다. 동일 콘텐츠를 서브도메인과 대표 도메인에 중복 발행하지 않는다.
 - URL 변경 시 자바스크립트 이동이 아닌 HTTP 301 리다이렉트를 생성한다.
 
 ## 4. 거미줄형 내부링크 구조

@@ -21,7 +21,7 @@ export function SiteHeader({
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 text-slate-900 shadow-xs font-sans transition">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-        {/* Brand Logo - SooriWiki */}
+        {/* Brand Logo - suriwiki */}
         <Link href="/" className="flex items-center gap-3 group">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white flex items-center justify-center font-black text-lg shadow-sm group-hover:scale-105 transition">
             W

@@ -2,7 +2,7 @@
   "name": "suriwiki",
   "private": true,
   "version": "2.3.0",
-  "description": "수리위키(SooriWiki) 통합 자동화 웹사이트 빌더 & 운영 플랫폼",
+  "description": "수리위키(suriwiki) 통합 자동화 웹사이트 빌더 & 운영 플랫폼",
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "next build",

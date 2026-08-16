@@ -1,5 +1,5 @@
 -- ============================================================================
--- 수리위키(SooriWiki) v2.3 Supabase PostgreSQL Database Schema
+-- 수리위키(suriwiki) v2.3 Supabase PostgreSQL Database Schema
 -- ============================================================================
 
 -- 1. Company Profiles Table (회사/팀 프로필)
@@ -78,13 +78,13 @@ CREATE POLICY "Allow full access for service role leads" ON consultation_leads F
 
 -- Storage Bucket Setup for Images
 INSERT INTO storage.buckets (id, name, public)
-VALUES ('sooriwiki-uploads', 'sooriwiki-uploads', true)
+VALUES ('suriwiki-uploads', 'suriwiki-uploads', true)
 ON CONFLICT (id) DO NOTHING;
 
 CREATE POLICY "Public Read Access on Uploads"
 ON storage.objects FOR SELECT
-USING (bucket_id = 'sooriwiki-uploads');
+USING (bucket_id = 'suriwiki-uploads');
 
 CREATE POLICY "Public Upload Access on Uploads"
 ON storage.objects FOR INSERT
-WITH CHECK (bucket_id = 'sooriwiki-uploads');
+WITH CHECK (bucket_id = 'suriwiki-uploads');

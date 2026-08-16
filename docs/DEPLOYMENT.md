@@ -1,4 +1,4 @@
-# 수리위키(SooriWiki) Vercel 프로덕션 배포 및 22개 멀티 도메인 설정 가이드
+# 수리위키(suriwiki) Vercel 프로덕션 배포 및 22개 멀티 도메인 설정 가이드
 
 본 문서는 수리위키 서비스의 Vercel 프로덕션 배포, 환경변수 구성, 그리고 22개 메인사이트 커스텀 도메인 매핑 절차를 안내합니다.
 
@@ -63,6 +63,6 @@ Vercel의 **Single Project Multi-Domain** 기능을 사용하여 22개 공정 �
 
 ## 4. 배포 후 상태 확인
 
-- **공개 라우트:** `https://sooriwiki.com/services/moon-suri/gangnam` 접속 테스트
-- **1:1 상담 라우트:** `https://sooriwiki.com/services/moon-suri/gangnam/consult` 접속 후 사진 첨부 접수 테스트
-- **관리자 라우트:** `https://sooriwiki.com/admin/login` 접속 후 로그인 및 회사정보 배포 확인
+- **공개 라우트:** `https://suriwiki.com/services/moon-suri/gangnam` 접속 테스트
+- **1:1 상담 라우트:** `https://suriwiki.com/services/moon-suri/gangnam/consult` 접속 후 사진 첨부 접수 테스트
+- **관리자 라우트:** `https://suriwiki.com/admin/login` 접속 후 로그인 및 회사정보 배포 확인

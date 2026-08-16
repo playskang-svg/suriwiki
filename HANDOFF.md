@@ -1,4 +1,4 @@
-# 수리위키(SooriWiki) v2.3 인수인계 및 작업 보고서 (HANDOFF)
+# 수리위키(suriwiki) v2.3 인수인계 및 작업 보고서 (HANDOFF)
 
 > **최종 수정일:** 2026-08-06  
 > **현재 상태:** 깃허브 저장소, Supabase 클라우드 DB, Vercel 실서버 자동 배포 파이프라인 100% 가동 중  
@@ -10,7 +10,7 @@
 
 ## 1. 프로젝트 개요
 
-**수리위키 (SooriWiki)** — 대한민국 1등 집수리·복원 지식 백과 & 수도권 현장 전문가 연합 플랫폼.  
+**수리위키 (suriwiki)** — 대한민국 1등 집수리·복원 지식 백과 & 수도권 현장 전문가 연합 플랫폼.  
 문틀, 마루, 도배, 필름, 타일, 계단, 문지방 수리 등 22개 시공 공정과 964개 수도권 세부 지역 키워드 페이지를 자동 생성하고, 1:1 상담 신청 및 현장 사진 접수, 영업 배포 관리, 1위 키워드 순위 추적을 통합 처리합니다.
 
 ---
@@ -48,7 +48,7 @@
 
 ### 6) 깃허브 & Supabase & Vercel 3대 클라우드 인프라 연동
 - **깃허브 저장소:** [https://github.com/playskang-svg/suriwiki](https://github.com/playskang-svg/suriwiki) 푸시 완료 (`.gitignore`에 `public/uploads/*` 제외 처리로 초경량 0.5MB 관리).
-- **Supabase Cloud DB:** 프로젝트 `rgdejzrlszpesuodjejw`에 `supabase/schema.sql` 스키마 실행 완료 (`company_profiles`, `consultation_leads`, `keyword_pages`, `contact_distributions`, `sooriwiki-uploads` 버킷 `HTTP 200 OK` 정상 응답 검증 완료).
+- **Supabase Cloud DB:** 프로젝트 `rgdejzrlszpesuodjejw`에 `supabase/schema.sql` 스키마 실행 완료 (`company_profiles`, `consultation_leads`, `keyword_pages`, `contact_distributions`, `suriwiki-uploads` 버킷 `HTTP 200 OK` 정상 응답 검증 완료).
 - **Vercel 자동 배포:** 깃허브 `main` 브랜치 푸시 시 1초 만에 자동 실서버 재배포 연동.
 
 ---

@@ -18,7 +18,7 @@ export function generateKeywordPageMetadata({
 }: KeywordSeoProps): Metadata {
   const title = `${regionName} ${categoryName} 전문 출장복원 및 시공 | 수리위키 ${companyProfile.companyName}`;
   const description = `${regionName} 지역 ${categoryName} 전화 상담 기반 고품질 수리 전문. ${companyProfile.companyName} (${companyProfile.phoneNumber}). 파손·부식·스크래치 5분 빠른 전화 견적.`;
-  const url = `https://sooriwiki.com/services/${categorySlug}/${regionSlug}/`;
+  const url = `https://suriwiki.com/services/${categorySlug}/${regionSlug}/`;
 
   return {
     title,
@@ -32,7 +32,7 @@ export function generateKeywordPageMetadata({
       type: "website",
       images: [
         {
-          url: "https://sooriwiki.com/og-image.jpg",
+          url: "https://suriwiki.com/og-image.jpg",
           width: 1200,
           height: 630,
           alt: `${regionName} ${categoryName} 수리전후 사례`,
@@ -67,7 +67,7 @@ export function generateCategoryPageMetadata({
 }: CategorySeoProps): Metadata {
   const title = `${categoryName} 전문 업체 | 수도권 출장 복원·시공 - 수리위키`;
   const description = `${categoryName} 파손·부식·마모 부분 복원 전문. 서울·경기·인천 전지역 출장, 전화 상담 5분 견적. ${companyProfile.companyName}이(가) 지역별 ${categoryName} 페이지를 통해 안내해드립니다.`;
-  const url = `https://sooriwiki.com/services/${categorySlug}/`;
+  const url = `https://suriwiki.com/services/${categorySlug}/`;
 
   return {
     title,
@@ -81,7 +81,7 @@ export function generateCategoryPageMetadata({
       type: "website",
       images: [
         {
-          url: "https://sooriwiki.com/og-image.jpg",
+          url: "https://suriwiki.com/og-image.jpg",
           width: 1200,
           height: 630,
           alt: `${categoryName} 수리 전후 사례`,
@@ -99,7 +99,7 @@ export function generateCategoryPageMetadata({
 }
 
 export function generateCategoryJsonLd({ categoryName, categorySlug }: Omit<CategorySeoProps, "companyProfile">) {
-  const url = `https://sooriwiki.com/services/${categorySlug}/`;
+  const url = `https://suriwiki.com/services/${categorySlug}/`;
 
   const serviceSchema = {
     "@context": "https://schema.org",
@@ -113,7 +113,7 @@ export function generateCategoryJsonLd({ categoryName, categorySlug }: Omit<Cate
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "홈", item: "https://sooriwiki.com/" },
+      { "@type": "ListItem", position: 1, name: "홈", item: "https://suriwiki.com/" },
       { "@type": "ListItem", position: 2, name: `${categoryName} 허브`, item: url },
     ],
   };
@@ -128,7 +128,7 @@ export function generateJsonLd({
   regionSlug,
   companyProfile,
 }: KeywordSeoProps) {
-  const url = `https://sooriwiki.com/services/${categorySlug}/${regionSlug}/`;
+  const url = `https://suriwiki.com/services/${categorySlug}/${regionSlug}/`;
 
   const localBusinessSchema = {
     "@context": "https://schema.org",
@@ -157,13 +157,13 @@ export function generateJsonLd({
         "@type": "ListItem",
         position: 1,
         name: "홈",
-        item: "https://sooriwiki.com/",
+        item: "https://suriwiki.com/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: `${categoryName} 허브`,
-        item: `https://sooriwiki.com/services/${categorySlug}/`,
+        item: `https://suriwiki.com/services/${categorySlug}/`,
       },
       {
         "@type": "ListItem",

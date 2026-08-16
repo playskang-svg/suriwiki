@@ -8,6 +8,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/admin", "/dashboard", "/preview", "/api", "*/consult"],
     },
-    sitemap: "https://sooriwiki.com/sitemap.xml",
+    sitemap: "https://suriwiki.com/sitemap.xml",
   };
 }

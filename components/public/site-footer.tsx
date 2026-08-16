@@ -66,7 +66,7 @@ export function SiteFooter({ company }: { company: CompanyProfile }) {
       </div>
 
       <div className="border-t border-slate-200 bg-slate-200/60 px-4 py-4 text-center text-xs text-slate-600">
-        © {new Date().getFullYear()} {company.companyName}. All rights reserved. Powered by SooriWiki Engine.
+        © {new Date().getFullYear()} {company.companyName}. All rights reserved. Powered by suriwiki Engine.
       </div>
     </footer>
   );

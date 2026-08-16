@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { MAIN_CATEGORIES, REGIONS_DATA, getKeywordPages } from "@/lib/store";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://sooriwiki.com";
+  const baseUrl = "https://suriwiki.com";
   const now = new Date();
 
   // 1. Home (Level 0)

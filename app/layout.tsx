@@ -4,7 +4,7 @@ import "./globals.css";
 // 전역 메타데이터 기본값. 페이지별 override는 PRD 6.2(메타데이터)에 따라
 // 각 page.tsx의 generateMetadata에서 처리한다.
 export const metadata: Metadata = {
-  title: "수리위키(SooriWiki)",
+  title: "수리위키(suriwiki)",
   description: "우리 동네 수리 전문가를 찾는 가장 빠른 방법",
 };
 

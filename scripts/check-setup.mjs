@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 
 console.log("\n==================================================");
-console.log("🔍 수리위키(SooriWiki) v2.3 론칭 환경 진단 점검도구");
+console.log("🔍 수리위키(suriwiki) v2.3 론칭 환경 진단 점검도구");
 console.log("==================================================\n");
 
 const root = process.cwd();

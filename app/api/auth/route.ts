@@ -47,7 +47,7 @@ export async function POST(request: Request) {
     });
 
     response.cookies.set({
-      name: "sooriwiki_session",
+      name: "suriwiki_session",
       value: JSON.stringify(sessionUser),
       httpOnly: true,
       path: "/",
@@ -66,13 +66,13 @@ export async function POST(request: Request) {
 
 export async function DELETE() {
   const response = NextResponse.json({ success: true, message: "로그아웃되었습니다." });
-  response.cookies.delete("sooriwiki_session");
+  response.cookies.delete("suriwiki_session");
   return response;
 }
 
 export async function GET(request: Request) {
   const cookieHeader = request.headers.get("cookie") || "";
-  const match = cookieHeader.match(/sooriwiki_session=([^;]+)/);
+  const match = cookieHeader.match(/suriwiki_session=([^;]+)/);
 
   if (match) {
     try {
