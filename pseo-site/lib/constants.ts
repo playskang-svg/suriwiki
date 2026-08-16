@@ -49,7 +49,7 @@ export function getKeywordSiteUrl(keywordSlug: string): string {
 }
 
 /** DB(pseo_keywords.phone / pseo_page_listings.phone_override)가 비어있을 때 최후의 fallback */
-export const DEFAULT_PHONE = '1588-0000'
+export const DEFAULT_PHONE = '010-4684-8838'
 
 /**
  * 썸네일(OG 이미지) 크기. 표준 OG 비율(1200×630, 1.91:1)보다 세로로 넉넉하게 키웠다 —

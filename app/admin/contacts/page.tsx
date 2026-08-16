@@ -465,7 +465,7 @@ export default function AdminContactsPage() {
                       setEditingProfile({ ...editingProfile, phoneNumber: e.target.value })
                     }
                     required
-                    placeholder="예: 010-1234-5678 또는 1588-0000"
+                    placeholder="예: 010-1234-5678 또는 010-4684-8838"
                     className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border rounded font-mono"
                   />
                 </div>

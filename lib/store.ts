@@ -165,7 +165,7 @@ const initialProfiles: CompanyProfile[] = [
     companyName: "수리위키 마스터 본사",
     representativeName: "홍길동",
     businessRegistrationNo: "124-88-00123",
-    phoneNumber: "1588-0000",
+    phoneNumber: "010-4684-8838",
     operatingHours: "평일 08:00 ~ 20:00 (토요일 09:00 ~ 17:00, 일요일/공휴일 휴무)",
     serviceRegions: ["서울 전지역", "경기 전체", "인천 광역시"],
     prepInstructions: "시공 부위의 전체 모습과 파손 파트를 가깝게 2장 이상 촬영하여 문자로 보내주시면 5분 내 정확한 견적을 산출해 드립니다.",
