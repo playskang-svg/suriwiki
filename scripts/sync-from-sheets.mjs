@@ -2,11 +2,17 @@ import { readFileSync, writeFileSync, existsSync } from 'node:fs'
 import path from 'node:path'
 
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID || '13xUm0roOtpRjfe0kMeYO2dlTSkGWnsHvqtCMlDmj5X4'
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+let rawUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://rgdejzrlszpesuodjejw.supabase.co'
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
+const projectMatch = rawUrl.match(/project\/([a-z0-9]+)/i)
+if (projectMatch) {
+  rawUrl = `https://${projectMatch}.supabase.co`
+}
+const url = rawUrl.replace(/\/$/, '')
+
 if (!url || !serviceKey) {
-  console.error('[sync-from-sheets] 환경변수가 없습니다.')
+  console.error('[sync-from-sheets] 환경변수(URL 또는 SERVICE_ROLE_KEY)가 없습니다.')
   process.exit(1)
 }
 
@@ -19,7 +25,7 @@ const headers = {
 async function fetchSheetCsv(sheetName) {
   const csvUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`
   const res = await fetch(csvUrl)
-  if (!res.ok) throw new Error(`[${sheetName}] 조회 실패`)
+  if (!res.ok) throw new Error(`[${sheetName}] 구글 시트 조회 실패 (${res.status})`)
   return parseCsv(await res.text())
 }
 
@@ -208,12 +214,12 @@ async function syncListings() {
 }
 
 async function main() {
-  console.log('🚀 동기화 시작')
+  console.log(`🚀 [Google Sheets -> Supabase API] 동기화 시작 (${url})`)
   await syncKeywords()
   await syncVariants()
   await syncSections()
   await syncListings()
-  console.log('✨ 완료!')
+  console.log('✨ 모든 동기화 완료!')
 }
 
 main().catch((err) => {
