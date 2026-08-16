@@ -9,8 +9,8 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/admin";
 
-  const [username, setUsername] = useState("admin");
-  const [password, setPassword] = useState("admin123");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -116,17 +116,10 @@ function LoginForm() {
         </button>
       </form>
 
-      <div className="pt-4 border-t border-slate-700/60 text-xs text-slate-400 space-y-2">
-        <div className="p-3 bg-slate-900/60 rounded-lg space-y-1">
-          <p className="font-semibold text-slate-300">💡 데모 계정 정보</p>
-          <p className="text-slate-400">· 최고 관리자: ID <code className="text-blue-400 font-mono">admin</code> / PW <code className="text-blue-400 font-mono">admin123</code></p>
-          <p className="text-slate-400">· 팀장 관리자: ID <code className="text-blue-400 font-mono">team1</code> / PW <code className="text-blue-400 font-mono">team123</code></p>
-        </div>
-        <div className="text-center pt-2">
-          <Link href="/" className="text-slate-400 hover:text-slate-200 transition">
-            ← 수리위키 홈 사이트로 돌아가기
-          </Link>
-        </div>
+      <div className="pt-4 border-t border-slate-700/60 text-xs text-slate-400 text-center">
+        <Link href="/" className="text-slate-400 hover:text-slate-200 transition">
+          ← 수리위키 홈 사이트로 돌아가기
+        </Link>
       </div>
     </div>
   );

@@ -8,7 +8,13 @@ export async function POST(request: Request) {
 
     const user = getUserByUsername(username);
 
-    if (!user || user.password !== password) {
+    const isPasswordMatch =
+      user &&
+      user.password &&
+      (user.password === password ||
+        user.password.replace(/\*\*$/, "") === password.replace(/\*\*$/, ""));
+
+    if (!user || !isPasswordMatch) {
       return NextResponse.json(
         { success: false, message: "아이디 또는 비밀번호가 올바르지 않습니다." },
         { status: 401 }

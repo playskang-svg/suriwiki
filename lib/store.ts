@@ -140,7 +140,7 @@ const initialUsers: User[] = [
   {
     id: "usr_admin",
     username: "admin",
-    password: "admin123",
+    password: "admin123**",
     name: "최고 관리자 (HQ)",
     role: "super_admin",
     status: "approved",
@@ -149,7 +149,7 @@ const initialUsers: User[] = [
   {
     id: "usr_team1",
     username: "team1",
-    password: "team123",
+    password: "team123**",
     name: "강남/서초 문수리 팀장",
     role: "team_leader",
     status: "approved",
