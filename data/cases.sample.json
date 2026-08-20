@@ -1,0 +1,7 @@
+[
+ {"id":"case_gangnam_bath_doorframe_01","area":"gangnam","space":"bath","target":"doorframe","problem":"rot","has_cause":true,"image_count":8},
+ {"id":"case_gimhae_firedoor_sag_01","area":"gimhae","space":"entrance","target":"firedoor","problem":"sag","has_cause":true,"image_count":6},
+ {"id":"case_yangsan_glass_floorhinge_01","area":"yangsan","space":"entrance","target":"temperedglass","problem":"floorhinge","has_cause":true,"image_count":5},
+ {"id":"case_pyeongtaek_countertop_crack_01","area":"pyeongtaek","space":"kitchen","target":"countertop","problem":"crack","has_cause":false,"image_count":4},
+ {"id":"case_busan_nam_firedoor_sag_01","area":"busan-nam","space":"entrance","target":"firedoor","problem":"sag","has_cause":true,"image_count":4}
+]

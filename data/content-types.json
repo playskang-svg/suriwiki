@@ -1,0 +1,321 @@
+{
+  "version": "0.3",
+  "source": "Suriwiki CT·MOD 가이드 v0.3 · 01 CT 정의 / 03 CT별 필수·옵션 Module 조합",
+  "optional_range": [
+    2,
+    4
+  ],
+  "content_types": [
+    {
+      "code": "CT1",
+      "name": "문제·해결형",
+      "question": "왜 이런 문제가 생겼고 어떻게 해결하는가?",
+      "example": "욕실 문틀이 썩는 원인과 해결방법",
+      "page_types": [
+        "LANDING",
+        "WIKI"
+      ],
+      "required": [
+        "M01",
+        "M03",
+        "M04",
+        "M09"
+      ],
+      "required_alternatives": [],
+      "optional": [
+        "M05",
+        "M06",
+        "M07",
+        "M15",
+        "M16",
+        "M17",
+        "M19",
+        "M20",
+        "M21",
+        "M24"
+      ],
+      "note": "원인 근거가 없으면 CT5 검토 또는 HOLD",
+      "fallback_ct": "CT5",
+      "default_order": [
+        "M01",
+        "M03",
+        "M04",
+        "M05",
+        "M09",
+        "M19",
+        "M20",
+        "M24"
+      ]
+    },
+    {
+      "code": "CT2",
+      "name": "절차·튜토리얼형",
+      "question": "무엇을 준비하고 어떤 순서로 작업하는가?",
+      "example": "욕실 실리콘 셀프시공 방법",
+      "page_types": [
+        "WIKI"
+      ],
+      "required": [
+        "M01",
+        "M10",
+        "M16"
+      ],
+      "required_alternatives": [
+        [
+          "M11",
+          "M12"
+        ]
+      ],
+      "optional": [
+        "M03",
+        "M05",
+        "M15",
+        "M17",
+        "M18",
+        "M19",
+        "M20",
+        "M21",
+        "M22"
+      ],
+      "note": "준비물·안전·순서가 확인돼야 함",
+      "fallback_ct": null,
+      "default_order": [
+        "M01",
+        "M11",
+        "M10",
+        "M16",
+        "M15",
+        "M17",
+        "M20"
+      ]
+    },
+    {
+      "code": "CT3",
+      "name": "정보·지식형",
+      "question": "이 대상·재료·공구는 무엇이고 어떤 특징이 있는가?",
+      "example": "ABS 방문 특징, 실리콘 종류",
+      "page_types": [
+        "WIKI",
+        "TOPIC"
+      ],
+      "required": [
+        "M01"
+      ],
+      "required_alternatives": [
+        [
+          "M11",
+          "M12"
+        ]
+      ],
+      "optional": [
+        "M04",
+        "M09",
+        "M13",
+        "M14",
+        "M16",
+        "M17",
+        "M19",
+        "M20",
+        "M21",
+        "M22"
+      ],
+      "note": "재료·공구 등 설명 대상을 명확히 함",
+      "fallback_ct": null,
+      "default_order": [
+        "M01",
+        "M11",
+        "M13",
+        "M09",
+        "M21",
+        "M22"
+      ]
+    },
+    {
+      "code": "CT4",
+      "name": "비교·선택형",
+      "question": "A와 B는 무엇이 다르고 무엇을 선택해야 하는가?",
+      "example": "부분수리와 전체교체 비교",
+      "page_types": [
+        "WIKI",
+        "LANDING"
+      ],
+      "required": [
+        "M01",
+        "M13"
+      ],
+      "required_alternatives": [
+        [
+          "M07",
+          "M09",
+          "M11",
+          "M12"
+        ]
+      ],
+      "optional": [
+        "M05",
+        "M06",
+        "M07",
+        "M09",
+        "M11",
+        "M12",
+        "M14",
+        "M16",
+        "M19",
+        "M20",
+        "M21",
+        "M22"
+      ],
+      "note": "비교대상 모듈 1개 이상 필수. 비교대상에 따라 M07/M09/M11/M12 선택",
+      "fallback_ct": null,
+      "min_compare_items": 2,
+      "default_order": [
+        "M01",
+        "M07",
+        "M13",
+        "M06",
+        "M14",
+        "M19",
+        "M20",
+        "M21"
+      ]
+    },
+    {
+      "code": "CT5",
+      "name": "진단·판단형",
+      "question": "현재 상태에서 수리와 교체 중 무엇이 필요한가?",
+      "example": "썩은 문틀 하부만 수리할 수 있을까?",
+      "page_types": [
+        "LANDING",
+        "WIKI",
+        "TOPIC"
+      ],
+      "required": [
+        "M01",
+        "M03",
+        "M05",
+        "M06",
+        "M07"
+      ],
+      "required_alternatives": [],
+      "optional": [
+        "M04",
+        "M09",
+        "M14",
+        "M15",
+        "M16",
+        "M18",
+        "M19",
+        "M20",
+        "M21",
+        "M24"
+      ],
+      "note": "수리·교체 판단 근거가 핵심",
+      "fallback_ct": null,
+      "default_order": [
+        "M01",
+        "M03",
+        "M05",
+        "M06",
+        "M07",
+        "M14",
+        "M19",
+        "M20",
+        "M24"
+      ]
+    },
+    {
+      "code": "CT6",
+      "name": "사례·현장형",
+      "question": "실제 현장에서 무엇을 보고 어떻게 판단·작업했는가?",
+      "example": "강남 욕실 문틀 하부 교체 사례",
+      "page_types": [
+        "CASE",
+        "LANDING"
+      ],
+      "required": [
+        "M02",
+        "M03",
+        "M06",
+        "M08",
+        "M18",
+        "M20"
+      ],
+      "required_alternatives": [],
+      "optional": [
+        "M04",
+        "M05",
+        "M07",
+        "M11",
+        "M12",
+        "M14",
+        "M17",
+        "M21",
+        "M22",
+        "M23",
+        "M24"
+      ],
+      "note": "실제 수행한 공정만 사용",
+      "fallback_ct": null,
+      "default_order": [
+        "M02",
+        "M03",
+        "M06",
+        "M08",
+        "M18",
+        "M20",
+        "M23",
+        "M24"
+      ]
+    }
+  ],
+  "promotion_rules": [
+    {
+      "when": "case.safety_flags 가 비어있지 않음",
+      "promote": [
+        "M16"
+      ],
+      "reason": "전기·가스·구조·심한 누수·고소작업"
+    },
+    {
+      "when": "source_case_id 존재",
+      "promote": [
+        "M19"
+      ],
+      "reason": "CASE 기반 근거 우선"
+    },
+    {
+      "when": "page_type == 'AREA' 또는 지역 슬러그 포함",
+      "promote": [
+        "M23"
+      ],
+      "reason": "지역 서비스 정보 (해당 지역 CASE 필수)"
+    },
+    {
+      "when": "page_type == 'LANDING'",
+      "promote": [
+        "M24"
+      ],
+      "reason": "전환 목적"
+    }
+  ],
+  "intent_to_ct": {
+    "cause": "CT1",
+    "howto": "CT2",
+    "spec": "CT3",
+    "compare": "CT4",
+    "judge": "CT5",
+    "case": "CT6",
+    "cost": "CT5",
+    "area": "CT6"
+  },
+  "diff_score_weights": {
+    "search_intent": 0.3,
+    "m01_answer": 0.25,
+    "core_modules": 0.25,
+    "image_set": 0.2
+  },
+  "decision_thresholds": {
+    "create": 0.45,
+    "review": 0.25
+  }
+}

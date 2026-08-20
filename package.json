@@ -1,0 +1,45 @@
+{
+  "name": "suriwiki",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "npm run gate:all && next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "vitest run",
+    "gate:facts": "tsx lib/gate/run.ts facts",
+    "gate:structure": "tsx lib/gate/run.ts structure",
+    "gate:dedupe": "tsx lib/gate/run.ts dedupe",
+    "gate:links": "tsx lib/gate/run.ts links",
+    "gate:images": "tsx scripts/gate-images.ts",
+    "gate:all": "DOTENV_CONFIG_PATH=.env.local tsx -r dotenv/config lib/gate/run.ts all --source=supabase && npm run gate:images"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.9.1",
+    "@supabase/ssr": "^0.5.2",
+    "@supabase/supabase-js": "^2.112.3",
+    "aromanize": "^0.1.5",
+    "lucide-react": "^1.33.0",
+    "next": "15.0.0",
+    "react": "19.0.0-rc-65a56d0e-20241020",
+    "react-dom": "19.0.0-rc-65a56d0e-20241020",
+    "react-hook-form": "^7.85.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.1.0",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "autoprefixer": "^10.5.4",
+    "dotenv": "^17.4.2",
+    "eslint": "^8",
+    "eslint-config-next": "15.0.0",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "tsx": "^4.23.12",
+    "typescript": "^5",
+    "vitest": "^4.1.11"
+  }
+}

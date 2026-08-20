@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SURIWIKI · Antigravity 지시문</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --primary:#00236f; --navy:#1e3a8a; --primary-fixed:#dce1ff; --primary-dim:#b6c4ff;
+    --surface:#f7f9fb; --clean:#ffffff; --low:#f2f4f6; --variant:#e0e3e5;
+    --on:#191c1e; --on-var:#444651; --outline:#757682; --subtle:#e2e8f0;
+    --amber:#f59e0b; --err:#ba1a1a; --tertiary:#222a3e;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans KR',system-ui,sans-serif;background:var(--surface);color:var(--on);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px 80px}
+
+  header{background:linear-gradient(135deg,var(--primary) 0%,var(--navy) 100%);color:#fff;padding:44px 0 40px;margin-bottom:28px}
+  header .wrap{padding-bottom:0}
+  .eyebrow{font-size:12px;letter-spacing:.08em;font-weight:700;color:var(--primary-dim);text-transform:uppercase}
+  h1{font-size:31px;font-weight:700;letter-spacing:-.02em;margin:8px 0 10px;line-height:1.3}
+  .sub{font-size:15px;color:#c9d4ff;max-width:720px}
+  .path{display:inline-block;margin-top:16px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);
+        border-radius:8px;padding:8px 13px;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#eaf0ff;word-break:break-all}
+
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:0 0 30px}
+  .step{background:var(--clean);border:1px solid var(--subtle);border-radius:12px;padding:15px 16px}
+  .step b{display:block;font-size:12px;color:var(--primary);letter-spacing:.06em;margin-bottom:5px}
+  .step span{font-size:13.5px;color:var(--on-var)}
+
+  h2{font-size:20px;font-weight:700;margin:38px 0 6px;display:flex;align-items:center;gap:9px}
+  h2 .n{background:var(--primary);color:#fff;width:26px;height:26px;border-radius:7px;display:grid;place-items:center;font-size:13px;flex:none}
+  .lead{font-size:14px;color:var(--on-var);margin-bottom:14px}
+
+  .card{background:var(--clean);border:1px solid var(--subtle);border-radius:12px;overflow:hidden;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  .card-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 14px;background:var(--low);border-bottom:1px solid var(--subtle)}
+  .card-title{font-size:13.5px;font-weight:700;color:var(--on)}
+  .card-title em{font-style:normal;font-weight:400;color:var(--outline);font-size:12.5px;margin-left:7px}
+  pre{margin:0;padding:16px;overflow-x:auto;background:var(--clean);font-family:'JetBrains Mono',monospace;
+      font-size:12.5px;line-height:1.75;white-space:pre-wrap;word-break:break-word;color:#1b2130;max-height:480px;overflow-y:auto}
+  .copy{flex:none;background:var(--primary);color:#fff;border:0;border-radius:7px;padding:7px 15px;font-size:12.5px;
+        font-weight:700;cursor:pointer;font-family:inherit;transition:.15s;white-space:nowrap}
+  .copy:hover{background:var(--navy)}
+  .copy.done{background:#0f7b3f}
+
+  .note{border-left:3px solid var(--amber);background:#fffbeb;border-radius:0 8px 8px 0;padding:12px 15px;font-size:13.5px;color:#78400a;margin:14px 0}
+  .warn{border-left:3px solid var(--err);background:#fff1f0;border-radius:0 8px 8px 0;padding:12px 15px;font-size:13.5px;color:#8a1414;margin:14px 0}
+  .note b,.warn b{font-weight:700}
+
+  .files{width:100%;border-collapse:collapse;font-size:13px;background:var(--clean);border:1px solid var(--subtle);border-radius:12px;overflow:hidden}
+  .files th{background:var(--low);text-align:left;padding:9px 13px;font-size:11.5px;letter-spacing:.05em;color:var(--outline);font-weight:700;border-bottom:1px solid var(--subtle)}
+  .files td{padding:8px 13px;border-bottom:1px solid #f0f2f4;vertical-align:top}
+  .files tr:last-child td{border-bottom:0}
+  .files code{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--primary);background:var(--primary-fixed);padding:1px 6px;border-radius:4px}
+
+  footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--variant);font-size:12.5px;color:var(--outline)}
+  @media(max-width:640px){h1{font-size:24px}pre{font-size:11.5px}.wrap{padding:0 14px 60px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="eyebrow">SURIWIKI · CT·MOD v0.3</div>
+    <h1>Antigravity 개발 지시문</h1>
+    <p class="sub">아래 블록을 순서대로 복사해 Antigravity에 붙여넣으세요. 문서·스킬·데이터·마이그레이션은 이미 폴더에 생성되어 있습니다.</p>
+    <div class="path">📁 내 드라이브 / 15 suriwiki3 / <b>suriwiki</b></div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="steps">
+    <div class="step"><b>STEP 0</b><span>Antigravity에서 <code>suriwiki</code> 폴더 열기</span></div>
+    <div class="step"><b>STEP 1</b><span>0번 → <b>재작업(FIX-1~3)</b> 먼저</span></div>
+    <div class="step"><b>STEP 2</b><span>FIX 완료 후 ①~⑥ 중 미완성분 보완</span></div>
+    <div class="step"><b>STEP 3</b><span>⑦ 콘텐츠 생성 루프 시작</span></div>
+  </div>
+
+  <div class="note"><b>중요 —</b> Antigravity에 <code>suriwiki</code> 폴더를 <b>워크스페이스 루트</b>로 열어야 합니다.
+  상위 폴더(<code>15 suriwiki3</code>)를 열면 문서 경로가 어긋납니다.</div>
+
+<!-- ───────────────────────── 0 -->
+<h2><span class="n">0</span>먼저 읽히기 (컨텍스트 주입)</h2>
+<p class="lead">본 작업 전에 한 번만. 에이전트가 규격을 머리에 넣게 합니다.</p>
+
+<div class="card">
+  <div class="card-top"><div class="card-title">컨텍스트 주입 <em>가장 먼저 1회</em></div><button class="copy">복사</button></div>
+  <pre>이 워크스페이스는 "수리위키(SURIWIKI)" 집수리 콘텐츠 사이트 프로젝트다.
+
+지금은 코드를 작성하지 말고, 아래 파일들을 전부 읽고 규격을 파악한 뒤
+"내가 이해한 것"을 400자 이내로 요약해서 보고해라.
+
+읽을 파일 (순서대로):
+1. AGENTS.md
+2. README.md
+3. docs/00-overview.md
+4. docs/01-content-type.md, docs/02-module-dictionary.md, docs/03-ct-module-matrix.md
+5. docs/07-composition-rules.md, docs/08-ai-selection-logic.md
+6. docs/10-data-model.md, docs/11-site-architecture.md
+7. docs/12-keyword-tree.md
+8. docs/14-design-system.md, docs/15-dev-spec.md
+9. docs/16-quality-gate.md
+10. data/content-types.json, data/modules.json
+11. supabase/migrations/0001_init.sql
+
+요약에 반드시 포함할 것:
+- Page Type / Content Type / Module 세 축의 차이
+- 필수 모듈에 근거가 없을 때의 처리 방식
+- 지역(AREA) 페이지를 만들 수 있는 조건
+- 사실성 규칙 F1~F7 중 3개 이상</pre>
+</div>
+
+<!-- ───────────────────────── 1 -->
+<h2><span class="n">1</span>앱 골격 + 디자인 토큰 (M1)</h2>
+<p class="lead">Next.js 초기화, Stitch 토큰 이식, 공통 컴포넌트.</p>
+
+<div class="note"><b>이미 진행된 부분 —</b> 폴더에 Next.js 15 + Tailwind 골격이 이미 있습니다.
+<code>package.json</code> · <code>tailwind.config.ts</code>(Stitch 토큰 이식 완료) · <code>app/layout.tsx</code> · <code>app/globals.css</code> ·
+<code>config/site.ts</code> · <code>config/cta.ts</code> · <code>components/common/</code>(Header · BottomNav · StatStrip).<br>
+아래 지시문은 <b>이어서 완성</b>하는 내용으로 되어 있습니다. 기존 파일을 덮어쓰지 않습니다.</div>
+
+<div class="card">
+  <div class="card-top"><div class="card-title">M1 — 부트스트랩 &amp; 디자인 시스템 <em>이어서 완성</em></div><button class="copy">복사</button></div>
+  <pre>docs/14-design-system.md 와 docs/15-dev-spec.md 를 기준으로 앱 골격을 완성하라.
+
+[현재 상태] Next.js 15 + Tailwind 골격이 이미 있다. 아래 파일은 이미 존재하므로
+           새로 만들지 말고 확인 후 부족한 부분만 보완하라:
+           package.json / tailwind.config.ts / tsconfig.json / next.config.ts / postcss.config.mjs
+           app/layout.tsx / app/globals.css / config/site.ts / config/cta.ts
+           components/common/{Header,BottomNav,StatStrip}.tsx
+
+[스택] Next.js 15 App Router / TypeScript strict / Tailwind CSS v3 / @supabase/ssr
+
+[작업]
+1. 기존 파일 점검 (덮어쓰지 말고 diff 후 보완)
+
+2. tailwind.config.ts 검증
+   - design/stitch_assets/screen1_home.html 의 &lt;script id="tailwind-config"&gt; 블록을 파싱해서
+     colors / fontSize / spacing / borderRadius 를 그대로 이식한다.
+   - docs/14-design-system.md §1 표와 대조해 누락이 없는지 확인한다.
+   - 임의의 hex 값을 새로 만들지 마라. 반드시 토큰 이름으로만 쓴다.
+
+3. app/layout.tsx
+   - next/font/google 로 Noto Sans KR(400,500,600,700) + Inter(600) self-host,
+     subset은 korean/latin, display: 'swap'
+   - CSS 변수 --font-noto / --font-inter 로 노출하고 tailwind fontFamily에 연결
+   - Material Symbols Outlined 는 &lt;link&gt; 로 로드 (FILL 0, wght 400, GRAD 0, opsz 24)
+   - lang="ko", 기본 metadata (title template, openGraph)
+
+4. config/site.ts
+   export const siteConfig = { name, tagline, phone, kakaoUrl, areas: string[] }
+   - 브랜드명/전화번호를 컴포넌트에 하드코딩하지 마라. 전부 여기서 주입.
+   - 초기값은 플레이스홀더로 두고 주석으로 "실제 값으로 교체" 표시
+
+5. config/cta.ts
+   - docs/16-quality-gate.md §6 의 CTA 로테이션 3종을 배열로
+
+6. 공통 컴포넌트 (components/common/) — 없는 것만 추가
+   [있음] Header · BottomNav · StatStrip → 점검만
+   [추가] DesktopNav (screen5 참조) · Footer · Breadcrumb · FilterChips · CaseCard · Container
+
+7. app/page.tsx — screen1_home.html 레이아웃을 컴포넌트로 재구성
+   (마크업을 그대로 복사하지 말고 위 공통 컴포넌트로 조립)
+
+[금지]
+- StatStrip 의 "10,000+", "4.9", "99%" 를 실제 지표처럼 렌더하지 마라.
+  siteConfig.stats 가 비어 있으면 아예 렌더하지 않는 구조로 만들어라. (사실성 규칙 F3)
+- cdn.tailwindcss.com 을 쓰지 마라. 빌드된 Tailwind를 쓴다.
+- localStorage / sessionStorage 사용 금지.
+
+[완료 조건] npm run build 성공 + npm run dev 에서 홈이 모바일/데스크톱 모두 정상 렌더</pre>
+</div>
+
+<!-- ───────────────────────── 2 -->
+<h2><span class="n">2</span>모듈 컴포넌트 24종 + 렌더러 (M3)</h2>
+<p class="lead">이 단계가 프로젝트의 심장입니다. 여기가 끝나야 콘텐츠를 만들 수 있습니다.</p>
+
+<div class="card">
+  <div class="card-top"><div class="card-title">M3 — ModuleRegistry &amp; PageRenderer</div><button class="copy">복사</button></div>
+  <pre>M01~M24 모듈 컴포넌트와 PageRenderer 를 구현하라.
+
+[기준 문서]
+- docs/02-module-dictionary.md          모듈 정의와 그룹
+- docs/14-design-system.md §3           모듈 → 컴포넌트 매핑표 (그대로 따를 것)
+- .claude/skills/ct-mod-composer/references/module-templates.md
+                                        각 모듈의 body JSON 스키마 + 예시 (그대로 따를 것)
+- data/modules.json                     단일 소스
+
+[작업]
+1. lib/schemas/modules.ts
+   - module-templates.md 의 각 body 구조를 zod 스키마로 정의 (M01Body ~ M24Body)
+   - ModuleBodyMap 타입 export
+
+2. components/modules/M01.tsx ~ M24.tsx  (1파일 1모듈)
+   - 서버 컴포넌트 기본. "use client" 는 M20(갤러리/슬라이더), M21(아코디언)만.
+   - props: { body, evidence, images }
+   - 색상은 Tailwind 토큰 이름으로만 (bg-primary, text-on-surface, bg-error-container …)
+
+3. components/modules/registry.ts
+   - ModuleRegistry: Record&lt;ModuleCode, ComponentType&lt;ModuleProps&gt;&gt;
+   - data/modules.json 을 읽어 24개가 전부 등록됐는지 런타임 검증하는 assert 함수 포함
+
+4. app/_render/PageRenderer.tsx
+   - page.module_order 를 순회하며 ModuleRegistry[code] 렌더
+   - 해당 모듈의 page_modules 레코드가 없으면 렌더하지 않는다 (근거 없는 모듈 = 출력 없음)
+   - h2 는 각 모듈 제목, h1 은 페이지에 1개만
+
+5. app/dev/modules/page.tsx
+   - 24개 모듈을 module-templates.md 의 예시 데이터로 전부 렌더하는 미리보기 페이지
+   - 모바일/데스크톱 폭 토글
+
+[모듈별 필수 동작]
+M14 CostFactors : body.amounts 가 null 이면 금액 영역을 렌더하지 않고
+                  "비용이 달라지는 이유" 리스트 + disclaimer 만 출력
+M16 SafetyBanner: 절대 접히지 않는다. bg-error-container. 페이지 상단부에 배치 가능하게.
+M20 EvidenceGallery : focus(cause|judgement|process|result)에 따라 캡션 강조가 달라진다.
+                  BEFORE/AFTER 비교 슬라이더는 키보드(←→) 조작 가능.
+M23 AreaBlock   : body.case_count === 0 이면 null 반환 (렌더 금지)
+M24 CtaBlock    : primary 액션 1개만 강조. rotation_key 로 config/cta.ts 에서 문구 선택.
+
+[접근성]
+- 모든 아이콘 버튼에 aria-label, 터치 타깃 44×44 이상
+- 이미지 전부 alt (body에서 받아옴, 없으면 빌드 경고)
+- amber-point(#f59e0b)를 텍스트 색으로 쓰지 마라 (대비 미달)
+
+[완료 조건] /dev/modules 에서 24개가 모두 정상 렌더 + tsc 에러 0</pre>
+</div>
+
+<!-- ───────────────────────── 3 -->
+<h2><span class="n">3</span>DB + 공개 라우트 + SEO (M2·M4)</h2>
+
+<div class="card">
+  <div class="card-top"><div class="card-title">M2·M4 — Supabase &amp; 라우팅 &amp; SEO</div><button class="copy">복사</button></div>
+  <pre>Supabase 연결과 공개 라우트 6종, SEO를 구현하라.
+
+[기준] docs/10-data-model.md · docs/11-site-architecture.md · docs/13-seo-rules.md
+       supabase/migrations/0001_init.sql (이미 작성됨 — 수정하지 말고 그대로 적용)
+
+[작업]
+1. Supabase
+   - supabase/migrations/0001_init.sql 을 적용한다.
+   - lib/supabase/server.ts, client.ts (@supabase/ssr)
+   - lib/types/db.ts 를 generate 하거나 수기 작성
+   - .env.local.example 작성 (NEXT_PUBLIC_SUPABASE_URL, ANON_KEY, SERVICE_ROLE_KEY, REVALIDATE_SECRET)
+
+2. 라우트 (docs/11 §라우팅 트리 그대로)
+   app/[space]/page.tsx                  CATEGORY
+   app/[space]/[target]/page.tsx         TOPIC
+   app/wiki/[slug]/page.tsx              WIKI
+   app/case/[slug]/page.tsx              CASE
+   app/area/[area]/page.tsx              AREA
+   app/area/[area]/[target]/page.tsx     지역×대상
+   app/repair/[slug]/page.tsx            LANDING
+
+   - 전부 PageRenderer 를 쓴다. 라우트마다 다른 렌더링 로직을 만들지 마라.
+   - generateStaticParams 는 status='published' 인 페이지만 포함
+   - CATEGORY/TOPIC/AREA 는 ISR 3600s, 나머지는 on-demand revalidate
+
+3. lib/seo/
+   - buildMetadata(page): title 30~45자, description 70~120자(M01 answer에서 파생), canonical
+   - buildJsonLd(page): docs/13 §구조화 데이터 표대로 분기
+     · 모든 페이지 BreadcrumbList
+     · M21 있으면 FAQPage (화면에 보이는 Q&amp;A만)
+     · CT2 → HowTo / CT6·CASE → Article / AREA → LocalBusiness(areaServed는 실제 CASE 지역만)
+   - AggregateRating, Review 는 절대 생성하지 마라 (사실성 F3)
+
+4. app/sitemap.ts — published 만, lastmod=published_at
+   app/robots.ts  — /admin 전체 차단
+   app/api/revalidate/route.ts — Supabase DB Webhook 수신, secret 검증 후 revalidatePath
+
+5. 이미지
+   - next/image + Supabase Storage. 버킷 2개: cases-private / public-assets
+   - 첫 화면 1장만 priority, 나머지 lazy. webp, 최대폭 1600px, width/height 항상 지정
+
+[완료 조건] 샘플 CASE 1건으로 /case/... 렌더 + sitemap.xml 생성 + Lighthouse SEO 100</pre>
+</div>
+
+<!-- ───────────────────────── 4 -->
+<h2><span class="n">4</span>키워드 트리 파이프라인 (M5)</h2>
+
+<div class="card">
+  <div class="card-top"><div class="card-title">M5 — keyword-tree 연동 &amp; 관리 화면</div><button class="copy">복사</button></div>
+  <pre>키워드 트리 파이프라인을 앱에 연결하라.
+
+[기준] docs/12-keyword-tree.md
+       .claude/skills/keyword-tree/SKILL.md
+       .claude/skills/keyword-tree/references/scoring.md
+       .claude/skills/keyword-tree/scripts/*.py  (이미 동작 검증됨)
+
+[작업]
+1. 먼저 스크립트를 실행해 현재 상태를 확인한다.
+   python3 .claude/skills/keyword-tree/scripts/build_tree.py \
+     --seed data/keyword-tree.seed.json --out data/keyword-tree.json --cases data/cases.sample.json
+   python3 .claude/skills/keyword-tree/scripts/validate_tree.py data/keyword-tree.json
+   python3 .claude/skills/keyword-tree/scripts/plan_pages.py data/keyword-tree.json --top 20
+
+2. lib/keyword-tree/ 에 TypeScript 포팅
+   - priorityScore()  : scoring.md §1 공식 그대로 (가중치를 임의로 바꾸지 마라)
+   - dedupeKey()      : scoring.md §2, normalize()는 references/taxonomy.md §5 동의어 사전 사용
+   - diffScore()      : scoring.md §3, 가중치 [0.30, 0.25, 0.25, 0.20]
+   - canExpandArea()  : docs/12 §8 — 해당 지역 CASE 없으면 false + HOLD 사유 반환
+
+3. data/keyword-tree.json → Supabase keyword_nodes 동기화 스크립트
+   scripts/sync-keywords.ts (upsert, status/target_page_id 는 DB 값 우선)
+
+4. app/admin/keywords/page.tsx
+   - 트리 뷰 (L1→L4 접기/펼치기)
+   - 컬럼: 우선순위 / 노드 / 검색질문 / CT / PageType / CASE수 / 상태
+   - 상태 필터 칩: OPEN / HOLD / CLAIMED / PUBLISHED / MERGED
+   - HOLD 노드는 hold_reason 을 빨간 배지로 표시
+   - "이번 주 큐" 탭: OPEN 상위 30개
+   - "필요 근거 리포트" 탭: HOLD 목록 → CSV 내보내기 (현장팀 전달용)
+
+[절대 규칙]
+- data/keyword-tree.json 을 코드에서 직접 수정하지 마라. build_tree.py 로 재생성한다.
+- 지역 노드는 해당 지역 실제 CASE가 있을 때만 OPEN. 없으면 HOLD로 두고 삭제하지 마라.
+- volume_hint 는 high/mid/low 3단계만. 구체적 월 검색량 수치를 만들어내지 마라.
+
+[완료 조건] /admin/keywords 에서 256개 노드가 우선순위순으로 보이고
+           HOLD 105개의 사유가 각각 표시됨</pre>
+</div>
+
+<!-- ───────────────────────── 5 -->
+<h2><span class="n">5</span>입력 7화면 (M6)</h2>
+
+<div class="card">
+  <div class="card-top"><div class="card-title">M6 — CASE 입력 &amp; 사진 분류 &amp; 승인</div><button class="copy">복사</button></div>
+  <pre>운영자용 CASE 입력 플로우 7화면을 구현하라.
+
+[기준] docs/06-input-ui-flow.md (화면별 필드·안내문구 그대로)
+       docs/04-image-rules.md   (이미지 규칙)
+       .claude/skills/case-intake/SKILL.md (구조화 절차와 출력 스키마)
+
+[핵심 원칙]
+사용자는 같은 정보를 두 번 입력하지 않는다. 문장을 다듬으라고 요구하지 않는다.
+사실만 받고 나머지는 AI가 한다.
+
+[작업]
+app/admin/cases/new  → 화면 1~4 (react-hook-form + zod, 자동 저장 draft)
+  1 기본정보  지역(시도/시군구/동) · 건물유형 · 공간 · 대상
+              공간/대상은 data/keyword-tree.seed.json 의 id로 매핑되는 combobox
+  2 현장내용  문제 / 판단 / 실제 작업(순서 나열) / 결과 · 한계
+              최소 글자수 제한을 두지 마라. 안내문구는 docs/06 표 그대로.
+  3 사진      드래그&amp;드롭 최대 30장. 각 썸네일에 토글 2개: [반드시 사용] [공개 금지]
+              업로드 직후 role 자동 태깅(BEFORE/PROCESS/AFTER/MATERIAL/TOOL/DETAIL/EXCLUDE)
+              → 드롭다운으로 수정 가능
+              pHash 유사도 ≥0.92 면 "유사 사진" 배지 (자동 삭제하지 마라)
+  4 추가정보  전부 선택 입력. cause / materials / tools / situation / maintenance / duration
+              safety_flags 체크박스: electric gas structure severe_leak height
+
+app/admin/cases/[id]/analyze → 화면 5~6
+  5 AI 분석   case-intake 스킬 절차로 구조화 → keyword-tree 로 LANDING 후보 6~8개
+              각 후보 카드: [우선순위] 노드ID / 검색질문 / 추천CT / 필수모듈 / 근거 체크표시
+              HOLD 후보는 "무엇이 있으면 풀리는지"를 함께 표시
+              ★ 후보들의 intent 가 서로 달라야 한다 (같은 intent 2개 금지)
+  6 사람 확인  각 카드에 버튼 3개만: [한 페이지로 사용] [별도 페이지로 분리] [제외]
+              하단에 "꼭 공략할 키워드" 입력창 1개(선택)
+              ★ 키워드 입력창을 여러 개 만들지 마라
+
+app/admin/pages/[id]/preview → 화면 7
+  좌: module_order 리스트 (드래그로 순서 변경)
+  우: PageRenderer 실시간 미리보기
+  각 모듈 블록에 근거 배지 (어느 CASE 필드/사진에서 나왔는지)
+  근거 없는 모듈은 빨간 배지 + 발행 버튼 비활성화
+
+[사실성 가드]
+- is_private 사진은 미리보기에도 나오지 않는다 (DB 트리거로도 막혀 있음)
+- CASE status 가 approved 가 아니면 발행 버튼 비활성
+- 얼굴·차량번호·문패·주소가 보이는 사진은 경고 배지 + 사람 확인 요청
+
+[완료 조건] CASE 1건을 처음부터 입력 → 후보 확인 → 페이지 초안 생성까지 통과</pre>
+</div>
+
+<!-- ───────────────────────── 6 -->
+<h2><span class="n">6</span>조립 엔진 + 품질 게이트 (M7·M8)</h2>
+
+<div class="card">
+  <div class="card-top"><div class="card-title">M7·M8 — compose 엔진 &amp; CI 게이트</div><button class="copy">복사</button></div>
+  <pre>CT·모듈 조립 엔진과 품질 게이트를 구현하라. 이 단계가 사이트 품질을 결정한다.
+
+[기준] docs/07-composition-rules.md (R1~R8)
+       docs/08-ai-selection-logic.md (9단계 + 의사코드 + 출력 스키마)
+       docs/16-quality-gate.md (F/S/D/L 전체)
+       .claude/skills/ct-mod-composer/SKILL.md
+       .claude/skills/ct-mod-composer/references/checklist.md
+
+[작업 1] lib/compose/
+  - rules.ts     : data/content-types.json 을 읽는다. 표를 코드에 하드코딩하지 마라.
+  - compose.ts   : docs/08 의사코드 그대로 구현
+                   pickCT → requiredModules(+승격) → 근거검사 → fallbackCT → rankOptional(2~4)
+                   → orderModules → buildImageSet(4~6) → diffScore → decide
+  - evidence.ts  : evidenceStrength() — checklist.md 의 0.0/0.3/0.7/1.0 기준
+                   0.3 미만이면 점수와 무관하게 선택 제외
+  - ai.ts        : 모듈 body 생성 LLM 호출. 출력은 반드시 zod safeParse.
+                   실패 시 재시도 1회 → 그래도 실패하면 저장하지 않고 HOLD.
+
+[작업 2] lib/gate/  — 발행 차단 규칙
+  facts.ts     F1~F7   (지역/금액/후기/공정/사진변경/비공개사진/자격)
+  structure.ts S1~S8   (CT 1개 / 필수모듈 근거 / 옵션 2~4 / M16 / M23 / CT6 공정일치 / CT4 비교2개 / CT1 원인)
+  dedupe.ts    D1~D6   (dedupe_key / diff≥0.45 / 순서유사도&lt;0.85 / FAQ&lt;0.85 / 이미지Jaccard&lt;0.6 / CTA로테이션)
+  links.ts     L1~L7   (링크 3~8개 실재 / 고아페이지 / title·desc 길이 / h1 1개 / alt / FAQ JSON-LD / Review금지)
+
+  각 게이트는 { pass: boolean, violations: {code, message, hint}[] } 를 반환한다.
+
+[작업 3] package.json 스크립트
+  "gate:facts", "gate:structure", "gate:dedupe", "gate:links", "gate:all"
+  하나라도 실패하면 exit 1 → 배포 중단
+
+[작업 4] 테스트 (vitest)
+  - docs/09-derivation-examples.md 의 "차별화 검증표" 5개 케이스를 그대로 테스트로 옮겨라.
+    1vs2=0.68 CREATE / 2vs3=0.61 CREATE / 1vs6=0.74 CREATE / 3vs5=0.58 CREATE / 중복=0.09 MERGE
+  - docs/09 의 "반례" 2개(제목만 바꾼 지역 양산, FAQ 복붙)가 게이트에서 차단되는지 테스트
+  - 지역 CASE 없는 AREA 페이지가 HOLD 되는지 테스트
+
+[절대 지킬 것]
+- 필수 모듈 근거가 없을 때 문장을 생성해 채우지 마라. CT 변경 또는 HOLD.
+- 옵션 모듈 2개를 못 채워도 억지로 채우지 마라. 짧아도 사실만.
+- M08 steps 는 case.work_steps 와 개수·순서가 정확히 같아야 한다.
+- HOLD 는 실패가 아니다. 반드시 required_evidence(필요한 근거 목록)와 alternative 를 함께 출력하라.
+
+[완료 조건] npm run gate:all 통과 + vitest 전부 green</pre>
+</div>
+
+<!-- ───────────────────────── FIX -->
+<h2><span class="n">!</span>재작업 지시문 (검증 결과 반영)</h2>
+<p class="lead">1차 구현이 골격 단계에서 멈춰 있습니다. 아래를 <b>0번 다음에 바로</b> 실행하세요.</p>
+
+<div class="warn"><b>검증 결과 —</b> 타입체크는 통과하지만 ①<code>getCTMatrix()</code>가 항상 <code>undefined</code>를 반환해 조립 엔진이 무력화돼 있고,
+②게이트 28개 규칙 중 8개만 구현(일부는 주석 처리), ③테스트가 <code>expect(true).toBe(true)</code>로 통과 처리돼 있으며 vitest는 실행조차 되지 않습니다.</div>
+
+<div class="card">
+  <div class="card-top"><div class="card-title">FIX-1 — 치명적 버그 &amp; 테스트 정상화 <em>먼저</em></div><button class="copy">복사</button></div>
+  <pre>1차 구현 검증 결과 아래 문제가 확인됐다. 순서대로 고쳐라.
+고칠 수 없으면 "고쳤다"고 하지 말고 무엇이 왜 막혔는지 보고하라.
+
+■ BUG-1 (치명적) lib/compose/rules.ts — getCTMatrix 가 항상 undefined 를 반환한다
+  data/content-types.json 의 content_types 는 배열인데 data.content_types[ct] 로 접근하고 있다.
+  → 결과적으로 required=[] 가 되어 필수 모듈 근거 검사(S2)가 통째로 무력화되고
+    모든 페이지가 빈 모듈로 CREATE 판정된다.
+  수정: code 로 인덱싱한 Map 을 만들어 반환하고, CT1~CT6 여섯 개가 모두 조회되는지
+        런타임 assert 를 추가하라. required_alternatives 도 함께 반환하라.
+
+■ BUG-2 lib/compose/compose.ts
+  - moduleOrder 가 selectedModules.sort() 로 알파벳 정렬돼 있다.
+    → docs/07-composition-rules.md §모듈 배치 기본 순서 프리셋을 쓰고,
+      data/content-types.json 의 default_order 를 기준으로 정렬하라.
+  - diffScore 의 simText 가 문자열 완전일치(0 또는 1)로만 돼 있다.
+    → 정규화 후 문자 3-gram Jaccard 로 구현하라
+      (.claude/skills/keyword-tree/references/scoring.md §3, 동의어 정규화는 taxonomy.md §5).
+    → sim 값을 외부에서 주입할 수 있는 오버로드도 함께 제공하라(테스트용).
+  - 옵션 모듈이 optional.slice(0,4) 로 잘려 있다.
+    → checklist.md 의 랭킹 점수(0.40 evidence + 0.35 intentFit + 0.15 uniqueness + 0.10 conversion)로
+      정렬한 뒤 상위 4개를 취하고, evidenceStrength &lt; 0.3 은 제외하라.
+  - 반환값의 selected_modules 가 optional 전체다. 실제로 채택한 것만 담아라.
+
+■ BUG-3 lib/gate/links.ts
+  - L1 검사가 주석 처리돼 비활성이다. 활성화하라.
+  - L3 이 "relaxed lengths for mock testing"으로 10~50 이다.
+    → docs/13-seo-rules.md 규격대로 title 30~45자, description 70~120자로 되돌려라.
+
+■ BUG-4 __tests__/compose.test.ts
+  - 첫 번째 테스트가 expect(true).toBe(true) 다. 아무것도 검증하지 않는다.
+  - 주석에 "Why does docs say 0.68?" 이라고 적어놓고 그냥 통과시켰다.
+    → 이 불일치는 문서 쪽 오류였고 이미 수정됐다.
+      docs/09-derivation-examples.md 의 차별화 검증표와
+      data/difftest.fixtures.json 을 다시 읽어라.
+    → 테스트는 픽스처를 로드해 cases 6건을 전부 돌려야 한다.
+      각 건마다 (a) pages 정의에서 Jaccard 를 재계산해 jaccard_* 와 일치하는지
+      (b) diffScore 결과가 expected_diff_score 와 tolerance 이내로 일치하는지
+      (c) 판정이 expected_decision 과 같은지 검증하라.
+    ★ 기대값이 안 맞으면 절대 테스트를 느슨하게 바꾸지 마라. 구현을 고치거나, 보고하라.
+
+■ BUG-5 vitest 가 실행되지 않는다
+  "Cannot find native binding ... @rolldown/binding-wasm32-wasi"
+  → node_modules 와 package-lock.json 을 지우고 npm install 을 다시 하라.
+  → npm run test 가 실제로 초록색으로 통과하는 것을 확인한 출력까지 보여줘라.
+
+[완료 조건] npx tsc --noEmit 통과 + npm run test 실제 통과(출력 첨부)
+           + getCTMatrix('CT1').required 가 ["M01","M03","M04","M09"] 를 반환하는 것 확인</pre>
+</div>
+
+<div class="card">
+  <div class="card-top"><div class="card-title">FIX-2 — 게이트 28개 규칙 완성</div><button class="copy">복사</button></div>
+  <pre>docs/16-quality-gate.md 의 규칙 중 현재 8개만 구현돼 있다. 나머지를 전부 구현하라.
+
+[현재 구현됨] F1 F6 / S1 S3(상한만) S4 S5 / D2 D4
+[구현 필요]
+
+lib/gate/facts.ts
+  F2 금액·기간 단정 금지 — M14.amounts 가 null 이 아닌데 disclaimer 가 없으면 위반.
+                          본문에 "원", "만원" + 숫자 패턴이 근거 없이 나오면 위반.
+  F3 후기·평점·시공건수 생성 금지 — StatStrip/JSON-LD 에 AggregateRating·Review·reviewCount 가
+                          있으면 위반. siteConfig.stats 가 비어 있는데 수치가 렌더되면 위반.
+  F4 CASE에 없는 공정·재료·공구·결과 — M08/M11/M12/M18 의 항목이 case 필드에 없으면 위반.
+  F5 사진 실제 내용 변경 금지 — image_variants.overlays 에 원본에 없는 손상/공정을
+                          만들어내는 타입이 있으면 위반(허용 타입: arrow box dashed callout compare steps).
+  F7 자격·면허·인증 — siteConfig.certifications 에 없는 문구가 본문에 있으면 위반.
+  F1 은 현재 "simplified" 주석과 함께 얕게 구현돼 있다.
+     → keyword_node.area_slug 와 실제 CASE 목록을 대조하는 방식으로 다시 구현하라.
+       (.claude/skills/keyword-tree 의 canExpandArea 규칙과 동일해야 한다)
+
+lib/gate/structure.ts
+  S2 ★가장 중요★ required_modules ⊆ module_order 이고 각 모듈에 evidence 가 있어야 한다.
+     지금 이 검사가 통째로 없다. BUG-1 을 고친 뒤 구현하라.
+  S6 CT6 이면 M08.steps 가 case.work_steps 와 개수·순서까지 일치해야 한다.
+  S7 CT4 이면 M13.items 가 2개 이상이어야 한다.
+  S8 CT1 이면 case.cause 가 있고 cause_observed === true 여야 한다.
+  S3 하한(2개 미만)은 현재 의도적으로 빼놨는데 그게 맞다.
+     단 "억지로 채우지 않았음"을 판정 사유에 남겨라.
+
+lib/gate/dedupe.ts
+  D1 dedupe_key 충돌 (keyword_nodes 조회)
+  D3 같은 CT 다른 페이지와 module_order 유사도 &lt; 0.85 (Kendall tau, 공통 모듈 3개 미만이면 skip)
+  D5 이미지 세트 Jaccard &lt; 0.6 — ★편집본 id 가 아니라 원본 image_id 로 비교하라★
+  D6 CTA rotation_key 가 같은 그룹 안에서 반복되지 않을 것
+
+lib/gate/links.ts
+  L2 고아 페이지 금지 (상위 TOPIC/AREA 에서 들어오는 링크 존재)
+  L4 h1 1개
+  L5 모든 이미지 alt 존재
+  L6 FAQPage JSON-LD 의 Q&amp;A 가 화면에 실제 렌더되는 M21.items 와 일치
+  L7 AggregateRating/Review 마크업 없음
+
+[공통]
+- 각 규칙은 코드(F2/S6/D5…)와 함께 "무엇을 보고 위반이라 판단했는지"를 hint 에 담아라.
+- any 타입을 쓰지 마라. lib/schemas 에 PageContext zod 스키마를 정의하고 그 타입을 쓰라.
+- lib/gate/run.ts 는 위반 1건이라도 있으면 exit 1 이어야 한다.
+
+[테스트 __tests__/gate.test.ts]
+  docs/09 "반례" 2건이 실제로 차단되는지:
+   (1) 지역 CASE 없는 "서초 문틀수리" → F1 위반 + HOLD
+   (2) 모든 페이지 동일 FAQ 5개 → D4 위반
+  그리고 규칙 하나당 최소 1건씩, 위반 케이스와 통과 케이스를 쌍으로 작성하라.
+
+[완료 조건] npm run gate:all 이 실제로 동작하고, 위반을 주입하면 exit 1 이 되는 것을 보여줘라.</pre>
+</div>
+
+<div class="card">
+  <div class="card-top"><div class="card-title">FIX-3 — 누락된 공통 컴포넌트 &amp; AI 연동</div><button class="copy">복사</button></div>
+  <pre>M1·M7 에서 빠진 것을 채워라.
+
+■ components/common/ 누락분 (현재 Header·BottomNav·StatStrip 3개만 있음)
+  DesktopNav   design/stitch_assets/screen5_main_door.html 참조
+  Footer       screen6_cases_door.html 하단 참조 (대표자·주소·연락처는 config/site.ts 에서)
+  Breadcrumb   docs/13-seo-rules.md 의 BreadcrumbList JSON-LD 와 연동
+  FilterChips  screen4_cases.html 참조
+  CaseCard     screen1_home.html "최근 시공 사례" + screen6 카드 참조
+  Container    grid-margin-mobile / grid-margin-desktop 토큰 사용
+
+■ lib/compose/ai.ts 가 전부 mock 이다
+  - generateMockDataForModule 이 M01/M03/M08 세 개만 하드코딩돼 있고 나머지는 { mock: true } 다.
+  - zod 파싱이 주석 처리돼 있다 ("we bypass actual zod parsing in the mock").
+  수정:
+  1. lib/schemas/modules.ts 에 M01~M24 body 스키마가 실제로 다 정의돼 있는지 확인하고,
+     .claude/skills/ct-mod-composer/references/module-templates.md 와 필드가 일치하게 맞춰라.
+  2. ModuleBodyMap[moduleCode].safeParse() 를 실제로 호출하라.
+     실패 시 재시도 1회 → 그래도 실패하면 저장하지 않고 HOLD 를 반환하라.
+  3. mock 과 실제 LLM 호출을 환경변수로 분기하되, mock 경로에서도 zod 검증은 반드시 통과해야 한다.
+  4. 24개 모듈 전부에 대해 "mock 데이터가 zod 스키마를 통과한다"는 테스트를 추가하라.
+
+■ .env.local.example 이 없다
+  NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY / SUPABASE_SERVICE_ROLE_KEY /
+  REVALIDATE_SECRET / (LLM 키) 를 주석과 함께 작성하라.
+
+■ 보고
+  작업 후 아래를 표로 보고하라. 추정하지 말고 실제 명령 출력을 근거로 써라.
+  | 항목 | 명령 | 결과 |
+  | 타입체크 | npx tsc --noEmit | |
+  | 테스트   | npm run test     | 통과 N / 실패 N |
+  | 게이트   | npm run gate:all | |
+  | 빌드     | npm run build    | |</pre>
+</div>
+
+<!-- ───────────────────────── 7 -->
+<h2><span class="n">7</span>콘텐츠 생성 (반복 실행)</h2>
+<p class="lead">개발이 끝난 뒤, CASE가 들어올 때마다 반복하는 지시문입니다.</p>
+
+<div class="card">
+  <div class="card-top"><div class="card-title">CASE 1건 → 페이지 세트 생성</div><button class="copy">복사</button></div>
+  <pre>새 CASE로 페이지 세트를 만들어라.
+
+[입력]
+CASE: (여기에 현장 메모를 그대로 붙여넣는다 — 다듬지 않아도 된다)
+사진: (파일 목록 / 반드시 사용·공개 금지 표시)
+
+[절차]
+1. .claude/skills/case-intake/SKILL.md 절차로 CASE 레코드 구조화
+   - 없는 사실을 채우지 마라. 비면 missing_evidence 에 적어라.
+   - 원인이 추정이면 cause_observed: false
+   - review_questions 는 꼭 필요한 것 3개 이하
+
+2. .claude/skills/keyword-tree/SKILL.md 로 LANDING 후보 6~8개
+   - 반드시 서로 다른 intent 로
+   - 각 후보에 우선순위 점수와 근거 상태 표시
+   - HOLD 후보는 해제 조건 명시
+
+3. 내가 후보를 고르면, .claude/skills/ct-mod-composer/SKILL.md 로 페이지 조립
+   - 중심 CT 1개
+   - 필수 모듈 근거 검사 → 없으면 CT 변경 또는 HOLD
+   - 옵션 2~4개
+   - 이미지 4~6장, 페이지마다 오버레이 focus 를 다르게
+   - 내부링크 3~8개 (실재 URL만)
+
+4. .claude/skills/ct-mod-composer/references/checklist.md 를 전부 실행하고
+   결과표(F/S/D/L 각 항목 pass·fail)를 보고하라.
+
+5. CREATE / UPDATE / MERGE / HOLD 판정 + 이유 1문장
+
+[출력 형식] docs/08-ai-selection-logic.md §출력 스키마 JSON
+
+[금지] 글자 수를 채우기 위해 일반론·유사 FAQ·같은 CTA를 반복하지 마라.
+      "100% 완벽", "무조건", "업계 1위", "최저가" 같은 표현을 쓰지 마라.</pre>
+</div>
+
+<div class="card">
+  <div class="card-top"><div class="card-title">주간 운영 루프 <em>주 1회</em></div><button class="copy">복사</button></div>
+  <pre>이번 주 콘텐츠 운영 루프를 실행하라.
+
+1. 트리 재생성
+   python3 .claude/skills/keyword-tree/scripts/build_tree.py \
+     --seed data/keyword-tree.seed.json --out data/keyword-tree.json --cases data/cases.json
+
+2. 검증 (오류 1개라도 있으면 여기서 멈춘다)
+   python3 .claude/skills/keyword-tree/scripts/validate_tree.py data/keyword-tree.json
+
+3. 이번 주 큐
+   python3 .claude/skills/keyword-tree/scripts/plan_pages.py data/keyword-tree.json --top 20
+
+4. 필요 근거 리포트 (현장팀 전달용)
+   python3 .claude/skills/keyword-tree/scripts/plan_pages.py data/keyword-tree.json \
+     --status HOLD --top 30 --format md
+
+5. 큐 상위 항목을 ct-mod-composer 로 초안 생성 (상태 CLAIMED)
+   python3 .claude/skills/keyword-tree/scripts/update_status.py data/keyword-tree.json \
+     &lt;node_id&gt; --status CLAIMED
+
+6. npm run gate:all 통과분만 사람 검수로 넘긴다
+
+[보고] 이번 주 생성 N건 / HOLD N건 / 가장 많이 막힌 사유 TOP3 / 필요한 지역 CASE 목록</pre>
+</div>
+
+<!-- ───────────────────────── ref -->
+<h2><span class="n">📁</span>폴더에 생성된 것</h2>
+
+<table class="files">
+  <tr><th style="width:33%">경로</th><th>내용</th></tr>
+  <tr><td><code>AGENTS.md</code></td><td>에이전트 공통 규칙 · 단일 소스 · 절대 규칙</td></tr>
+  <tr><td><code>README.md</code></td><td>문서 인덱스 · 빠른 시작</td></tr>
+  <tr><td><code>docs/00~10</code></td><td>원문 가이드 v0.3 전체를 체계화 (CT·모듈·이미지·역할·화면·조합규칙·선택로직·파생예시·데이터모델)</td></tr>
+  <tr><td><code>docs/11~16</code></td><td>신규 — 사이트구조 · <b>키워드트리</b> · SEO · 디자인시스템 · 개발사양 · 품질게이트</td></tr>
+  <tr><td><code>data/content-types.json</code></td><td>CT1~CT6 필수·옵션·승격규칙 (코드의 단일 소스)</td></tr>
+  <tr><td><code>data/modules.json</code></td><td>M01~M24 + 컴포넌트명 + 근거소스</td></tr>
+  <tr><td><code>data/keyword-tree.*.json</code></td><td>시드 · 스키마 · 빌드 산출물(256노드) · 샘플 CASE</td></tr>
+  <tr><td><code>.claude/skills/keyword-tree/</code></td><td><b>SKILL.md + 4개 스크립트</b> (build / validate / plan / update_status) + taxonomy · scoring</td></tr>
+  <tr><td><code>.claude/skills/ct-mod-composer/</code></td><td>CT·모듈 조립 스킬 + 게이트 체크리스트 + 모듈 body 템플릿</td></tr>
+  <tr><td><code>.claude/skills/case-intake/</code></td><td>현장 메모·사진 → CASE 구조화 스킬</td></tr>
+  <tr><td><code>supabase/migrations/0001_init.sql</code></td><td>8테이블 · RLS · <b>사실성 트리거</b>(비공개사진 차단, 미승인 CASE 발행 차단) — Postgres 16에서 적용·검증 완료</td></tr>
+  <tr><td><code>design/stitch_assets/</code></td><td>Stitch 원본 5화면 (HTML+PNG)</td></tr>
+</table>
+
+<div class="warn"><b>이 프로젝트의 핵심 —</b> "글자 수를 채우기 위해 없는 사실을 만들지 않는다."
+근거가 없으면 <b>HOLD</b>가 정답입니다. HOLD는 실패가 아니라 <b>현장팀에 무엇이 필요한지 알려주는 신호</b>입니다.
+지역 페이지 양산이 가장 위험한 지점이며, <code>area_expandable</code> + 실제 CASE 검사로 막혀 있습니다.</div>
+
+<footer>
+  SURIWIKI CT·MOD v0.3 · 문서 17종 / 스킬 3종 / 스크립트 4종 / 키워드 노드 256개(OPEN 151 · HOLD 105)<br>
+  키워드 트리 검증 통과 · JSON Schema 준수 · SQL 마이그레이션 Postgres 16 적용 검증 완료
+</footer>
+
+</div>
+
+<script>
+document.querySelectorAll('.copy').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var pre = btn.closest('.card').querySelector('pre');
+    var text = pre.innerText;
+    var done = function(){
+      btn.textContent = '복사됨 ✓'; btn.classList.add('done');
+      setTimeout(function(){ btn.textContent='복사'; btn.classList.remove('done'); }, 1800);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function(){ fallback(text, done); });
+    } else { fallback(text, done); }
+  });
+});
+function fallback(text, done){
+  var ta = document.createElement('textarea');
+  ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); done(); } catch(e) { alert('복사에 실패했습니다. 텍스트를 직접 선택해 주세요.'); }
+  document.body.removeChild(ta);
+}
+</script>
+</body>
+</html>

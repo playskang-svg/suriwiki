@@ -1,0 +1,9 @@
+.env.local
+node_modules
+.next
+*.tsbuildinfo
+.DS_Store
+
+# 고객 현장 원본 사진 — 개인정보 포함. Supabase cases-private 버킷에만 둔다.
+design/비둘기 샘플이미지/
+design/욕조트랩 샘플이미지/

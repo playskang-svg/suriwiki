@@ -1,0 +1,210 @@
+{
+  "version": "0.3",
+  "note": "docs/09-derivation-examples.md 차별화 검증표의 결정론적 테스트 픽스처. 질문·첫답변 유사도(sim)는 임베딩 모델에 따라 달라지므로 여기 명시한 값을 입력으로 고정한다. 모듈·이미지 Jaccard 는 pages 정의에서 계산되며 검증 가능하다. 값은 반올림하지 않은 원값이며 tolerance(1e-9) 이내로 일치해야 한다.",
+  "weights": {
+    "search_intent": 0.3,
+    "m01_answer": 0.25,
+    "core_modules": 0.25,
+    "image_set": 0.2
+  },
+  "thresholds": {
+    "create": 0.45,
+    "review": 0.25
+  },
+  "pages": {
+    "P1": {
+      "label": "욕실 문틀은 왜 아래쪽부터 썩나요?",
+      "ct": "CT1",
+      "pt": "LANDING",
+      "modules": [
+        "M01",
+        "M03",
+        "M04",
+        "M09",
+        "M19",
+        "M20"
+      ],
+      "images": [
+        "i1",
+        "i2",
+        "i3",
+        "i7"
+      ]
+    },
+    "P2": {
+      "label": "썩은 문틀, 하부만 수리할 수 있나요?",
+      "ct": "CT5",
+      "pt": "LANDING",
+      "modules": [
+        "M01",
+        "M03",
+        "M05",
+        "M06",
+        "M07",
+        "M19",
+        "M20"
+      ],
+      "images": [
+        "i2",
+        "i4",
+        "i5",
+        "i9"
+      ]
+    },
+    "P3": {
+      "label": "문틀 부분수리와 전체교체 중 뭘 해야 하나요?",
+      "ct": "CT4",
+      "pt": "WIKI",
+      "modules": [
+        "M01",
+        "M07",
+        "M13",
+        "M14",
+        "M19",
+        "M20"
+      ],
+      "images": [
+        "i3",
+        "i5",
+        "i10",
+        "i11"
+      ]
+    },
+    "P4": {
+      "label": "강남 욕실 문틀 하부 교체 사례",
+      "ct": "CT6",
+      "pt": "CASE",
+      "modules": [
+        "M02",
+        "M03",
+        "M06",
+        "M08",
+        "M18",
+        "M20"
+      ],
+      "images": [
+        "i1",
+        "i2",
+        "i4",
+        "i6",
+        "i8",
+        "i12"
+      ]
+    },
+    "P5": {
+      "label": "ABS 문틀은 어떤 자재인가요?",
+      "ct": "CT3",
+      "pt": "WIKI",
+      "modules": [
+        "M01",
+        "M11",
+        "M13",
+        "M19"
+      ],
+      "images": [
+        "i13",
+        "i14"
+      ]
+    },
+    "P6": {
+      "label": "강남 문틀수리",
+      "ct": "CT6",
+      "pt": "AREA",
+      "modules": [
+        "M01",
+        "M19",
+        "M20",
+        "M23",
+        "M24"
+      ],
+      "images": [
+        "i6",
+        "i8",
+        "i15"
+      ]
+    },
+    "P2dup": {
+      "label": "썩은 문틀 부분수리 가능한가요?",
+      "ct": "CT5",
+      "pt": "LANDING",
+      "modules": [
+        "M01",
+        "M03",
+        "M05",
+        "M06",
+        "M07",
+        "M19",
+        "M20"
+      ],
+      "images": [
+        "i2",
+        "i4",
+        "i5",
+        "i16"
+      ]
+    }
+  },
+  "cases": [
+    {
+      "a": "P1",
+      "b": "P2",
+      "sim_search_intent": 0.41,
+      "sim_m01_answer": 0.22,
+      "jaccard_core_modules": 0.4444444444444444,
+      "jaccard_image_set": 0.14285714285714285,
+      "expected_diff_score": 0.6823174603174604,
+      "expected_decision": "CREATE"
+    },
+    {
+      "a": "P2",
+      "b": "P3",
+      "sim_search_intent": 0.38,
+      "sim_m01_answer": 0.25,
+      "jaccard_core_modules": 0.4444444444444444,
+      "jaccard_image_set": 0.14285714285714285,
+      "expected_diff_score": 0.6838174603174604,
+      "expected_decision": "CREATE"
+    },
+    {
+      "a": "P1",
+      "b": "P6",
+      "sim_search_intent": 0.19,
+      "sim_m01_answer": 0.14,
+      "jaccard_core_modules": 0.375,
+      "jaccard_image_set": 0.0,
+      "expected_diff_score": 0.8142499999999999,
+      "expected_decision": "CREATE"
+    },
+    {
+      "a": "P3",
+      "b": "P5",
+      "sim_search_intent": 0.31,
+      "sim_m01_answer": 0.28,
+      "jaccard_core_modules": 0.42857142857142855,
+      "jaccard_image_set": 0.0,
+      "expected_diff_score": 0.7298571428571428,
+      "expected_decision": "CREATE"
+    },
+    {
+      "a": "P2",
+      "b": "P2dup",
+      "sim_search_intent": 0.97,
+      "sim_m01_answer": 0.95,
+      "jaccard_core_modules": 1.0,
+      "jaccard_image_set": 0.6,
+      "expected_diff_score": 0.10150000000000003,
+      "expected_decision": "MERGE"
+    },
+    {
+      "a": "P1",
+      "b": "P4",
+      "sim_search_intent": 0.33,
+      "sim_m01_answer": 0.3,
+      "jaccard_core_modules": 0.2,
+      "jaccard_image_set": 0.25,
+      "expected_diff_score": 0.7260000000000001,
+      "expected_decision": "CREATE"
+    }
+  ],
+  "tolerance": 1e-09
+}

@@ -1,0 +1,157 @@
+{
+  "version": "0.3",
+  "domain": { "id": "home_repair", "label": "집수리" },
+  "note": "L1 space / L2 target / L3 problem 만 정의합니다. L4 intent 노드는 build_tree.py 가 확장합니다.",
+  "default_intents": ["cause", "judge", "case"],
+  "areas": [
+    { "slug": "busan", "label": "부산", "parent": null },
+    { "slug": "busan-buk", "label": "부산 북구", "parent": "busan" },
+    { "slug": "busan-nam", "label": "부산 남구", "parent": "busan" },
+    { "slug": "gimhae", "label": "김해", "parent": null },
+    { "slug": "yangsan", "label": "양산", "parent": null },
+    { "slug": "gangnam", "label": "서울 강남구", "parent": null },
+    { "slug": "seocho", "label": "서울 서초구", "parent": null },
+    { "slug": "pyeongtaek", "label": "평택", "parent": null }
+  ],
+  "spaces": [
+    {
+      "id": "bath", "label": "욕실", "volume_hint": "high",
+      "targets": [
+        { "id": "doorframe", "label": "욕실 문틀", "volume_hint": "mid", "competition_hint": "low", "area_expandable": true,
+          "problems": [
+            { "id": "rot", "label": "썩음·부식", "volume_hint": "mid", "intents": ["cause", "judge", "case", "cost"] },
+            { "id": "swell", "label": "들뜸·부풂", "volume_hint": "low", "intents": ["cause", "judge"] },
+            { "id": "hole", "label": "구멍·파손", "volume_hint": "low", "intents": ["judge", "case"] }
+          ] },
+        { "id": "silicone", "label": "욕실 실리콘", "volume_hint": "high", "competition_hint": "mid", "area_expandable": false,
+          "problems": [
+            { "id": "mold", "label": "곰팡이·변색", "volume_hint": "high", "intents": ["cause", "howto", "judge"] },
+            { "id": "peel", "label": "들뜸·벌어짐", "volume_hint": "mid", "intents": ["cause", "howto"] }
+          ] },
+        { "id": "tile", "label": "욕실 타일", "volume_hint": "mid", "competition_hint": "mid", "area_expandable": true,
+          "problems": [
+            { "id": "crack", "label": "깨짐·크랙", "volume_hint": "mid", "intents": ["judge", "case"] },
+            { "id": "detach", "label": "들뜸·탈락", "volume_hint": "mid", "intents": ["cause", "judge", "case"] }
+          ] },
+        { "id": "faucet", "label": "수전", "volume_hint": "mid", "competition_hint": "mid", "area_expandable": false,
+          "problems": [
+            { "id": "leak", "label": "누수", "volume_hint": "mid", "intents": ["cause", "judge", "howto"] }
+          ] },
+        { "id": "drain", "label": "배수구", "volume_hint": "mid", "competition_hint": "high", "area_expandable": false,
+          "problems": [
+            { "id": "odor", "label": "냄새·역류", "volume_hint": "mid", "intents": ["cause", "howto"] },
+            { "id": "trap", "label": "배수 트랩 빠짐·이탈", "volume_hint": "low", "intents": ["cause", "judge", "case"] }
+          ] }
+      ]
+    },
+    {
+      "id": "kitchen", "label": "주방", "volume_hint": "high",
+      "targets": [
+        { "id": "countertop", "label": "싱크대 상판", "volume_hint": "mid", "competition_hint": "low", "area_expandable": true,
+          "problems": [
+            { "id": "crack", "label": "인조대리석 크랙", "volume_hint": "mid", "intents": ["cause", "judge", "case", "cost"] },
+            { "id": "burn", "label": "탄자국·변색", "volume_hint": "low", "intents": ["judge", "case"] },
+            { "id": "stain", "label": "얼룩·광택 상실", "volume_hint": "low", "intents": ["howto", "judge"] }
+          ] },
+        { "id": "cabinet", "label": "싱크대 문짝·상부장", "volume_hint": "mid", "competition_hint": "low", "area_expandable": true,
+          "problems": [
+            { "id": "sag", "label": "처짐·단차", "volume_hint": "mid", "intents": ["cause", "judge", "case"] },
+            { "id": "hinge", "label": "경첩 헐거움", "volume_hint": "mid", "intents": ["howto", "judge", "case"] }
+          ] },
+        { "id": "hood", "label": "주방 후드", "volume_hint": "low", "competition_hint": "mid", "area_expandable": false,
+          "problems": [
+            { "id": "noise", "label": "소음·흡입력 저하", "volume_hint": "low", "intents": ["cause", "judge"] }
+          ] }
+      ]
+    },
+    {
+      "id": "entrance", "label": "현관·출입문", "volume_hint": "high",
+      "targets": [
+        { "id": "firedoor", "label": "방화문·현관문", "volume_hint": "high", "competition_hint": "low", "area_expandable": true,
+          "problems": [
+            { "id": "sag", "label": "처짐·바닥 끌림", "volume_hint": "high", "intents": ["cause", "judge", "case", "cost"] },
+            { "id": "pivot", "label": "피벗힌지 파손", "volume_hint": "mid", "intents": ["judge", "case"] },
+            { "id": "gap", "label": "틈새 벌어짐", "volume_hint": "mid", "intents": ["cause", "judge", "case"] },
+            { "id": "closer", "label": "도어클로저 고장", "volume_hint": "mid", "intents": ["howto", "judge", "case"] }
+          ] },
+        { "id": "temperedglass", "label": "강화도어·유리문", "volume_hint": "high", "competition_hint": "low", "area_expandable": true,
+          "problems": [
+            { "id": "floorhinge", "label": "플로어힌지 유압 파손", "volume_hint": "high", "intents": ["cause", "judge", "case", "cost"] },
+            { "id": "fastclose", "label": "빨리 닫힘·소음", "volume_hint": "mid", "intents": ["cause", "howto", "judge"] },
+            { "id": "tophinge", "label": "상부힌지(상롯트) 이탈", "volume_hint": "mid", "intents": ["judge", "case"] }
+          ] },
+        { "id": "autodoor", "label": "자동문", "volume_hint": "mid", "competition_hint": "mid", "area_expandable": true,
+          "problems": [
+            { "id": "sensor", "label": "센서 오작동", "volume_hint": "mid", "intents": ["cause", "judge", "case"] },
+            { "id": "motor", "label": "모터·컨트롤러 고장", "volume_hint": "low", "intents": ["judge", "case"] },
+            { "id": "rail", "label": "레일·롤러 소음", "volume_hint": "low", "intents": ["cause", "howto", "case"] }
+          ] }
+      ]
+    },
+    {
+      "id": "room", "label": "거실·방", "volume_hint": "mid",
+      "targets": [
+        { "id": "door", "label": "방문·문짝", "volume_hint": "mid", "competition_hint": "low", "area_expandable": true,
+          "problems": [
+            { "id": "hole", "label": "구멍·파손", "volume_hint": "mid", "intents": ["judge", "case", "cost"] },
+            { "id": "sag", "label": "처짐·닫힘 불량", "volume_hint": "mid", "intents": ["cause", "howto", "judge"] },
+            { "id": "film", "label": "필름 들뜸·벗겨짐", "volume_hint": "low", "intents": ["howto", "judge", "case"] }
+          ] },
+        { "id": "wallpaper", "label": "벽지", "volume_hint": "mid", "competition_hint": "high", "area_expandable": false,
+          "problems": [
+            { "id": "tear", "label": "찢어짐·들뜸", "volume_hint": "mid", "intents": ["howto", "judge"] },
+            { "id": "mold", "label": "곰팡이·결로", "volume_hint": "mid", "intents": ["cause", "judge"] }
+          ] },
+        { "id": "furniture", "label": "가구(붙박이장 등)", "volume_hint": "low", "competition_hint": "low", "area_expandable": false,
+          "problems": [
+            { "id": "rail", "label": "레일·서랍 불량", "volume_hint": "low", "intents": ["howto", "judge", "case"] },
+            { "id": "hinge", "label": "경첩·단차", "volume_hint": "low", "intents": ["howto", "judge"] }
+          ] }
+      ]
+    },
+    {
+      "id": "veranda", "label": "베란다·발코니", "volume_hint": "mid",
+      "targets": [
+        { "id": "window", "label": "창호·샤시", "volume_hint": "mid", "competition_hint": "mid", "area_expandable": true,
+          "problems": [
+            { "id": "leak", "label": "누수·결로", "volume_hint": "mid", "intents": ["cause", "judge", "case"] },
+            { "id": "roller", "label": "호차·개폐 불량", "volume_hint": "mid", "intents": ["howto", "judge", "case"] }
+          ] },
+        { "id": "floor", "label": "베란다 바닥", "volume_hint": "low", "competition_hint": "low", "area_expandable": false,
+          "problems": [
+            { "id": "crack", "label": "균열·방수 파손", "volume_hint": "low", "intents": ["cause", "judge"] }
+          ] },
+        { "id": "outdoor_unit", "label": "실외기실", "volume_hint": "low", "competition_hint": "low", "area_expandable": true,
+          "problems": [
+            { "id": "pigeon", "label": "비둘기 유입·배설물", "volume_hint": "low", "intents": ["cause", "judge", "case", "howto"] }
+          ] }
+      ]
+    },
+    {
+      "id": "store", "label": "상가·상업공간", "volume_hint": "mid",
+      "targets": [
+        { "id": "cubicle", "label": "화장실 큐비클", "volume_hint": "low", "competition_hint": "low", "area_expandable": true,
+          "problems": [
+            { "id": "sag", "label": "처짐·단차", "volume_hint": "low", "intents": ["judge", "case"] }
+          ] },
+        { "id": "emergencydoor", "label": "비상구 방화문", "volume_hint": "low", "competition_hint": "low", "area_expandable": true,
+          "problems": [
+            { "id": "detach", "label": "탈락 위험·힌지 파손", "volume_hint": "low", "intents": ["judge", "case"] }
+          ] }
+      ]
+    }
+  ],
+  "materials": [
+    { "id": "abs", "label": "ABS", "space": "any" },
+    { "id": "mdf", "label": "MDF", "space": "any" },
+    { "id": "silicone", "label": "실리콘", "space": "bath" },
+    { "id": "artificial_marble", "label": "인조대리석", "space": "kitchen" },
+    { "id": "tempered_glass_12t", "label": "12T 강화유리", "space": "entrance" }
+  ],
+  "compare_pairs": [
+    { "id": "partial_vs_full", "label": "부분수리 vs 전체교체", "space": "any", "volume_hint": "high", "competition_hint": "low" },
+    { "id": "abs_vs_mdf", "label": "ABS vs MDF 문틀", "space": "any", "volume_hint": "mid", "competition_hint": "low" },
+    { "id": "weld_vs_replace_hinge", "label": "힌지 용접 vs 교체", "space": "entrance", "volume_hint": "mid", "competition_hint": "low" },
+    { "id": "repair_vs_replace_countertop", "label": "상판 보수 vs 교체", "space": "kitchen", "volume_hint": "mid", "competition_hint": "low" }
+  ]
+}

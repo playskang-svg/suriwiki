@@ -1,0 +1,256 @@
+{
+  "version": "0.3",
+  "source": "Suriwiki CT·MOD 모듈형 콘텐츠 생성 가이드 v0.3 · 02 기본 Module 사전",
+  "modules": [
+    {
+      "code": "M01",
+      "name": "질문 즉답",
+      "role": "검색자의 질문에 첫 화면에서 바로 답함",
+      "component": "AnswerBox",
+      "evidence_sources": [
+        "search_intent"
+      ],
+      "group": "답변"
+    },
+    {
+      "code": "M02",
+      "name": "핵심 요약",
+      "role": "문제·판단·작업·결과를 짧게 압축",
+      "component": "SummaryCard",
+      "evidence_sources": [
+        "case.problem",
+        "case.judgement",
+        "case.work_steps",
+        "case.result"
+      ],
+      "group": "답변"
+    },
+    {
+      "code": "M03",
+      "name": "문제·증상",
+      "role": "현재 어떤 문제가 있는지 설명",
+      "component": "SymptomList",
+      "evidence_sources": [
+        "case.problem"
+      ],
+      "group": "진단"
+    },
+    {
+      "code": "M04",
+      "name": "원인·발생 구조",
+      "role": "문제가 생긴 이유와 진행 구조",
+      "component": "CauseFlow",
+      "evidence_sources": [
+        "case.cause"
+      ],
+      "group": "진단"
+    },
+    {
+      "code": "M05",
+      "name": "상태 구분",
+      "role": "손상 정도를 나눠 설명",
+      "component": "GradeCards",
+      "evidence_sources": [
+        "case.problem",
+        "grade_rules"
+      ],
+      "group": "진단"
+    },
+    {
+      "code": "M06",
+      "name": "전문가 판단",
+      "role": "무엇을 보고 작업 방향을 정했는지",
+      "component": "JudgementCallout",
+      "evidence_sources": [
+        "case.judgement"
+      ],
+      "group": "진단"
+    },
+    {
+      "code": "M07",
+      "name": "수리·교체 기준",
+      "role": "수리 가능한 조건과 교체 조건",
+      "component": "CriteriaTable",
+      "evidence_sources": [
+        "criteria_rules"
+      ],
+      "group": "진단"
+    },
+    {
+      "code": "M08",
+      "name": "실제 작업 공정",
+      "role": "해당 CASE에서 실제로 수행한 순서",
+      "component": "ProcessTimeline",
+      "evidence_sources": [
+        "case.work_steps"
+      ],
+      "group": "실행"
+    },
+    {
+      "code": "M09",
+      "name": "일반 해결방법",
+      "role": "여러 현장에 적용 가능한 일반 수리방향",
+      "component": "SolutionList",
+      "evidence_sources": [
+        "general_knowledge"
+      ],
+      "group": "실행"
+    },
+    {
+      "code": "M10",
+      "name": "셀프시공 절차",
+      "role": "사용자가 직접 작업하는 준비와 순서",
+      "component": "StepGuide",
+      "evidence_sources": [
+        "procedure",
+        "safety_rules"
+      ],
+      "group": "실행"
+    },
+    {
+      "code": "M11",
+      "name": "대상·재료·자재 정보",
+      "role": "대상·재료의 특징·용도·한계",
+      "component": "SpecTable",
+      "evidence_sources": [
+        "case.materials",
+        "material_dict"
+      ],
+      "group": "정보"
+    },
+    {
+      "code": "M12",
+      "name": "공구 정보",
+      "role": "공구의 기능과 사용 조건",
+      "component": "SpecTable",
+      "evidence_sources": [
+        "case.tools",
+        "tool_dict"
+      ],
+      "group": "정보"
+    },
+    {
+      "code": "M13",
+      "name": "비교·선택 기준",
+      "role": "방법·재료·제품의 차이와 선택 기준",
+      "component": "CompareTable",
+      "evidence_sources": [
+        "compare_targets"
+      ],
+      "group": "정보"
+    },
+    {
+      "code": "M14",
+      "name": "비용·시간 요소",
+      "role": "비용·시간이 달라지는 실제 이유",
+      "component": "CostFactors",
+      "evidence_sources": [
+        "case.duration_note",
+        "cost_factors"
+      ],
+      "group": "정보"
+    },
+    {
+      "code": "M15",
+      "name": "자가 확인",
+      "role": "사용자가 안전하게 확인할 항목",
+      "component": "Checklist",
+      "evidence_sources": [
+        "check_rules"
+      ],
+      "group": "안전·사후"
+    },
+    {
+      "code": "M16",
+      "name": "안전·중단 기준",
+      "role": "작업을 멈추고 전문가가 필요한 조건",
+      "component": "SafetyBanner",
+      "evidence_sources": [
+        "safety_rules",
+        "case.safety_flags"
+      ],
+      "group": "안전·사후"
+    },
+    {
+      "code": "M17",
+      "name": "관리·예방",
+      "role": "작업 후 관리와 재발 방지",
+      "component": "TipList",
+      "evidence_sources": [
+        "case.maintenance"
+      ],
+      "group": "안전·사후"
+    },
+    {
+      "code": "M18",
+      "name": "결과·한계",
+      "role": "작업 후 달라진 점과 남은 한계",
+      "component": "ResultCard",
+      "evidence_sources": [
+        "case.result",
+        "case.limit_note"
+      ],
+      "group": "안전·사후"
+    },
+    {
+      "code": "M19",
+      "name": "실제 CASE 근거",
+      "role": "설명을 실제 현장사례로 뒷받침",
+      "component": "CaseCitation",
+      "evidence_sources": [
+        "source_case_id"
+      ],
+      "group": "근거"
+    },
+    {
+      "code": "M20",
+      "name": "사진·오버레이",
+      "role": "사진으로 문제·판단·공정을 설명",
+      "component": "EvidenceGallery",
+      "evidence_sources": [
+        "image_variants"
+      ],
+      "group": "근거"
+    },
+    {
+      "code": "M21",
+      "name": "FAQ",
+      "role": "추가로 궁금해할 질문에 답함",
+      "component": "FaqAccordion",
+      "evidence_sources": [
+        "faq_pool"
+      ],
+      "group": "연결"
+    },
+    {
+      "code": "M22",
+      "name": "관련 콘텐츠·내부링크",
+      "role": "CASE·WIKI·TOPIC 등 다음 페이지 연결",
+      "component": "RelatedGrid",
+      "evidence_sources": [
+        "existing_pages"
+      ],
+      "group": "연결"
+    },
+    {
+      "code": "M23",
+      "name": "지역·서비스 정보",
+      "role": "실제 지역과 서비스 가능 범위 설명",
+      "component": "AreaBlock",
+      "evidence_sources": [
+        "case.area_id"
+      ],
+      "group": "연결"
+    },
+    {
+      "code": "M24",
+      "name": "CTA",
+      "role": "전화·문자·사진상담 등 다음 행동 안내",
+      "component": "CtaBlock",
+      "evidence_sources": [
+        "brand_cta"
+      ],
+      "group": "연결"
+    }
+  ]
+}

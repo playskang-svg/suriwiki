@@ -1,0 +1,28 @@
+{
+  "profile": "default",
+  "brand": {
+    "name": "수리위키",
+    "tagline": "전체 교체 없이, 상한 곳만 정확히 되살립니다",
+    "site_url": "https://suriwiki.com"
+  },
+  "contact": {
+    "phone": "010-0000-0000",
+    "kakao_url": "https://pf.kakao.com/placeholder",
+    "email": "contact@suriwiki.com",
+    "business_hours": "평일 09:00 - 18:00",
+    "owner": "홍길동",
+    "biz_no": "123-45-67890",
+    "address": "부산광역시 해운대구"
+  },
+  "keyword_set": "default",
+  "area_scope": ["busan", "gimhae", "yangsan"],
+  "certifications": [],
+  "stats": null,
+  "assets": {
+    "logo": "/brand/default/logo.svg",
+    "favicon": "/brand/default/favicon.ico",
+    "og_image": null,
+    "hero": null,
+    "placeholder": "/brand/default/placeholder.svg"
+  }
+}
