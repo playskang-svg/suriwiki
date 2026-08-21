@@ -170,11 +170,17 @@ export default async function Home() {
 
           {/* 시공 지역 */}
           <section id="areas" className="w-full px-grid-margin-mobile md:px-grid-margin-desktop pb-section-gap max-w-7xl mx-auto">
-            <div className="mb-stack-md">
-              <h2 className="font-headline-lg text-headline-lg text-on-surface mb-2">시공 지역</h2>
-              <p className="font-body-md text-body-md text-on-surface-variant">
-                아래 지역에서 방문 시공하고 있습니다.
-              </p>
+            <div className="mb-stack-md flex items-end justify-between gap-4">
+              <div>
+                <h2 className="font-headline-lg text-headline-lg text-on-surface mb-2">시공 지역</h2>
+                <p className="font-body-md text-body-md text-on-surface-variant">
+                  아래 지역에서 방문 시공하고 있습니다.
+                </p>
+              </div>
+              <Link href="/area" className="shrink-0 font-status-label text-status-label text-primary hover:underline flex items-center gap-1">
+                전국 지역 보기
+                <span className="material-symbols-outlined text-[18px]">chevron_right</span>
+              </Link>
             </div>
             <div className="flex flex-wrap gap-2">
               {serviceAreas.map(a =>
