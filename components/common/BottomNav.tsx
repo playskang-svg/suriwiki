@@ -26,11 +26,15 @@ export default function BottomNav() {
           <span className="material-symbols-outlined">photo_library</span>
           <span className="text-label-caps font-label-caps">시공사례</span>
         </Link>
-        <div className="w-1/4 h-full flex items-center justify-center">
-          {/* 상담 페이지가 아직 없다. 전화가 실제 전환 경로다. */}
-          <a href={telHref} className="bg-deep-navy text-on-primary px-4 py-2 rounded-lg text-status-label font-status-label flex items-center gap-1 hover:bg-primary transition-colors">
+        <div className="w-1/4 h-full flex items-center justify-center px-1">
+          {/* 상담 페이지가 아직 없다. 전화가 실제 전환 경로다.
+              좁은 화면에서 글자가 세로로 접히지 않도록 폭을 줄이고 줄바꿈을 막는다. */}
+          <a
+            href={telHref}
+            className="bg-deep-navy text-on-primary w-full px-2 py-2 rounded-lg text-status-label font-status-label flex items-center justify-center gap-1 whitespace-nowrap hover:bg-primary transition-colors"
+          >
             <span className="material-symbols-outlined text-[18px]">call</span>
-            <span>전화상담</span>
+            <span>전화</span>
           </a>
         </div>
       </div>

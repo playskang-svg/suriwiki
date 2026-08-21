@@ -2,6 +2,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { siteConfig } from "@/config/site";
 import areasData from "@/data/areas.json";
+import MobileMenu, { type MenuItem } from "@/components/common/MobileMenu";
+
+/** 사이트 대표 메뉴. 데스크톱은 펼치고, 모바일은 햄버거 안에 넣는다. */
+const MENU: MenuItem[] = [
+  { label: "홈", href: "/" },
+  { label: "시공 사례", href: "/cases" },
+];
 
 // 서비스 지역 표기. 최상위 지역(시도·독립시)만 쓴다 — 구·동까지 나열하면 헤더가 넘친다.
 const TOP_AREAS = areasData.areas.filter(a => a.parent === null).map(a => a.label);
@@ -51,21 +58,24 @@ export default function Header() {
         <div className="flex items-center gap-2">
           {/* 목록으로 갈 수 있는 상시 메뉴. 없으면 홈에서 링크된 페이지 말고는 도달할 방법이 없다. */}
           <nav className="hidden md:flex items-center gap-1 mr-2">
-            <Link href="/" className="px-3 py-2 rounded-lg font-status-label text-status-label text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors">
-              홈
-            </Link>
-            <Link href="/cases" className="px-3 py-2 rounded-lg font-status-label text-status-label text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors">
-              시공 사례
-            </Link>
+            {MENU.map(item => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="px-3 py-2 rounded-lg font-status-label text-status-label text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors"
+              >
+                {item.label}
+              </Link>
+            ))}
           </nav>
           <a
             href={telHref}
-            className="flex items-center gap-1.5 bg-primary text-on-primary px-4 py-2 rounded-full font-status-label text-status-label hover:bg-primary/90 transition-colors"
+            className="hidden sm:flex items-center gap-1.5 bg-primary text-on-primary px-4 py-2 rounded-full font-status-label text-status-label hover:bg-primary/90 transition-colors"
           >
             <span className="material-symbols-outlined text-[18px]">call</span>
-            <span className="hidden sm:inline">{siteConfig.contact.phone}</span>
-            <span className="sm:hidden">전화</span>
+            <span>{siteConfig.contact.phone}</span>
           </a>
+          <MobileMenu items={MENU} telHref={telHref} phone={siteConfig.contact.phone} />
         </div>
       </div>
     </header>
