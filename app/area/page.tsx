@@ -21,7 +21,16 @@ export const metadata: Metadata = {
 };
 
 export default async function AreaIndexPage() {
-  const tree = await fetchAreaTree();
+  const all = await fetchAreaTree();
+
+  /*
+    광역시·특별시·도 단위만 버튼으로 낸다.
+    areas 테이블에는 초기 데이터에서 넘어온 "김해" · "평택" · "서울 강남구" 같은
+    최상위 행이 섞여 있는데, 이것들은 하위 지역이 없는 시군구급이라
+    시도 버튼에 끼면 "김해"가 광역시처럼 보인다.
+    하위 지역을 가진 것만 광역 단위로 본다. (해당 지역 페이지 자체는 그대로 살아 있다.)
+  */
+  const tree = all.filter(t => t.children.length > 0);
   const telHref = `tel:${siteConfig.contact.phone.replace(/[^0-9]/g, "")}`;
   const total = tree.reduce((n, t) => n + t.children.length, 0) + tree.length;
 
@@ -39,32 +48,36 @@ export default async function AreaIndexPage() {
           <h1 className="font-headline-lg text-headline-lg text-on-surface mb-2">시공 가능 지역</h1>
           <p className="font-body-md text-on-surface-variant mb-stack-lg break-keep">
             전국 {tree.length}개 시·도, {total.toLocaleString()}개 지역을 안내합니다.
+            지역을 누르면 해당 시·군·구가 펼쳐집니다.
             지역별 시공 사례는 실제 작업한 현장이 생기는 대로 공개합니다.
           </p>
 
           {/*
-            권역(시도) 이름만 먼저 보이고, 펼쳐야 시군구가 나온다.
-            274개를 한 번에 늘어놓으면 화면을 통째로 잡아먹는다.
-            <details> 를 쓰면 자바스크립트 없이 동작하고 서버 컴포넌트로 남는다 —
-            키보드 조작과 스크린리더 지원도 브라우저가 기본으로 해준다.
+            광역시·특별시·도 단위 버튼만 늘어놓고, 누른 하나만 펼친다.
+
+            <details name="..."> 은 같은 name 을 가진 것 중 하나만 열리게 하는
+            HTML 표준 동작(exclusive accordion)이다. 자바스크립트가 필요 없어
+            서버 컴포넌트로 남고, 지원하지 않는 구형 브라우저에서는
+            그냥 일반 아코디언으로 동작한다 — 기능이 사라지지는 않는다.
           */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
             {tree.map(sido => (
               <details
                 key={sido.slug}
-                className="group bg-surface-clean border border-border-subtle rounded-xl overflow-hidden open:border-primary/40 transition-colors"
+                name="region"
+                className="group bg-surface-clean border border-border-subtle rounded-xl open:col-span-2 sm:open:col-span-3 md:open:col-span-4 open:border-primary/40 transition-colors"
               >
-                <summary className="flex items-center justify-between gap-2 px-4 py-3.5 cursor-pointer hover:bg-surface-container-low transition-colors">
-                  <span className="font-headline-md text-[17px] text-on-surface group-open:text-primary transition-colors">
+                <summary className="flex items-center justify-between gap-1 px-3 py-3 cursor-pointer rounded-xl hover:bg-surface-container-low transition-colors">
+                  <span className="font-headline-md text-[15px] md:text-[16px] text-on-surface group-open:text-primary transition-colors break-keep">
                     {sido.label}
                   </span>
-                  <span className="flex items-center gap-2 shrink-0">
+                  <span className="flex items-center gap-1 shrink-0">
                     {sido.children.length > 0 && (
-                      <span className="font-status-label text-status-label text-on-surface-variant">
+                      <span className="font-status-label text-[12px] text-on-surface-variant">
                         {sido.children.length}
                       </span>
                     )}
-                    <span className="material-symbols-outlined text-[20px] text-on-surface-variant transition-transform group-open:rotate-180">
+                    <span className="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform group-open:rotate-180">
                       expand_more
                     </span>
                   </span>
