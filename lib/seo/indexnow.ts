@@ -22,8 +22,15 @@ const ENDPOINTS = [
   'https://searchadvisor.naver.com/indexnow',
 ];
 
-/** IndexNow 는 요청당 URL 1만 개까지 받는다. */
-const MAX_URLS = 10000;
+/**
+ * 한 요청에 담는 URL 수.
+ *
+ * 규격 문서에는 요청당 1만 개까지라고 되어 있지만, 실제로는 그보다 훨씬 적다 —
+ * 280건을 한 번에 보냈을 때 api.indexnow.org 가 403 을 돌려줬고,
+ * 같은 키로 1건을 보내면 200 이었다. 키 문제가 아니라 요청 크기 문제였다.
+ * 안전한 크기로 나눠 보낸다.
+ */
+const BATCH_SIZE = 100;
 
 /** 키 파일 경로. 루트에 `<key>.txt` 로 둔다. */
 export function indexNowKeyPath(key: string): string {
@@ -34,6 +41,8 @@ export type IndexNowResult = {
   endpoint: string;
   ok: boolean;
   status: number | null;
+  /** 접수된 URL 수 */
+  sent: number;
   error?: string;
 };
 
@@ -53,25 +62,52 @@ export async function pingIndexNow(urls: string[]): Promise<IndexNowResult[] | n
   if (!urls.length) return [];
 
   const siteUrl = new URL(siteConfig.brand.site_url);
-  const payload = {
-    host: siteUrl.host,
-    key,
-    keyLocation: `${siteUrl.origin}${indexNowKeyPath(key)}`,
-    urlList: urls.slice(0, MAX_URLS),
-  };
 
-  return Promise.all(
-    ENDPOINTS.map(async (endpoint): Promise<IndexNowResult> => {
+  const batches: string[][] = [];
+  for (let i = 0; i < urls.length; i += BATCH_SIZE) {
+    batches.push(urls.slice(i, i + BATCH_SIZE));
+  }
+
+  const results: IndexNowResult[] = [];
+
+  for (const endpoint of ENDPOINTS) {
+    let ok = true;
+    let lastStatus: number | null = null;
+    let error: string | undefined;
+    let sent = 0;
+
+    // 엔드포인트별로 배치를 순차 전송한다. 병렬로 쏘면 rate limit 에 걸린다.
+    for (const batch of batches) {
+      const payload = {
+        host: siteUrl.host,
+        key,
+        keyLocation: `${siteUrl.origin}${indexNowKeyPath(key)}`,
+        urlList: batch,
+      };
       try {
         const res = await fetch(endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json; charset=utf-8' },
           body: JSON.stringify(payload),
         });
-        return { endpoint, ok: res.ok, status: res.status };
+        lastStatus = res.status;
+        if (res.ok) {
+          sent += batch.length;
+        } else {
+          ok = false;
+          error = `배치 ${sent + 1}~${sent + batch.length} 실패`;
+          break;
+        }
       } catch (err) {
-        return { endpoint, ok: false, status: null, error: String(err) };
+        ok = false;
+        lastStatus = null;
+        error = String(err);
+        break;
       }
-    })
-  );
+    }
+
+    results.push({ endpoint, ok, status: lastStatus, sent, error });
+  }
+
+  return results;
 }
