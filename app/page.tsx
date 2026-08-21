@@ -3,8 +3,17 @@ import BottomNav from "@/components/common/BottomNav";
 import StatStrip from "@/components/common/StatStrip";
 import Link from "next/link";
 import { siteConfig } from "@/config/site";
+import { fetchPublishedPages, pageLastModified } from "@/lib/seo/sitemap";
 
-export default function Home() {
+export const revalidate = 3600;
+
+export default async function Home() {
+  // 실제로 발행된 페이지만 홈에서 링크한다.
+  // 서비스 카드가 아직 없는 페이지를 가리키고 있어서 눌러도 전부 404 였고,
+  // 정작 발행된 CASE 는 홈에서 갈 방법이 없었다.
+  const published = (await fetchPublishedPages())
+    .sort((a, b) => pageLastModified(b).getTime() - pageLastModified(a).getTime());
+
   return (
     <>
       <Header />
@@ -35,10 +44,14 @@ export default function Home() {
               <p className="font-body-lg text-[18px] md:text-[24px] text-on-primary font-medium mb-stack-md md:mb-12 break-keep text-center md:text-left drop-shadow-sm opacity-90 max-w-xl mx-auto md:mx-0">
                 <span className="text-primary-fixed-dim font-bold">{siteConfig.brand.name}</span>는 비용이 많이 드는 전체 교체를 권하지 않습니다.<br />꼭 필요한 부분만 정확히 찾아내어 새것처럼 되살려 드립니다.
               </p>
-              <button className="bg-primary hover:bg-primary/90 text-on-primary px-6 py-4 rounded-xl font-headline-md text-[18px] flex items-center justify-center gap-2 w-full md:w-auto shadow-lg transition-transform active:scale-95">
-                <span>무료 상담 신청하기</span>
-                <span className="material-symbols-outlined">arrow_forward</span>
-              </button>
+              {/* <button> 이라 아무 동작도 하지 않았다. 전화가 실제 전환 경로다. */}
+              <a
+                href={`tel:${siteConfig.contact.phone.replace(/[^0-9]/g, "")}`}
+                className="bg-primary hover:bg-primary/90 text-on-primary px-6 py-4 rounded-xl font-headline-md text-[18px] inline-flex items-center justify-center gap-2 w-full md:w-auto shadow-lg transition-transform active:scale-95"
+              >
+                <span className="material-symbols-outlined">call</span>
+                <span>{siteConfig.contact.phone} 전화 상담</span>
+              </a>
             </div>
           </section>
 
@@ -47,17 +60,28 @@ export default function Home() {
           {/* Service Categories */}
           <section id="services" className="w-full px-grid-margin-mobile md:px-grid-margin-desktop py-section-gap max-w-7xl mx-auto">
             <div className="mb-stack-lg">
-              <h2 className="font-headline-lg text-headline-lg text-on-surface mb-2">전문 복원 서비스</h2>
-              <p className="font-body-md text-body-md text-on-surface-variant">필요한 부분만 꼼꼼하게 수리하는 부분 복원 솔루션</p>
+              <h2 className="font-headline-lg text-headline-lg text-on-surface mb-2">실제 시공 사례</h2>
+              <p className="font-body-md text-body-md text-on-surface-variant">현장에서 기록한 문제·진단·공정·결과를 그대로 공개합니다</p>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-gutter">
-              <ServiceCard title="싱크대 복원" desc="상판 크랙, 탄자국, 연마광택" img="/brand/default/placeholder.svg" href="/kitchen/countertop" />
-              <ServiceCard title="문짝/문틀" desc="구멍 복원, 필름 시공, 힌지 교체" img="/brand/default/placeholder.svg" href="/entrance/firedoor" />
-              <ServiceCard title="타일/벽지" desc="들뜸, 깨짐 부분 교체" img="/brand/default/placeholder.svg" href="/bath/tile" />
-              <ServiceCard title="욕실 수리" desc="실리콘 재시공, 수전 교체" img="/brand/default/placeholder.svg" href="/bath/doorframe" />
-              <ServiceCard title="가구 수리" desc="레일 교체, 경첩 수리, 단차 조정" img="/brand/default/placeholder.svg" href="/furniture/repair" />
-              <ServiceCard title="후드/조명" desc="주방 후드, LED 조명 교체" img="/brand/default/placeholder.svg" href="/kitchen/hood" />
-            </div>
+            {published.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-gutter">
+                {published.map(page => (
+                  <ServiceCard
+                    key={page.slug}
+                    title={page.title}
+                    desc={page.meta_description || page.search_intent}
+                    href={`/${page.slug}`}
+                  />
+                ))}
+              </div>
+            ) : (
+              /* 발행된 페이지가 없으면 죽은 링크를 늘어놓지 않고 상태를 그대로 말한다. */
+              <div className="bg-surface-container-low rounded-2xl p-stack-lg text-center">
+                <p className="font-body-md text-on-surface-variant">
+                  시공 사례를 준비하고 있습니다. 수리가 필요하시면 전화로 문의해 주세요.
+                </p>
+              </div>
+            )}
           </section>
 
           {/* Core Strengths */}
@@ -84,10 +108,26 @@ export default function Home() {
                 <span className="material-symbols-outlined text-[48px] text-on-primary-container mb-4">photo_camera</span>
                 <h2 className="font-headline-lg text-[24px] md:text-[32px] text-on-primary mb-3">수리가 필요한 곳이 있나요?</h2>
                 <p className="font-body-md text-on-primary-container max-w-2xl text-center md:text-left opacity-90">우리 동네 수많은 집들이 이미 <span className="font-bold">{siteConfig.brand.name}</span>의 부분 수리로 새 생명을 얻었습니다. 검증된 수리 사례를 확인해보세요.</p>
-                <button className="bg-on-primary text-primary-container w-full md:w-auto px-8 py-4 rounded-xl font-headline-md text-[18px] flex items-center justify-center gap-2 shadow-lg hover:bg-surface-clean transition-colors">
-                  <span className="material-symbols-outlined text-[20px]">add_a_photo</span>
-                  사진 한 장으로 견적 받기
-                </button>
+                <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                  <a
+                    href={`tel:${siteConfig.contact.phone.replace(/[^0-9]/g, "")}`}
+                    className="bg-on-primary text-primary w-full md:w-auto px-8 py-4 rounded-xl font-headline-md text-[18px] inline-flex items-center justify-center gap-2 shadow-lg hover:bg-surface-clean transition-colors"
+                  >
+                    <span className="material-symbols-outlined text-[20px]">call</span>
+                    전화로 상담하기
+                  </a>
+                  {siteConfig.contact.kakao_url && (
+                    <a
+                      href={siteConfig.contact.kakao_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-[#FEE500] text-[#3C1E1E] w-full md:w-auto px-8 py-4 rounded-xl font-headline-md text-[18px] inline-flex items-center justify-center gap-2 shadow-lg hover:brightness-95 transition-all"
+                    >
+                      <span className="material-symbols-outlined text-[20px]">chat</span>
+                      사진 보내기
+                    </a>
+                  )}
+                </div>
               </div>
             </div>
           </section>
@@ -110,18 +150,21 @@ export default function Home() {
   );
 }
 
-function ServiceCard({ title, desc, img, href }: { title: string, desc: string, img: string, href: string }) {
+/*
+  같은 자리표시자 이미지를 카드마다 반복해 넣지 않는다 (docs/17 §8-5).
+  실제 시공 사진은 각 사례 페이지 안에 있다.
+*/
+function ServiceCard({ title, desc, href }: { title: string, desc: string, href: string }) {
   return (
-    <Link href={href} className="group flex flex-col gap-3">
-      <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-surface-container shadow-sm group-hover:shadow-md transition-shadow">
-        <img alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src={img} />
-      </div>
-      <div>
-        <h3 className="font-headline-md text-[18px] text-on-surface flex items-center gap-1 group-hover:text-primary transition-colors">
-          {title} <span className="material-symbols-outlined text-[18px] opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all">chevron_right</span>
-        </h3>
-        <p className="font-body-md text-[14px] text-on-surface-variant truncate">{desc}</p>
-      </div>
+    <Link
+      href={href}
+      className="group flex flex-col gap-2 bg-surface-clean border border-border-subtle rounded-xl p-5 shadow-sm hover:shadow-md hover:border-primary/30 transition-all"
+    >
+      <h3 className="font-headline-md text-[18px] text-on-surface flex items-start gap-1 group-hover:text-primary transition-colors break-keep">
+        <span className="flex-1">{title}</span>
+        <span className="material-symbols-outlined text-[18px] mt-1 shrink-0 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all">chevron_right</span>
+      </h3>
+      <p className="font-body-md text-[14px] text-on-surface-variant line-clamp-2 break-keep">{desc}</p>
     </Link>
   );
 }
