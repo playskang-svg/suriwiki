@@ -99,3 +99,21 @@ export function pagesForSitemap(pages: PublishedPage[], id: string): PublishedPa
 export function pageLastModified(page: PublishedPage): Date {
   return new Date(page.published_at ?? page.updated_at ?? Date.now());
 }
+
+
+/**
+ * 사이트맵에 넣을 지역 페이지 URL.
+ *
+ * 광역(시도)과 시군구까지만 넣는다. 동 단위 3,535개는 제외한다 —
+ * 동까지 넣으면 내용이 거의 같은 URL 수천 개를 검색엔진에 밀어넣는 셈이고,
+ * 그 지역에 실제 사례가 생겼을 때 열어도 늦지 않다.
+ */
+export async function areaSitemapSlugs(): Promise<string[]> {
+  const { fetchAllAreas } = await import('@/lib/data/areas');
+  const rows = await fetchAllAreas();
+  const rootSlugs = new Set(rows.filter(r => !r.parent_slug).map(r => r.slug));
+  return rows
+    .filter(r => !r.parent_slug || rootSlugs.has(r.parent_slug))
+    .map(r => `area/${r.slug}`)
+    .sort();
+}

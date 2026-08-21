@@ -9,6 +9,7 @@
  */
 import { siteConfig } from '@/config/site';
 import { fetchPublishedPages, pageLastModified, pagesForSitemap, sitemapIdsFor, CORE_SITEMAP_ID } from '@/lib/seo/sitemap';
+import { AREAS_SITEMAP_ID } from '@/app/sitemap';
 import { toW3CDate, xmlResponse, xmlText } from '@/lib/seo/xml';
 
 const SITE_URL = siteConfig.brand.site_url;
@@ -18,10 +19,12 @@ export const revalidate = 3600;
 export async function GET() {
   const pages = await fetchPublishedPages();
   const ids = sitemapIdsFor(pages);
-  const list = ids.length ? ids : [CORE_SITEMAP_ID];
+  // 지역 분할은 DB pages 가 아니라 시드 콘텐츠로 만들어진다.
+  // app/sitemap.ts 의 generateSitemaps 와 같은 목록을 내야 인덱스와 본문이 어긋나지 않는다.
+  const list = [...(ids.length ? ids : [CORE_SITEMAP_ID]), AREAS_SITEMAP_ID];
 
   const entries = list.map(id => {
-    const part = pagesForSitemap(pages, id);
+    const part = id === AREAS_SITEMAP_ID ? [] : pagesForSitemap(pages, id);
     // 분할별 최신 수정일. 비어 있으면 지금 시각을 쓴다.
     const lastmod = part.length
       ? new Date(Math.max(...part.map(p => pageLastModified(p).getTime())))
