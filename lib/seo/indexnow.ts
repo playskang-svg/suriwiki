@@ -7,8 +7,11 @@
  * 네이버·빙·Yandex·Seznam 이 참여한다. 구글은 참여하지 않으므로 구글은 사이트맵으로 간다.
  *
  * 규격: https://www.indexnow.org/documentation
+ *        https://searchadvisor.naver.com/guide/indexnow-preparation
  *   - key 는 비밀값이 아니다. 키 파일을 사이트에 공개로 올려야 소유 검증이 된다.
- *   - keyLocation 을 주면 키 파일을 루트가 아닌 곳에 둘 수 있다.
+ *   - 키 파일은 **루트에 `<key>.txt` 이름으로** 둔다 (네이버 추천 방식).
+ *     scripts/gen-indexnow-key.ts 가 빌드 때 public/<key>.txt 를 만든다.
+ *   - 루트가 아닌 곳에 두면 그 디렉터리 이하 페이지만 갱신을 알릴 수 있다는 제약이 생긴다.
  */
 import { siteConfig } from '@/config/site';
 
@@ -22,7 +25,10 @@ const ENDPOINTS = [
 /** IndexNow 는 요청당 URL 1만 개까지 받는다. */
 const MAX_URLS = 10000;
 
-export const INDEXNOW_KEY_PATH = '/indexnow-key.txt';
+/** 키 파일 경로. 루트에 `<key>.txt` 로 둔다. */
+export function indexNowKeyPath(key: string): string {
+  return `/${key}.txt`;
+}
 
 export type IndexNowResult = {
   endpoint: string;
@@ -50,7 +56,7 @@ export async function pingIndexNow(urls: string[]): Promise<IndexNowResult[] | n
   const payload = {
     host: siteUrl.host,
     key,
-    keyLocation: `${siteUrl.origin}${INDEXNOW_KEY_PATH}`,
+    keyLocation: `${siteUrl.origin}${indexNowKeyPath(key)}`,
     urlList: urls.slice(0, MAX_URLS),
   };
 

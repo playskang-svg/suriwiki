@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "npm run gate:all && next build",
+    "build": "npm run gate:all && npm run seo:indexnow-key && next build",
     "start": "next start",
     "lint": "next lint",
     "test": "vitest run",
@@ -13,6 +13,7 @@
     "tree:validate": "python3 .claude/skills/keyword-tree/scripts/validate_tree.py data/keyword-tree.json",
     "tree:sync": "tsx scripts/sync-keywords.ts",
     "tree:prune": "tsx scripts/prune-keywords.ts",
+    "seo:indexnow-key": "tsx scripts/gen-indexnow-key.ts",
     "gate:facts": "tsx lib/gate/run.ts facts",
     "gate:structure": "tsx lib/gate/run.ts structure",
     "gate:dedupe": "tsx lib/gate/run.ts dedupe",

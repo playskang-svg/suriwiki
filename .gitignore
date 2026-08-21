@@ -7,3 +7,6 @@ node_modules
 # 고객 현장 원본 사진 — 개인정보 포함. Supabase cases-private 버킷에만 둔다.
 design/비둘기 샘플이미지/
 design/욕조트랩 샘플이미지/
+
+# IndexNow 키 파일 — 빌드 때 생성된다 (scripts/gen-indexnow-key.ts)
+public/*.txt

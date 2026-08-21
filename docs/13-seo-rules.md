@@ -102,7 +102,7 @@ Page Type / CT 별로 다른 스키마를 씁니다.
 | `/sitemap/<id>.xml` | 분할 사이트맵 (`core` + 지역별) | 인덱스가 대신 가리킨다 |
 | `/rss.xml` | 최근 발행 50건 RSS 2.0 | 네이버 서치어드바이저 (RSS 제출) |
 | `/llms.txt` | 생성형 검색(AI 답변)용 사이트 안내 | 제출 없음. 크롤러가 직접 읽는다 |
-| `/indexnow-key.txt` | IndexNow 소유 확인 키 | 검색엔진이 직접 확인 |
+| `/<key>.txt` | IndexNow 소유 확인 키 | 검색엔진이 직접 확인 |
 | `/opengraph-image` | OG 이미지 (브랜드명·태그라인에서 생성) | 메타태그로 자동 참조 |
 
 ### 왜 사이트맵 인덱스가 따로 필요한가
@@ -120,13 +120,32 @@ Page Type / CT 별로 다른 스키마를 씁니다.
 
 네이버·빙·Yandex 가 참여한다. **구글은 참여하지 않으므로 구글은 사이트맵으로 간다.**
 
-- 키는 비밀값이 아니다. `/indexnow-key.txt` 로 공개 서빙돼야 소유 검증이 된다.
+**키 파일은 루트에 `<key>.txt` 이름으로 둔다** (네이버 추천 방식).
+파일 내용도 키 문자열 그대로다. 예: `https://suriwiki.com/4257f4….txt` → 본문 `4257f4…`
+
+```
+config/profiles/<name>.json 의 indexnow_key
+        │
+        └─(npm run seo:indexnow-key, build 가 자동 실행)─▶ public/<key>.txt
+```
+
+키가 바뀌면 옛 키 파일을 지운다. 남겨두면 **옛 키로도 소유 검증이 통과해버린다.**
+
+다른 디렉터리에 두고 `keyLocation` 으로 알리는 방법도 규격상 유효하지만,
+그 경우 **키 파일이 있는 디렉터리 이하 페이지만** 갱신을 알릴 수 있다는 제약이 생긴다.
+루트에 두면 그 제약이 없다.
+
+- 키는 비밀값이 아니다. 공개로 서빙돼야 소유 검증이 된다.
 - 키가 없으면 `pingIndexNow` 가 `null` 을 돌려준다. 성공한 척하지 않는다.
 - `POST /api/revalidate` 가 `record.status === 'published'` 일 때만 알린다.
   draft·review 를 알리면 검색엔진이 404 를 가지러 온다.
+- **도메인이 여러 개면 도메인마다 별개의 키가 필요하다.**
+  `suriwiki.com` 과 `www.suriwiki.com` 처럼 한쪽이 리다이렉트면 하나로 충분하다.
+
+키 규격: UTF-8, `a-f A-F 0-9 -` 만, 8~128자.
 
 ```bash
-openssl rand -hex 16   # INDEXNOW_KEY 생성
+openssl rand -hex 16   # 키 생성 → 프로필의 indexnow_key 또는 INDEXNOW_KEY 에 넣는다
 ```
 
 ### 사이트 소유 확인
