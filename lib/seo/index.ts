@@ -28,7 +28,9 @@ export function buildMetadata(page: PageRecord, m01Body?: Record<string, any>): 
   const canonicalUrl = `${SITE_URL}/${page.slug}`;
 
   return {
-    title,
+    // absolute 를 쓰지 않으면 layout.tsx 의 template("%s | 브랜드")가 한 번 더 붙어
+    // "… | 수리위키 | 수리위키" 가 된다. truncateTitle 이 이미 브랜드를 붙인다.
+    title: { absolute: title },
     description,
     alternates: {
       canonical: canonicalUrl,

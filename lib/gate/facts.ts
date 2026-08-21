@@ -150,8 +150,16 @@ export function checkFacts(pageContext: PageContext): GateResult {
   // 한 모듈 본문 안에서 서로 다른 키에 동일 문자열이 반복되는지 탐지
   const OPPOSED_PAIRS = [['limits', 'improved'], ['repair_when', 'replace_when']];
 
+  // 식별자·URL 은 콘텐츠가 아니라 참조다.
+  // 예: M20 의 compare.before 는 items[].image_variant_id 를 가리키는 게 설계 의도다.
+  // F8 이 막으려는 것은 "같은 문장을 여러 필드에 복사해 분량을 채우는 것"이므로
+  // 참조값까지 잡으면 정상적인 데이터 구조를 위반으로 만든다.
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const isReference = (v: string) => UUID_RE.test(v.trim()) || /^https?:\/\//.test(v.trim());
+
   const collectStrings = (obj: any, keyPath: string, out: Map<string, Set<string>>) => {
       if (typeof obj === 'string' && obj.length > 0) {
+          if (isReference(obj)) return;
           if (!out.has(obj)) out.set(obj, new Set());
           out.get(obj)!.add(keyPath);
       } else if (Array.isArray(obj)) {

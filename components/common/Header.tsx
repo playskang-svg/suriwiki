@@ -1,8 +1,18 @@
 import Image from "next/image";
 import Link from "next/link";
 import { siteConfig } from "@/config/site";
+import areasData from "@/data/areas.json";
+
+// 서비스 지역 표기. 최상위 지역(시도·독립시)만 쓴다 — 구·동까지 나열하면 헤더가 넘친다.
+const TOP_AREAS = areasData.areas.filter(a => a.parent === null).map(a => a.label);
+const SERVICE_AREA_LABEL =
+  TOP_AREAS.length > 3
+    ? `${TOP_AREAS.slice(0, 3).join(" · ")} 외 ${TOP_AREAS.length - 3}곳`
+    : TOP_AREAS.join(" · ");
 
 export default function Header() {
+  const telHref = `tel:${siteConfig.contact.phone.replace(/[^0-9]/g, "")}`;
+
   return (
     <header className="fixed top-0 inset-x-0 z-50 bg-surface-clean/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe">
       <div className="h-16 px-grid-margin-mobile md:px-grid-margin-desktop flex items-center justify-between gap-gutter max-w-7xl mx-auto w-full">
@@ -21,20 +31,32 @@ export default function Header() {
               </span>
             )}
           </Link>
-          <div className="flex items-center gap-1 bg-surface-container-low px-2 py-1 rounded-full cursor-pointer hover:bg-surface-container transition-colors">
+          {/*
+            원래 "강남구 역삼동" 이 하드코딩돼 있었다 (Stitch 목업 잔재).
+            위치 감지도 선택 기능도 없으면서 그 지역을 서비스하는 것처럼 보였다.
+            실제 서비스 지역(프로필 area_scope → data/areas.json)을 그대로 표기한다.
+            누를 수 없는 표시이므로 cursor-pointer 를 붙이지 않는다.
+          */}
+          <div className="hidden sm:flex items-center gap-1 bg-surface-container-low px-3 py-1 rounded-full">
             <span className="material-symbols-outlined text-primary text-[18px]">location_on</span>
-            <span className="font-status-label text-status-label text-on-surface-variant">강남구 역삼동</span>
-            <span className="material-symbols-outlined text-on-surface-variant text-[16px]">expand_more</span>
+            <span className="font-status-label text-status-label text-on-surface-variant">
+              {SERVICE_AREA_LABEL}
+            </span>
           </div>
         </div>
+        {/*
+            알림·프로필 아이콘이 있었지만 알림 기능도 로그인도 없어 아무 동작을 하지 않았다.
+            동작하지 않는 UI 는 두지 않는다 (docs/17 §8-5). 실제 전환 경로인 전화로 대체한다.
+        */}
         <div className="flex items-center gap-2">
-          <button className="w-10 h-10 flex items-center justify-center hover:bg-surface-container-low rounded-full transition-colors">
-            <span className="material-symbols-outlined text-on-surface-variant">notifications</span>
-          </button>
-          {/* 프로필 사진이 없는 상태다. 자리표시자 이미지 대신 아이콘을 쓴다. */}
-          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center overflow-hidden cursor-pointer">
-            <span className="material-symbols-outlined text-on-primary text-[20px]">person</span>
-          </div>
+          <a
+            href={telHref}
+            className="flex items-center gap-1.5 bg-primary text-on-primary px-4 py-2 rounded-full font-status-label text-status-label hover:bg-primary/90 transition-colors"
+          >
+            <span className="material-symbols-outlined text-[18px]">call</span>
+            <span className="hidden sm:inline">{siteConfig.contact.phone}</span>
+            <span className="sm:hidden">전화</span>
+          </a>
         </div>
       </div>
     </header>

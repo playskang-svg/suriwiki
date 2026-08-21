@@ -181,10 +181,14 @@ export const M20BodySchema = z.object({
   items: z.array(
     z.object({
       image_variant_id: z.string(),
+      // 공개 버킷 URL. 모듈은 클라이언트 컴포넌트라 DB 를 못 읽으므로 조립 시점에 넣는다.
+      url: z.string().optional(),
       role: z.string(),
       caption: z.string(),
     })
   ),
+  // compare 는 items 의 image_variant_id 를 가리키기만 한다.
+  // URL 을 여기 또 넣으면 같은 문자열이 두 필드에 생겨 게이트 F8(필드 복사)에 걸린다.
   compare: z.object({
     before: z.string(),
     after: z.string(),

@@ -12,6 +12,10 @@ export default function M20({ body }: ModuleProps<"M20">) {
     if (e.key === 'ArrowRight') setSliderPos(p => Math.min(100, p + 5));
   };
 
+  // compare 는 id 만 갖는다. 실제 URL 은 items 에서 찾는다.
+  const urlOf = (variantId: string) =>
+    body.items.find(i => i.image_variant_id === variantId)?.url;
+
   const getFocusLabel = (focus: string) => {
     switch (focus) {
       case 'cause': return '원인 분석';
@@ -40,7 +44,11 @@ export default function M20({ body }: ModuleProps<"M20">) {
           >
             {/* After Image (Background) */}
             <div className="absolute inset-0 flex items-center justify-center text-outline-variant font-label-caps bg-surface-variant">
-              AFTER IMG {body.compare.after}
+              {urlOf(body.compare.after) ? (
+                <img src={urlOf(body.compare.after)} alt="시공 후" className="w-full h-full object-cover" />
+              ) : (
+                <span>AFTER 이미지 준비 중</span>
+              )}
             </div>
             
             {/* Before Image (Clipped) */}
@@ -48,7 +56,16 @@ export default function M20({ body }: ModuleProps<"M20">) {
               className="absolute inset-0 flex items-center justify-center text-outline-variant font-label-caps bg-surface-container-highest overflow-hidden border-r-2 border-white"
               style={{ width: `${sliderPos}%` }}
             >
-              BEFORE IMG {body.compare.before}
+              {urlOf(body.compare.before) ? (
+                <img
+                  src={urlOf(body.compare.before)}
+                  alt="시공 전"
+                  className="h-full max-w-none object-cover"
+                  style={{ width: sliderRef.current?.clientWidth ?? "100%" }}
+                />
+              ) : (
+                <span>BEFORE 이미지 준비 중</span>
+              )}
             </div>
 
             {/* Slider Handle */}
@@ -86,7 +103,11 @@ export default function M20({ body }: ModuleProps<"M20">) {
         {body.items.map((item, idx) => (
           <div key={idx} className="bg-surface-clean border border-border-subtle rounded-xl overflow-hidden shadow-sm flex flex-col">
             <div className="aspect-video bg-surface-container flex items-center justify-center relative">
-              <span className="font-label-caps text-outline-variant">IMG {item.image_variant_id}</span>
+              {item.url ? (
+                <img src={item.url} alt={item.caption} className="w-full h-full object-cover" loading="lazy" />
+              ) : (
+                <span className="font-label-caps text-outline-variant">이미지 준비 중</span>
+              )}
               <div className="absolute top-2 left-2 bg-primary text-on-primary font-label-caps px-2 py-1 rounded shadow-sm text-[10px]">
                 {item.role}
               </div>

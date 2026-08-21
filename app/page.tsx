@@ -45,7 +45,7 @@ export default function Home() {
           <StatStrip />
 
           {/* Service Categories */}
-          <section className="w-full px-grid-margin-mobile md:px-grid-margin-desktop py-section-gap max-w-7xl mx-auto">
+          <section id="services" className="w-full px-grid-margin-mobile md:px-grid-margin-desktop py-section-gap max-w-7xl mx-auto">
             <div className="mb-stack-lg">
               <h2 className="font-headline-lg text-headline-lg text-on-surface mb-2">전문 복원 서비스</h2>
               <p className="font-body-md text-body-md text-on-surface-variant">필요한 부분만 꼼꼼하게 수리하는 부분 복원 솔루션</p>
@@ -77,7 +77,7 @@ export default function Home() {
 
 
           {/* Bottom CTA */}
-          <section className="w-full px-grid-margin-mobile md:px-grid-margin-desktop pb-section-gap pt-stack-lg mt-auto max-w-7xl mx-auto">
+          <section id="consult" className="w-full px-grid-margin-mobile md:px-grid-margin-desktop pb-section-gap pt-stack-lg mt-auto max-w-7xl mx-auto">
             <div className="bg-primary-container rounded-3xl p-stack-lg md:p-12 text-center relative overflow-hidden flex flex-col items-center">
               <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary rounded-full blur-3xl opacity-50 mix-blend-multiply"></div>
               <div className="relative z-10 flex flex-col items-center">
