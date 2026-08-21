@@ -50,7 +50,7 @@ export default async function Home() {
               </h1>
               {/* 어두운 히어로 배경 위라 밝은 색을 쓴다. text-primary(#00236f)는 배경에 묻힌다. */}
               <p className="font-body-lg text-[18px] md:text-[24px] text-on-primary font-medium mb-stack-md md:mb-12 break-keep text-center md:text-left drop-shadow-sm opacity-90 max-w-xl mx-auto md:mx-0">
-                <span className="text-primary-fixed-dim font-bold">{siteConfig.brand.name}</span>는 비용이 많이 드는 전체 교체를 권하지 않습니다.<br />꼭 필요한 부분만 정확히 찾아내어 새것처럼 되살려 드립니다.
+                <span className="text-primary-fixed-dim font-bold">{siteConfig.brand.name}</span>는 전체 교체부터 권하지 않습니다.<br />고쳐 쓸 수 있는 부분인지 먼저 확인하고, 필요한 곳만 손봅니다.
               </p>
               {/* <button> 이라 아무 동작도 하지 않았다. 전화가 실제 전환 경로다. */}
               <a
@@ -139,13 +139,13 @@ export default async function Home() {
           <section className="w-full bg-surface-container-low py-section-gap">
             <div className="px-grid-margin-mobile md:px-grid-margin-desktop max-w-7xl mx-auto mb-stack-lg">
               <h2 className="font-headline-lg text-headline-lg text-on-surface mb-2">왜 {siteConfig.brand.name}인가요?</h2>
-              <p className="font-body-md text-body-md text-on-surface-variant">타협하지 않는 디테일의 차이</p>
+              <p className="font-body-md text-body-md text-on-surface-variant">부분 수리에서 결과를 가르는 것들</p>
             </div>
             <div className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar pl-grid-margin-mobile md:pl-grid-margin-desktop md:justify-center pr-grid-margin-mobile gap-stack-md pb-4">
-              <StrengthCard icon="search" title="사전 방문 서비스" desc="정확한 진단 없이는 완벽한 복원도 없습니다. 시공 전 현장을 방문하여 상태를 꼼꼼히 점검합니다." />
-              <StrengthCard icon="palette" title="정밀 조색 기술" desc="기존 소재와의 이질감을 최소화하기 위해 수십 번의 조색 테스트를 거쳐 완벽한 컬러 매칭을 구현합니다." />
-              <StrengthCard icon="shield_with_house" title="철저한 보양 작업" desc="작업 중 발생할 수 있는 2차 손상과 분진을 막기 위해 시공 부위 주변을 철저하게 보양합니다." />
-              <StrengthCard icon="task_alt" title="당일 완료 원칙" desc="고객님의 소중한 일상에 불편함이 없도록, 약속된 일정 내에 신속하고 정확하게 시공을 마무리합니다." />
+              <StrengthCard icon="search" title="시공 전 현장 확인" desc="사진만으로 판단하지 않습니다. 시공 전에 현장에서 실제 상태를 확인하고 수리 범위를 정합니다." />
+              <StrengthCard icon="palette" title="조색 후 시공" desc="기존 소재와 색을 맞춰본 뒤 시공합니다. 부분 수리는 주변과 얼마나 이어지느냐로 결과가 갈립니다." />
+              <StrengthCard icon="shield_with_house" title="주변 보양 후 작업" desc="분진과 2차 손상을 막기 위해 시공 부위 주변을 덮고 작업합니다." />
+              <StrengthCard icon="task_alt" title="일정 먼저 안내" desc="작업에 걸리는 시간과 일정을 시공 전에 알려드립니다. 현장 상태에 따라 달라지는 부분도 미리 설명합니다." />
             </div>
           </section>
 
@@ -158,7 +158,7 @@ export default async function Home() {
               <div className="relative z-10 flex flex-col items-center">
                 <span className="material-symbols-outlined text-[48px] text-on-primary-container mb-4">photo_camera</span>
                 <h2 className="font-headline-lg text-[24px] md:text-[32px] text-on-primary mb-3">수리가 필요한 곳이 있나요?</h2>
-                <p className="font-body-md text-on-primary-container max-w-2xl text-center md:text-left opacity-90">우리 동네 수많은 집들이 이미 <span className="font-bold">{siteConfig.brand.name}</span>의 부분 수리로 새 생명을 얻었습니다. 검증된 수리 사례를 확인해보세요.</p>
+                <p className="font-body-md text-on-primary-container max-w-2xl text-center opacity-90 break-keep">사진 한 장이면 수리 가능 여부를 먼저 알려드립니다.<br />{siteConfig.brand.name}는 실제 시공한 현장만 기록해 공개합니다.</p>
                 <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
                   <a
                     href={`tel:${siteConfig.contact.phone.replace(/[^0-9]/g, "")}`}
