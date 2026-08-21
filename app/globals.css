@@ -93,3 +93,7 @@
   .hero-slide { animation: none; opacity: 0; }
   .hero-slide:first-child { opacity: 1; }
 }
+
+/* <details> 기본 삼각형 마커 제거. 화살표는 직접 그린다. */
+summary::-webkit-details-marker { display: none; }
+summary { list-style: none; }

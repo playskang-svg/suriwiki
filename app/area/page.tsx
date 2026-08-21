@@ -42,34 +42,57 @@ export default async function AreaIndexPage() {
             지역별 시공 사례는 실제 작업한 현장이 생기는 대로 공개합니다.
           </p>
 
-          <div className="flex flex-col gap-stack-lg">
+          {/*
+            권역(시도) 이름만 먼저 보이고, 펼쳐야 시군구가 나온다.
+            274개를 한 번에 늘어놓으면 화면을 통째로 잡아먹는다.
+            <details> 를 쓰면 자바스크립트 없이 동작하고 서버 컴포넌트로 남는다 —
+            키보드 조작과 스크린리더 지원도 브라우저가 기본으로 해준다.
+          */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             {tree.map(sido => (
-              <section key={sido.slug}>
-                <h2 className="font-headline-md text-[20px] text-on-surface mb-stack-sm flex items-center gap-2">
-                  <span className="w-1 h-5 bg-primary rounded-full" />
-                  <Link href={`/area/${sido.slug}`} className="hover:text-primary transition-colors">
+              <details
+                key={sido.slug}
+                className="group bg-surface-clean border border-border-subtle rounded-xl overflow-hidden open:border-primary/40 transition-colors"
+              >
+                <summary className="flex items-center justify-between gap-2 px-4 py-3.5 cursor-pointer hover:bg-surface-container-low transition-colors">
+                  <span className="font-headline-md text-[17px] text-on-surface group-open:text-primary transition-colors">
                     {sido.label}
+                  </span>
+                  <span className="flex items-center gap-2 shrink-0">
+                    {sido.children.length > 0 && (
+                      <span className="font-status-label text-status-label text-on-surface-variant">
+                        {sido.children.length}
+                      </span>
+                    )}
+                    <span className="material-symbols-outlined text-[20px] text-on-surface-variant transition-transform group-open:rotate-180">
+                      expand_more
+                    </span>
+                  </span>
+                </summary>
+
+                <div className="px-4 pb-4 pt-1 border-t border-border-subtle">
+                  <Link
+                    href={`/area/${sido.slug}`}
+                    className="inline-flex items-center gap-1 mb-3 font-status-label text-status-label text-primary hover:underline"
+                  >
+                    {sido.label} 전체 보기
+                    <span className="material-symbols-outlined text-[16px]">chevron_right</span>
                   </Link>
                   {sido.children.length > 0 && (
-                    <span className="font-body-md text-[14px] text-on-surface-variant">
-                      {sido.children.length}개 지역
-                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {sido.children.map(gu => (
+                        <Link
+                          key={gu.slug}
+                          href={`/area/${gu.slug}`}
+                          className="px-2.5 py-1.5 rounded-lg bg-surface-container-low font-status-label text-status-label text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors"
+                        >
+                          {gu.label}
+                        </Link>
+                      ))}
+                    </div>
                   )}
-                </h2>
-                {sido.children.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5">
-                    {sido.children.map(gu => (
-                      <Link
-                        key={gu.slug}
-                        href={`/area/${gu.slug}`}
-                        className="px-3 py-1.5 rounded-lg bg-surface-clean border border-border-subtle font-status-label text-status-label text-on-surface-variant hover:border-primary hover:text-primary transition-colors"
-                      >
-                        {gu.label}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </section>
+                </div>
+              </details>
             ))}
           </div>
 
