@@ -49,6 +49,15 @@ export default function Header() {
             동작하지 않는 UI 는 두지 않는다 (docs/17 §8-5). 실제 전환 경로인 전화로 대체한다.
         */}
         <div className="flex items-center gap-2">
+          {/* 목록으로 갈 수 있는 상시 메뉴. 없으면 홈에서 링크된 페이지 말고는 도달할 방법이 없다. */}
+          <nav className="hidden md:flex items-center gap-1 mr-2">
+            <Link href="/" className="px-3 py-2 rounded-lg font-status-label text-status-label text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors">
+              홈
+            </Link>
+            <Link href="/cases" className="px-3 py-2 rounded-lg font-status-label text-status-label text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors">
+              시공 사례
+            </Link>
+          </nav>
           <a
             href={telHref}
             className="flex items-center gap-1.5 bg-primary text-on-primary px-4 py-2 rounded-full font-status-label text-status-label hover:bg-primary/90 transition-colors"

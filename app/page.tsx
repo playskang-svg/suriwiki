@@ -60,8 +60,18 @@ export default async function Home() {
           {/* Service Categories */}
           <section id="services" className="w-full px-grid-margin-mobile md:px-grid-margin-desktop py-section-gap max-w-7xl mx-auto">
             <div className="mb-stack-lg">
-              <h2 className="font-headline-lg text-headline-lg text-on-surface mb-2">실제 시공 사례</h2>
-              <p className="font-body-md text-body-md text-on-surface-variant">현장에서 기록한 문제·진단·공정·결과를 그대로 공개합니다</p>
+              <div className="flex items-end justify-between gap-4">
+                <div>
+                  <h2 className="font-headline-lg text-headline-lg text-on-surface mb-2">실제 시공 사례</h2>
+                  <p className="font-body-md text-body-md text-on-surface-variant">현장에서 기록한 문제·진단·공정·결과를 그대로 공개합니다</p>
+                </div>
+                {published.length > 0 && (
+                  <Link href="/cases" className="shrink-0 font-status-label text-status-label text-primary hover:underline flex items-center gap-1">
+                    전체보기
+                    <span className="material-symbols-outlined text-[18px]">chevron_right</span>
+                  </Link>
+                )}
+              </div>
             </div>
             {published.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-gutter">

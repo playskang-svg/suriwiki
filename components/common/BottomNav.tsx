@@ -22,9 +22,9 @@ export default function BottomNav() {
           <span className="material-symbols-outlined">build</span>
           <span className="text-label-caps font-label-caps">서비스</span>
         </Link>
-        <Link href="/#consult" className="flex flex-col items-center justify-center gap-0.5 w-1/4 h-full text-on-surface-variant hover:text-primary transition-colors">
+        <Link href="/cases" className="flex flex-col items-center justify-center gap-0.5 w-1/4 h-full text-on-surface-variant hover:text-primary transition-colors">
           <span className="material-symbols-outlined">photo_library</span>
-          <span className="text-label-caps font-label-caps">문의</span>
+          <span className="text-label-caps font-label-caps">시공사례</span>
         </Link>
         <div className="w-1/4 h-full flex items-center justify-center">
           {/* 상담 페이지가 아직 없다. 전화가 실제 전환 경로다. */}
