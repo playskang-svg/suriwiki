@@ -35,31 +35,79 @@ export default async function Home() {
             프로필에 hero 가 채워지면 그때 배경으로 깐다.
           */}
           <section
-            className="relative w-full h-[65vh] min-h-[500px] flex items-end pb-stack-lg"
+            className="relative w-full overflow-hidden"
             style={{
               backgroundImage: siteConfig.assets?.hero
-                ? `linear-gradient(to top, rgba(0, 16, 56, 0.88) 0%, rgba(0, 35, 111, 0.55) 55%, rgba(0, 35, 111, 0.35) 100%), url('${siteConfig.assets.hero}')`
-                : "linear-gradient(to top, #001038 0%, #00236f 60%, #123a94 100%)",
+                ? `linear-gradient(105deg, rgba(0,16,56,0.94) 0%, rgba(0,35,111,0.82) 60%, rgba(18,58,148,0.72) 100%), url('${siteConfig.assets.hero}')`
+                : "linear-gradient(105deg, #001038 0%, #00236f 58%, #123a94 100%)",
               backgroundSize: "cover",
               backgroundPosition: "center",
             }}
           >
-            <div className="w-full px-grid-margin-mobile md:px-grid-margin-desktop text-on-primary max-w-7xl mx-auto">
-              <h1 className="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg mb-stack-md leading-tight">
+            {/* 배경 격자 — 타일·문틀처럼 '면을 나눠 부분만 손대는' 일을 배경으로 암시한다. */}
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 opacity-[0.07]"
+              style={{
+                backgroundImage:
+                  "linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px)",
+                backgroundSize: "72px 72px",
+              }}
+            />
+
+            <div className="relative w-full px-grid-margin-mobile md:px-grid-margin-desktop max-w-7xl mx-auto py-stack-lg md:py-16">
+              <p className="font-label-caps text-label-caps text-primary-fixed-dim tracking-widest mb-stack-sm">
+                집수리 · 부분 복원
+              </p>
+
+              <h1 className="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-primary leading-[1.15] mb-stack-md break-keep">
                 전체 교체 없이,<br />상한 곳만 정확히 되살립니다
               </h1>
-              {/* 어두운 히어로 배경 위라 밝은 색을 쓴다. text-primary(#00236f)는 배경에 묻힌다. */}
-              <p className="font-body-lg text-[18px] md:text-[24px] text-on-primary font-medium mb-stack-md md:mb-12 break-keep text-center md:text-left drop-shadow-sm opacity-90 max-w-xl mx-auto md:mx-0">
-                <span className="text-primary-fixed-dim font-bold">{siteConfig.brand.name}</span>는 전체 교체부터 권하지 않습니다.<br />고쳐 쓸 수 있는 부분인지 먼저 확인하고, 필요한 곳만 손봅니다.
+
+              <p className="font-body-lg text-[17px] md:text-[20px] text-on-primary/85 mb-stack-md max-w-2xl break-keep leading-relaxed">
+                <span className="text-primary-fixed-dim font-bold">{siteConfig.brand.name}</span>는 전체 교체부터 권하지 않습니다.
+                고쳐 쓸 수 있는 부분인지 먼저 확인하고, 필요한 곳만 손봅니다.
               </p>
-              {/* <button> 이라 아무 동작도 하지 않았다. 전화가 실제 전환 경로다. */}
-              <a
-                href={`tel:${siteConfig.contact.phone.replace(/[^0-9]/g, "")}`}
-                className="bg-primary hover:bg-primary/90 text-on-primary px-6 py-4 rounded-xl font-headline-md text-[18px] inline-flex items-center justify-center gap-2 w-full md:w-auto shadow-lg transition-transform active:scale-95"
-              >
-                <span className="material-symbols-outlined">call</span>
-                <span>{siteConfig.contact.phone} 전화 상담</span>
-              </a>
+
+              {/*
+                시그니처: 이 브랜드의 주장 자체를 대비로 보여준다.
+                사진 자산이 없는 상태에서 히어로를 채우려고 아무 이미지를 끼우는 대신
+                판단 기준을 그대로 노출하는 편이 이 서비스에 맞다.
+              */}
+              <div className="flex flex-wrap items-center gap-2 mb-stack-lg">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-on-primary/10 border border-on-primary/20 font-status-label text-status-label text-on-primary/70 line-through decoration-1">
+                  전체 교체
+                </span>
+                <span className="material-symbols-outlined text-primary-fixed-dim text-[20px]">arrow_forward</span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-point text-[#2a1700] font-status-label text-status-label font-bold">
+                  <span className="material-symbols-outlined text-[16px]">check</span>
+                  필요한 부분만
+                </span>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3 mb-stack-md">
+                <a
+                  href={`tel:${siteConfig.contact.phone.replace(/[^0-9]/g, "")}`}
+                  className="bg-on-primary text-primary px-6 py-4 rounded-xl font-headline-md text-[17px] inline-flex items-center justify-center gap-2 shadow-lg hover:bg-surface-clean transition-colors active:scale-[0.98]"
+                >
+                  <span className="material-symbols-outlined text-[20px]">call</span>
+                  {siteConfig.contact.phone}
+                </a>
+                {published.length > 0 && (
+                  <Link
+                    href="/cases"
+                    className="border border-on-primary/30 text-on-primary px-6 py-4 rounded-xl font-headline-md text-[17px] inline-flex items-center justify-center gap-2 hover:bg-on-primary/10 transition-colors"
+                  >
+                    시공 사례 보기
+                    <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
+                  </Link>
+                )}
+              </div>
+
+              <p className="font-status-label text-status-label text-on-primary/60 flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-[16px]">verified</span>
+                실제 시공한 현장만 기록해 공개합니다
+              </p>
             </div>
           </section>
 
