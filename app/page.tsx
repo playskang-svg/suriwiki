@@ -5,8 +5,18 @@ import Link from "next/link";
 import { siteConfig } from "@/config/site";
 import { fetchPublishedPages, pageLastModified, isAreaPage } from "@/lib/seo/sitemap";
 import areasData from "@/data/areas.json";
+import HeroSlideshow from "@/components/common/HeroSlideshow";
+import { getHeroSlides } from "@/lib/data/catalog";
 
 export const revalidate = 3600;
+
+/** 강점 카드. 마퀴가 두 벌을 이어 붙이므로 데이터로 뺀다. */
+const STRENGTHS = [
+  { icon: "search", title: "시공 전 현장 확인", desc: "사진만으로 판단하지 않습니다. 시공 전에 현장에서 실제 상태를 확인하고 수리 범위를 정합니다." },
+  { icon: "palette", title: "조색 후 시공", desc: "기존 소재와 색을 맞춰본 뒤 시공합니다. 부분 수리는 주변과 얼마나 이어지느냐로 결과가 갈립니다." },
+  { icon: "shield_with_house", title: "주변 보양 후 작업", desc: "분진과 2차 손상을 막기 위해 시공 부위 주변을 덮고 작업합니다." },
+  { icon: "task_alt", title: "일정 먼저 안내", desc: "작업에 걸리는 시간과 일정을 시공 전에 알려드립니다. 현장 상태에 따라 달라지는 부분도 미리 설명합니다." },
+];
 
 export default async function Home() {
   // 실제로 발행된 페이지만 홈에서 링크한다.
@@ -17,6 +27,7 @@ export default async function Home() {
 
   // 시공 지역. 발행된 AREA 페이지가 있는 지역만 링크한다.
   // 페이지가 없는 지역까지 링크하면 눌러서 404 가 나는 링크가 다시 생긴다 (F1).
+  const heroSlides = await getHeroSlides();
   const areaPageSlugs = new Set(published.filter(isAreaPage).map(p => p.slug));
   const serviceAreas = areasData.areas
     .filter(a => a.parent === null)
@@ -36,14 +47,21 @@ export default async function Home() {
           */}
           <section
             className="relative w-full overflow-hidden"
-            style={{
-              backgroundImage: siteConfig.assets?.hero
-                ? `linear-gradient(105deg, rgba(0,16,56,0.94) 0%, rgba(0,35,111,0.82) 60%, rgba(18,58,148,0.72) 100%), url('${siteConfig.assets.hero}')`
-                : "linear-gradient(105deg, #001038 0%, #00236f 58%, #123a94 100%)",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
+            style={{ backgroundColor: "#001038" }}
           >
+            {/* 실제 시공 사진이 배경에서 교차된다. 사진이 없으면 단색 위에 격자만 남는다. */}
+            <HeroSlideshow slides={heroSlides} />
+
+            {/* 사진 위에 어두운 그라데이션을 덮어 본문 대비를 확보한다. */}
+            <div
+              aria-hidden="true"
+              className="absolute inset-0"
+              style={{
+                backgroundImage:
+                  "linear-gradient(105deg, rgba(0,16,56,0.96) 0%, rgba(0,35,111,0.90) 55%, rgba(18,58,148,0.82) 100%)",
+              }}
+            />
+
             {/* 배경 격자 — 타일·문틀처럼 '면을 나눠 부분만 손대는' 일을 배경으로 암시한다. */}
             <div
               aria-hidden="true"
@@ -189,11 +207,17 @@ export default async function Home() {
               <h2 className="font-headline-lg text-headline-lg text-on-surface mb-2">왜 {siteConfig.brand.name}인가요?</h2>
               <p className="font-body-md text-body-md text-on-surface-variant">부분 수리에서 결과를 가르는 것들</p>
             </div>
-            <div className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar pl-grid-margin-mobile md:pl-grid-margin-desktop md:justify-center pr-grid-margin-mobile gap-stack-md pb-4">
-              <StrengthCard icon="search" title="시공 전 현장 확인" desc="사진만으로 판단하지 않습니다. 시공 전에 현장에서 실제 상태를 확인하고 수리 범위를 정합니다." />
-              <StrengthCard icon="palette" title="조색 후 시공" desc="기존 소재와 색을 맞춰본 뒤 시공합니다. 부분 수리는 주변과 얼마나 이어지느냐로 결과가 갈립니다." />
-              <StrengthCard icon="shield_with_house" title="주변 보양 후 작업" desc="분진과 2차 손상을 막기 위해 시공 부위 주변을 덮고 작업합니다." />
-              <StrengthCard icon="task_alt" title="일정 먼저 안내" desc="작업에 걸리는 시간과 일정을 시공 전에 알려드립니다. 현장 상태에 따라 달라지는 부분도 미리 설명합니다." />
+            {/* 카드가 옆으로 천천히 흘러간다. 마우스를 올리면 멈춘다. */}
+            <div className="marquee-viewport w-full overflow-hidden">
+              <div className="marquee-track flex gap-stack-md w-max pb-4">
+                {[0, 1].map(copy => (
+                  <div key={copy} className="flex gap-stack-md" aria-hidden={copy === 1}>
+                    {STRENGTHS.map(item => (
+                      <StrengthCard key={`${copy}-${item.title}`} {...item} />
+                    ))}
+                  </div>
+                ))}
+              </div>
             </div>
           </section>
 

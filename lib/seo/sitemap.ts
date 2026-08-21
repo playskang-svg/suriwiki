@@ -4,6 +4,7 @@
  * 두 곳에 같은 로직을 따로 쓰면 반드시 어긋난다. 인덱스에는 있는데 본문이 404 이거나
  * 그 반대가 되면 검색엔진은 사이트맵 전체를 신뢰하지 않는다.
  */
+import { cache } from 'react';
 import { createClient } from '@supabase/supabase-js';
 
 const AREA_PAGE_TYPES = ['AREA', 'AREA-CASE', 'AREA-SERVICE'];
@@ -29,13 +30,20 @@ function client() {
   return createClient(url, anonKey);
 }
 
-export async function fetchPublishedPages(): Promise<PublishedPage[]> {
+/**
+ * 발행된 페이지 목록.
+ *
+ * React.cache 로 감싸 한 요청 안에서는 한 번만 조회한다.
+ * 사이트맵은 generateSitemaps 와 sitemap 이, 홈은 목록과 지역 섹션이 같은 데이터를 쓰는데
+ * 감싸지 않으면 요청마다 같은 쿼리가 여러 번 나간다.
+ */
+export const fetchPublishedPages = cache(async function fetchPublishedPages(): Promise<PublishedPage[]> {
   const { data } = await client()
     .from('pages')
     .select('slug, page_type, published_at, updated_at, title, meta_description, search_intent')
     .eq('status', 'published');
   return (data ?? []) as PublishedPage[];
-}
+});
 
 export function isAreaPage(page: Pick<PublishedPage, 'page_type'>): boolean {
   return AREA_PAGE_TYPES.includes(page.page_type);

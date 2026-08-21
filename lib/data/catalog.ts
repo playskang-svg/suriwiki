@@ -100,3 +100,38 @@ export async function getCatalog(): Promise<{ all: CatalogEntry[]; groups: Catal
 
   return { all, groups };
 }
+
+
+/**
+ * 히어로 배경에 쓸 시공 사진.
+ *
+ * 발행된 페이지의 M20(사진) 모듈에서 모은다. 실제 시공 사진만 나온다는 뜻이다.
+ * BEFORE·AFTER 를 먼저 담아 "무엇이 어떻게 달라지는가" 가 배경에서도 읽히게 한다.
+ */
+export async function getHeroSlides(limit = 6): Promise<{ url: string; alt: string }[]> {
+  const { createClient } = await import('@supabase/supabase-js');
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !anonKey) return [];
+
+  const { data } = await createClient(url, anonKey)
+    .from('page_modules')
+    .select('body')
+    .eq('module_code', 'M20');
+
+  type Item = { url?: string; role?: string; caption?: string };
+  const items: Item[] = (data ?? []).flatMap(m => ((m.body as { items?: Item[] })?.items ?? []));
+
+  const rank = (role?: string) => (role === 'BEFORE' ? 0 : role === 'AFTER' ? 1 : 2);
+  const seen = new Set<string>();
+
+  return items
+    .filter(i => {
+      if (!i.url || seen.has(i.url)) return false;
+      seen.add(i.url);
+      return true;
+    })
+    .sort((a, b) => rank(a.role) - rank(b.role))
+    .slice(0, limit)
+    .map(i => ({ url: i.url!, alt: i.caption || '시공 사진' }));
+}

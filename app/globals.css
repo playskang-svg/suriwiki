@@ -46,3 +46,50 @@
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
+
+/*
+  가로 자동 흐름(마퀴). 카드 묶음을 두 벌 이어 붙이고 정확히 절반만큼 밀어
+  이음매 없이 반복시킨다.
+  - 마우스를 올리면 멈춘다. 읽으려는 사람을 방해하지 않기 위해서다.
+  - prefers-reduced-motion 을 존중해 애니메이션을 끄고 수동 스크롤로 돌린다.
+*/
+@keyframes marquee-x {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.marquee-track {
+  animation: marquee-x 36s linear infinite;
+  will-change: transform;
+}
+.marquee-viewport:hover .marquee-track,
+.marquee-viewport:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
+  .marquee-viewport { overflow-x: auto; }
+}
+
+/*
+  히어로 배경 슬라이드 크로스페이드.
+  각 장이 음수 delay 로 시차를 두고 같은 주기를 돈다.
+  0~4% 페이드인, 4~20% 유지, 20~24% 페이드아웃 — 나머지 구간은 투명.
+*/
+@keyframes hero-slide-fade {
+  0%   { opacity: 0; }
+  4%   { opacity: 1; }
+  20%  { opacity: 1; }
+  24%  { opacity: 0; }
+  100% { opacity: 0; }
+}
+.hero-slide {
+  opacity: 0;
+  animation-name: hero-slide-fade;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  /* 움직임을 줄여야 하는 사용자에게는 첫 장만 고정으로 보여준다. */
+  .hero-slide { animation: none; opacity: 0; }
+  .hero-slide:first-child { opacity: 1; }
+}

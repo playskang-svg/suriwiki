@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { ModuleProps } from "@/lib/schemas/modules";
 import { useState, useRef, KeyboardEvent } from "react";
 
@@ -42,57 +43,37 @@ export default function M20({ body }: ModuleProps<"M20">) {
             onKeyDown={handleKeyDown}
             aria-label="BEFORE/AFTER 사진 비교 슬라이더 (좌우 화살표 키로 조작)"
           >
-            {/* After Image (Background) */}
-            <div className="absolute inset-0 flex items-center justify-center text-outline-variant font-label-caps bg-surface-variant">
-              {urlOf(body.compare.after) ? (
-                <img src={urlOf(body.compare.after)} alt="시공 후" className="w-full h-full object-cover" />
-              ) : (
-                <span>AFTER 이미지 준비 중</span>
-              )}
-            </div>
-            
-            {/* Before Image (Clipped) */}
-            <div 
-              className="absolute inset-0 flex items-center justify-center text-outline-variant font-label-caps bg-surface-container-highest overflow-hidden border-r-2 border-white"
-              style={{ width: `${sliderPos}%` }}
-            >
-              {urlOf(body.compare.before) ? (
-                <img
-                  src={urlOf(body.compare.before)}
+            {/* 두 사진을 같은 자리에 겹쳐 두고 BEFORE 쪽만 clip-path 로 잘라 보여준다.
+                폭을 계산해 넣던 방식은 컨테이너 크기를 읽어야 해서 리사이즈에 취약했다. */}
+            {urlOf(body.compare.after) && (
+              <Image
+                src={urlOf(body.compare.after)!}
+                alt="시공 후"
+                fill
+                sizes="(max-width: 768px) 100vw, 800px"
+                className="object-cover"
+              />
+            )}
+            {urlOf(body.compare.before) && (
+              <div
+                className="absolute inset-0"
+                style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}
+              >
+                <Image
+                  src={urlOf(body.compare.before)!}
                   alt="시공 전"
-                  className="h-full max-w-none object-cover"
-                  style={{ width: sliderRef.current?.clientWidth ?? "100%" }}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 800px"
+                  className="object-cover"
                 />
-              ) : (
-                <span>BEFORE 이미지 준비 중</span>
-              )}
-            </div>
+              </div>
+            )}
+            <div
+              className="absolute inset-y-0 w-0.5 bg-white/90 pointer-events-none"
+              style={{ left: `${sliderPos}%` }}
+              aria-hidden="true"
+            />
 
-            {/* Slider Handle */}
-            <div 
-              className="absolute top-1/2 -mt-4 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center text-primary cursor-ew-resize"
-              style={{ left: `calc(${sliderPos}% - 16px)` }}
-              onMouseDown={(e) => {
-                const startX = e.clientX;
-                const startPos = sliderPos;
-                const onMouseMove = (moveEvent: MouseEvent) => {
-                  if (!sliderRef.current) return;
-                  const rect = sliderRef.current.getBoundingClientRect();
-                  const dx = moveEvent.clientX - startX;
-                  const dPct = (dx / rect.width) * 100;
-                  setSliderPos(Math.max(0, Math.min(100, startPos + dPct)));
-                };
-                const onMouseUp = () => {
-                  document.removeEventListener('mousemove', onMouseMove);
-                  document.removeEventListener('mouseup', onMouseUp);
-                };
-                document.addEventListener('mousemove', onMouseMove);
-                document.addEventListener('mouseup', onMouseUp);
-              }}
-            >
-              <span className="material-symbols-outlined text-[20px]">swap_horiz</span>
-            </div>
-            
             <div className="absolute top-4 left-4 bg-black/60 text-white font-label-caps px-2 py-1 rounded backdrop-blur-sm pointer-events-none">BEFORE</div>
             <div className="absolute top-4 right-4 bg-black/60 text-white font-label-caps px-2 py-1 rounded backdrop-blur-sm pointer-events-none">AFTER</div>
           </div>
@@ -104,7 +85,13 @@ export default function M20({ body }: ModuleProps<"M20">) {
           <div key={idx} className="bg-surface-clean border border-border-subtle rounded-xl overflow-hidden shadow-sm flex flex-col">
             <div className="aspect-video bg-surface-container flex items-center justify-center relative">
               {item.url ? (
-                <img src={item.url} alt={item.caption} className="w-full h-full object-cover" loading="lazy" />
+                <Image
+                  src={item.url}
+                  alt={item.caption}
+                  fill
+                  sizes="(max-width: 640px) 100vw, 400px"
+                  className="object-cover"
+                />
               ) : (
                 <span className="font-label-caps text-outline-variant">이미지 준비 중</span>
               )}
