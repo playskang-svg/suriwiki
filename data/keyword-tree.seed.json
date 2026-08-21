@@ -1,18 +1,8 @@
 {
   "version": "0.3",
   "domain": { "id": "home_repair", "label": "집수리" },
-  "note": "L1 space / L2 target / L3 problem 만 정의합니다. L4 intent 노드는 build_tree.py 가 확장합니다.",
+  "note": "L1 space / L2 target / L3 problem 만 정의합니다. L4 intent 노드는 build_tree.py 가 확장합니다. 지역은 여기에 두지 않습니다 — DB areas 테이블이 유일한 출처이고 scripts/export-areas.ts 가 주입합니다 (docs/17-swappable-config.md §4).",
   "default_intents": ["cause", "judge", "case"],
-  "areas": [
-    { "slug": "busan", "label": "부산", "parent": null },
-    { "slug": "busan-buk", "label": "부산 북구", "parent": "busan" },
-    { "slug": "busan-nam", "label": "부산 남구", "parent": "busan" },
-    { "slug": "gimhae", "label": "김해", "parent": null },
-    { "slug": "yangsan", "label": "양산", "parent": null },
-    { "slug": "gangnam", "label": "서울 강남구", "parent": null },
-    { "slug": "seocho", "label": "서울 서초구", "parent": null },
-    { "slug": "pyeongtaek", "label": "평택", "parent": null }
-  ],
   "spaces": [
     {
       "id": "bath", "label": "욕실", "volume_hint": "high",

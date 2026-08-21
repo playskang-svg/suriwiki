@@ -22,12 +22,15 @@
 |---|---|---|
 | CT별 필수·옵션 모듈 | `data/content-types.json` | 코드에 표 하드코딩 |
 | 모듈 정의 | `data/modules.json` | 컴포넌트에 이름 하드코딩 |
-| 키워드 | `data/keyword-tree.json` (빌드 산출물) | 손으로 편집 |
+| 키워드 | `data/keyword-tree.seed.json` → `keyword-tree.json` (빌드 산출물) | 산출물을 손으로 편집 |
+| **지역** | **DB `areas` 테이블** → `data/areas.json` (빌드 산출물) | 시드·산출물에 지역을 적기 |
 | 디자인 토큰 | `tailwind.config.ts` (Stitch에서 이식) | 임의 hex 값 사용 |
 | 사이트 정보 | `config/site.ts` | 컴포넌트에 전화번호·브랜드명 하드코딩 |
 
-**`data/keyword-tree.json` 을 직접 수정하지 마세요.**
-`build_tree.py` 로 재생성하거나 `update_status.py` 로 상태만 바꿉니다.
+**`data/keyword-tree.json` · `data/areas.json` 을 직접 수정하지 마세요.**
+`npm run tree:build` 로 재생성하거나 `update_status.py` 로 상태만 바꿉니다.
+키워드는 `keyword-tree.seed.json`, 지역은 DB `areas` 테이블에서만 고칩니다
+(docs/17-swappable-config.md §4-1).
 
 ## 2. 절대 규칙 (사실성)
 

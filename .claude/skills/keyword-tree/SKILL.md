@@ -51,17 +51,35 @@ priority_score = 35·volume + 25·evidence + 20·(1-competition) + 12·intent_va
 
 ## 작업 절차
 
+### 0) 지역 export — **빌드 전에 항상 실행**
+
+```bash
+npx tsx scripts/export-areas.ts [--max-depth 1]   # DB areas → data/areas.json
+```
+
+지역의 단일 진실 공급원(SSOT)은 **DB `areas` 테이블**입니다 (docs/17-swappable-config.md §4).
+시드에는 지역이 없습니다. 시드에 `areas` 를 다시 넣으면 `build_tree.py` 가 에러로 막습니다.
+
+범위는 프로필의 `area_scope` + 그 하위 지역(계층 **절대 깊이** `--max-depth`, 기본 1 = 시군구)
+\+ 승인 CASE 가 있는 지역입니다. 지역을 늘리려면 `areas` 테이블에 행을 넣거나 `area_scope` 를 고칩니다.
+
+깊이가 절대값이라 `area_scope` 에 시군구(`seoul-gangnam`)를 넣어도 그 아래 동까지 딸려오지 않습니다.
+
 ### 1) 트리 빌드
 
 ```bash
 python3 .claude/skills/keyword-tree/scripts/build_tree.py \
-  --seed data/keyword-tree.seed.json \
-  --out  data/keyword-tree.json \
+  --seed  data/keyword-tree.seed.json \
+  --areas data/areas.json \        # 필수 — 0) 의 산출물
+  --out   data/keyword-tree.json \
   [--cases data/cases.json]        # 있으면 evidence_case_ids/status 반영
 ```
 
 시드의 space×target×problem×intent 를 전개하고, `compare_pairs`·`materials` 로 CT4/CT3 노드를 추가합니다.
+`area_expandable` 인 대상에는 `--areas` 의 지역을 곱해 AREA 노드를 만듭니다.
 `--cases` 를 주면 근거가 있는 노드는 `OPEN`, 근거가 필요한데 없는 노드(`cost`, `area`)는 `HOLD` 로 표시합니다.
+
+> 0)~2) 를 한 번에: `npm run tree:build`
 
 ### 2) 검증 — **항상 실행**
 

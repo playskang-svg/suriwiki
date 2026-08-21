@@ -145,11 +145,16 @@ def can_expand_area(node, area, cases):
 - 같은 대상의 지역 페이지끼리도 **본문 60% 이상이 달라야** 합니다(각 지역의 실제 CASE로 채우므로 자연히 달라집니다).
 - 지역 CASE가 0건이면 노드를 삭제하지 말고 `HOLD` 로 두어, CASE가 쌓이면 자동으로 큐에 복귀시킵니다.
 
+**곱할 지역 목록은 시드가 아니라 DB `areas` 테이블에서 옵니다.**
+`scripts/export-areas.ts` 가 프로필의 `area_scope` 범위로 뽑아 `data/areas.json` 에 떨구고,
+`build_tree.py --areas` 가 그걸 읽습니다. 자세한 건 [17 교체 가능한 설정 구조 §4-1](17-swappable-config.md) 참조.
+
 ## 9. 선점 운영 루프
 
 ```
 주 1회
- 1) build_tree.py    시드 + 신규 CASE로 트리 재생성
+ 0) export-areas.ts  DB areas → data/areas.json (지역 SSOT)
+ 1) build_tree.py    시드 + 지역 + 신규 CASE로 트리 재생성
  2) validate_tree.py 스키마·중복·고아·지역규칙 검사
  3) plan_pages.py    priority_score 상위 N개 → 이번 주 생성 큐
  4) ct-mod-composer  큐를 돌며 페이지 초안 생성 (CLAIMED)

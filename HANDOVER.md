@@ -247,13 +247,15 @@ SUPABASE-SETUP.md 와 FIX-INSTRUCTION-2.md 도 함께 읽어라.
 
 **키워드 트리 파이썬 스크립트는 검증됐다.** 재빌드·검증이 언제든 가능하다.
 ```bash
-python3 .claude/skills/keyword-tree/scripts/build_tree.py \
-  --seed data/keyword-tree.seed.json --out data/keyword-tree.json --cases data/cases.sample.json
-python3 .claude/skills/keyword-tree/scripts/validate_tree.py data/keyword-tree.json
+npm run tree:build     # export-areas(DB) → build_tree → validate_tree
 python3 .claude/skills/keyword-tree/scripts/plan_pages.py data/keyword-tree.json --top 20
 python3 .claude/skills/keyword-tree/scripts/plan_pages.py data/keyword-tree.json --status HOLD --top 30
 ```
-현재 시드 기준 **264노드 · OPEN 151 · HOLD 105**. HOLD 대부분은 "그 지역 CASE 없음"이며,
-이 목록이 곧 **현장팀에 요청할 촬영·기록 리스트**가 된다.
+현재 **442노드 · OPEN 147 · HOLD 295** (2026-08-21, `area_scope` 6개 지역, max-depth 1).
+HOLD 대부분은 "그 지역 CASE 없음"이며, 이 목록이 곧 **현장팀에 요청할 촬영·기록 리스트**가 된다.
+
+**지역은 시드가 아니라 DB `areas` 테이블에서 온다** (2026-08-21 변경, docs/17-swappable-config.md §4-1).
+시드에 `areas` 를 다시 넣거나 `--areas` 없이 빌드하면 에러로 막힌다. 지역을 늘리려면
+`areas` 테이블에 행을 넣거나 프로필의 `area_scope` 를 고친 뒤 `npm run tree:build`.
 
 **`_archive/`** 에는 초기 배포 zip 과 검증용 소스 zip 이 들어 있다. 지워도 무방하다.

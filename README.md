@@ -51,21 +51,35 @@ CASE·WIKI·LANDING 페이지를 생성하는 사이트입니다.
 | [data/content-types.json](data/content-types.json) | CT1~CT6 + 필수/옵션 모듈 |
 | [data/modules.json](data/modules.json) | M01~M24 모듈 사전 |
 | [data/keyword-tree.schema.json](data/keyword-tree.schema.json) | 키워드 트리 JSON Schema |
-| [data/keyword-tree.seed.json](data/keyword-tree.seed.json) | 시드 택소노미 (욕실/주방/현관/베란다…) |
+| [data/keyword-tree.seed.json](data/keyword-tree.seed.json) | 시드 택소노미 (욕실/주방/현관/베란다…) — **키워드를 고치는 유일한 파일** |
+| [data/areas.json](data/areas.json) | 빌드 산출물 (export-areas.ts 가 DB `areas` 에서 뽑음) |
 | [data/keyword-tree.json](data/keyword-tree.json) | 빌드 산출물 (build_tree.py 실행 결과) |
+
+> **손으로 고치는 건 `keyword-tree.seed.json` 하나뿐이다.** 지역은 DB `areas` 테이블이 유일한 출처이고
+> (docs/17-swappable-config.md §4), `areas.json` · `keyword-tree.json` 은 재빌드하면 덮어써진다.
 
 ## 빠른 시작
 
 ```bash
-# 1) 키워드 트리 빌드 + 검증
-python3 .claude/skills/keyword-tree/scripts/build_tree.py \
-  --seed data/keyword-tree.seed.json --out data/keyword-tree.json
-python3 .claude/skills/keyword-tree/scripts/validate_tree.py data/keyword-tree.json
+# 1) 키워드 트리 빌드 (지역 export → 빌드 → 검증)
+npm run tree:build
 
-# 2) 페이지 생성 계획 뽑기 (우선순위 상위 50개)
+# 2) DB 에 반영 (keyword_nodes upsert — CLAIMED/PUBLISHED/MERGED 는 보존)
+npm run tree:sync
+
+# 3) 페이지 생성 계획 뽑기 (우선순위 상위 50개)
 python3 .claude/skills/keyword-tree/scripts/plan_pages.py data/keyword-tree.json --top 50
 
-# 3) Next.js 앱 부트스트랩 (docs/15-dev-spec.md 참조)
+# 4) Next.js 앱 부트스트랩 (docs/15-dev-spec.md 참조)
+```
+
+`npm run tree:build` 를 풀어 쓰면 이렇다. 지역은 시드가 아니라 DB 에서 온다.
+
+```bash
+npx tsx scripts/export-areas.ts --max-depth 1        # DB areas → data/areas.json
+python3 .claude/skills/keyword-tree/scripts/build_tree.py \
+  --seed data/keyword-tree.seed.json --areas data/areas.json --out data/keyword-tree.json
+python3 .claude/skills/keyword-tree/scripts/validate_tree.py data/keyword-tree.json
 ```
 
 ## 절대 규칙 (사실성)

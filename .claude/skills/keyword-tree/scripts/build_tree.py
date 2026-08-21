@@ -6,8 +6,12 @@ build_tree.py — Suriwiki 키워드 트리 빌더
 data/keyword-tree.json 을 생성합니다.
 
 사용:
-  python3 build_tree.py --seed data/keyword-tree.seed.json --out data/keyword-tree.json
-  python3 build_tree.py --seed ... --out ... --cases data/cases.json
+  python3 build_tree.py --seed data/keyword-tree.seed.json \
+      --areas data/areas.json --out data/keyword-tree.json
+  python3 build_tree.py --seed ... --areas ... --out ... --cases data/cases.json
+
+지역은 시드가 아니라 DB `areas` 테이블에서 온다 (docs/17-swappable-config.md §4).
+--areas 파일은 `npm run areas:export` (scripts/export-areas.ts) 가 만든다.
 
 cases.json 형식 (선택):
   [{"id":"case_...","area":"gangnam","space":"bath","target":"doorframe",
@@ -98,9 +102,45 @@ def load_ct_matrix(root: Path) -> dict:
     return {c["code"]: c for c in data["content_types"]}
 
 
+# ---------------------------------------------------------------- 지역
+
+def load_areas(seed: dict, areas_path: str | None) -> list[dict]:
+    """지역 목록을 --areas 파일에서만 읽는다.
+
+    지역의 SSOT 는 DB `areas` 테이블이다 (docs/17-swappable-config.md §4).
+    시드에 지역을 다시 넣으면 두 곳이 어긋나므로 발견 즉시 실패시킨다.
+    폴백 기본값을 두지 않는다 — 출처가 없으면 빈 트리를 조용히 만들지 말고 죽어야 한다.
+    """
+    if "areas" in seed:
+        raise SystemExit(
+            "ERROR: 시드에 areas 가 남아 있습니다. 지역 SSOT 는 DB areas 테이블입니다.\n"
+            "       시드에서 areas 를 지우고 `npm run areas:export` 산출물을 --areas 로 넘기세요.\n"
+            "       (docs/17-swappable-config.md §4)"
+        )
+    if not areas_path:
+        raise SystemExit(
+            "ERROR: --areas 가 필요합니다. 먼저 `npm run areas:export` 로 data/areas.json 을 만드세요.\n"
+            "       (지역을 손으로 관리하지 않습니다 — docs/17-swappable-config.md §4)"
+        )
+    path = Path(areas_path)
+    if not path.exists():
+        raise SystemExit(f"ERROR: {areas_path} 이 없습니다. `npm run areas:export` 를 먼저 실행하세요.")
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    areas = raw.get("areas", []) if isinstance(raw, dict) else raw
+    if not areas:
+        raise SystemExit(
+            f"ERROR: {areas_path} 에 지역이 0건입니다. "
+            "프로필의 area_scope 와 DB areas 테이블을 확인하세요."
+        )
+    for a in areas:
+        if "slug" not in a or "label" not in a:
+            raise SystemExit(f"ERROR: {areas_path} 의 지역에 slug/label 이 없습니다: {a}")
+    return areas
+
+
 # ---------------------------------------------------------------- 빌드
 
-def build(seed: dict, cases: list[dict], ct_matrix: dict) -> dict:
+def build(seed: dict, areas: list[dict], cases: list[dict], ct_matrix: dict) -> dict:
     nodes: list[dict] = []
     seen: set[str] = set()
 
@@ -123,8 +163,14 @@ def build(seed: dict, cases: list[dict], ct_matrix: dict) -> dict:
             out.append(c)
         return out
 
+    def area_case_count(a: dict) -> int:
+        # --cases 를 주면 그 파일이 근거의 출처다.
+        # 안 주면 export_areas 가 DB 에서 집계한 값을 그대로 쓴다 (0 으로 덮어쓰지 않는다).
+        if cases:
+            return sum(1 for c in cases if c.get("area") == a["slug"])
+        return int(a.get("case_count", 0))
+
     default_intents = seed.get("default_intents", ["cause", "judge", "case"])
-    areas = seed.get("areas", [])
 
     for space in seed["spaces"]:
         sid, slabel = space["id"], space["label"]
@@ -290,7 +336,7 @@ def build(seed: dict, cases: list[dict], ct_matrix: dict) -> dict:
     return {
         "version": seed.get("version", "0.3"),
         "generated_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
-        "areas": [{**a, "case_count": sum(1 for c in cases if c.get("area") == a["slug"])} for a in areas],
+        "areas": [{**a, "case_count": area_case_count(a)} for a in areas],
         "nodes": sorted(nodes, key=lambda n: (-n["priority_score"], n["id"])),
     }
 
@@ -299,14 +345,17 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="Suriwiki 키워드 트리 빌더")
     ap.add_argument("--seed", default="data/keyword-tree.seed.json")
     ap.add_argument("--out", default="data/keyword-tree.json")
+    ap.add_argument("--areas", default=None,
+                    help="지역 목록 JSON (필수) — `npm run areas:export` 산출물")
     ap.add_argument("--cases", default=None, help="CASE 목록 JSON (선택)")
     ap.add_argument("--root", default=".", help="프로젝트 루트")
     args = ap.parse_args()
 
     root = Path(args.root).resolve()
     seed = json.loads(Path(args.seed).read_text(encoding="utf-8"))
+    areas = load_areas(seed, args.areas)
     cases = json.loads(Path(args.cases).read_text(encoding="utf-8")) if args.cases else []
-    tree = build(seed, cases, load_ct_matrix(root))
+    tree = build(seed, areas, cases, load_ct_matrix(root))
 
     bad = [n["id"] for n in tree["nodes"] if not ID_RE.match(n["id"])]
     if bad:
@@ -323,6 +372,7 @@ def main() -> int:
     print(f"✓ {out}  노드 {len(tree['nodes'])}개")
     for k, v in sorted(by_status.items()):
         print(f"    {k:<10} {v}")
+    print(f"    지역 {len(areas)}개 (출처: {args.areas})")
     print(f"    CASE 근거 {len(cases)}건 반영")
     return 0
 

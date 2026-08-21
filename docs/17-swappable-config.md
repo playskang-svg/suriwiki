@@ -11,7 +11,7 @@
 |---|---|---|
 | 브랜드명 하드코딩 | `app/layout.tsx:22,23,27` · `lib/seo/index.ts:7,105,115` **6곳** | 사이트명 하나 바꾸려면 코드 6곳 수정 |
 | `SITE_URL` 폴백 중복 | `app/robots.ts:4` · `app/sitemap.ts:4` · `lib/seo/index.ts:4` | 세 곳에 `\|\| 'https://suriwiki.com'` 이 각각 박혀 있음 |
-| **지역 정의가 두 곳** | `config/site.ts` 의 `areas: string[]` **vs** DB `areas` 테이블 | 어느 쪽이 진실인지 불명. F1 지역 판정과 어긋날 수 있음 |
+| ~~**지역 정의가 두 곳**~~ ✅ 해결 (2026-08-21) | ~~`config/site.ts` 의 `areas: string[]`~~ · ~~`data/keyword-tree.seed.json` 의 `areas`~~ **vs** DB `areas` 테이블 | DB 단일 출처로 통일. §4-1 참조 |
 | 값 없을 때 조용히 폴백 | `\|\| 'dummy_key'` 4곳, `\|\| 'https://suriwiki.com'` 3곳 | 설정 누락이 **에러가 아니라 가짜 값**으로 흘러감 |
 | 키워드 세트 단일 | `data/keyword-tree.json` 고정 | 다른 주제 사이트를 만들려면 파일을 덮어써야 함 |
 
@@ -145,6 +145,7 @@ const profileSchema = z.object({
 ## 4. 지역 — SSOT 는 DB `areas` 테이블이다
 
 `config/site.ts` 의 `areas: string[]` 를 **삭제하라.** 지역은 두 곳에서 관리하면 안 된다.
+같은 이유로 `data/keyword-tree.seed.json` 에도 지역을 두지 않는다 (§4-1).
 
 | 용도 | 출처 |
 |---|---|
@@ -167,6 +168,44 @@ left join cases c on (c.area_slug = a.slug or c.area_slug = child.slug)
 group by a.slug, a.label
 having count(c.id) > 0;
 ```
+
+### 4-1. 키워드 트리에 지역을 주입하는 경로
+
+키워드 트리는 `area_expandable` 인 대상에 지역을 곱해 AREA 노드를 만든다.
+그 지역 목록을 **시드에 적어두면 DB 와 어긋난다.** 그래서 시드에는 지역이 없고, 빌드할 때 DB 에서 뽑아 넣는다.
+
+```
+DB areas ──(scripts/export-areas.ts)──▶ data/areas.json ──(--areas)──▶ build_tree.py
+                                         (빌드 산출물)
+```
+
+```bash
+npm run tree:build     # export-areas → build_tree → validate_tree 를 한 번에
+```
+
+`export-areas.ts` 가 내보내는 범위:
+
+| 규칙 | 내용 |
+|---|---|
+| ① 확장 후보 | 프로필 `area_scope` 에 적힌 지역 — 제 깊이와 무관하게 포함 |
+| ② 그 하위 지역 | 계층 **절대 깊이**가 `--max-depth`(기본 1 = 시군구) 이하인 것 |
+| ③ CASE 가 연 지역 | 승인 CASE 가 실제로 있는 지역은 범위·깊이와 무관하게 포함 |
+
+**깊이는 뿌리 기준 상대값이 아니라 계층의 절대 깊이다** (0=시도, 1=시군구, 2=동).
+상대 깊이로 하면 `area_scope` 에 시군구를 하나 넣는 순간 그 아래 동까지 통째로 딸려온다.
+`seoul-gangnam` 을 넣어도 강남구 하나만 들어오는 이유가 이것이다.
+
+`parent` 는 **이 목록 안에서의 부모**로 다시 매단다. 빠진 조상을 채워 넣지 않는다 —
+`seoul-gangnam` 때문에 `seoul` 이 목록에 끼면 **서비스하지 않는 "서울 전체" AREA 노드가 생겨버린다.**
+
+표시명은 조상을 합쳐 만든다 — DB 의 `북구` 는 `부산 북구` 가 된다. **`북구` 단독은 어느 시의 북구인지 알 수 없다.**
+`--max-depth` 를 올리면 동 단위까지 열 수 있지만, 동 단위 지역은 3,535개다.
+**CASE 없이 깊이만 늘리면 HOLD 노드만 수천 개 늘어난다.**
+
+**폴백을 두지 않는다.** `build_tree.py` 는 이렇게 죽는다.
+
+- `--areas` 없이 실행 → 에러 (지역 0개짜리 트리를 조용히 만들지 않는다)
+- 시드에 `areas` 키가 다시 생김 → 에러 (두 곳 관리로 되돌아가는 것을 막는다)
 
 ---
 
@@ -196,6 +235,8 @@ SITE_PROFILE=default npx tsx scripts/sync-keywords.ts
 | 전화번호·카카오 링크 | Vercel 환경변수 수정 | redeploy |
 | 브랜드명·태그라인·도메인 | `config/profiles/<name>.json` 수정 | 빌드 |
 | 서비스 지역 추가 | `areas` 행 추가 + 그 지역 CASE 승인 | revalidate |
+| 키워드 트리의 지역 범위 조정 | 프로필 `area_scope` 수정 → `npm run tree:build` | 빌드 |
+| 키워드 추가·수정 | `keyword-tree.seed.json` 수정 → `npm run tree:build` → `npm run tree:sync` | 빌드 |
 | 키워드 세트 전체 교체 | `keyword-tree.<name>.json` 추가 + `SITE_PROFILE` 변경 | 빌드 |
 | 사이트 통째로 복제 | 프로필 JSON + 키워드 JSON 2개 파일 추가 | 빌드 |
 
@@ -206,6 +247,7 @@ SITE_PROFILE=default npx tsx scripts/sync-keywords.ts
 1. `|| '기본값'` 폴백을 넣지 마라. 없으면 죽어야 한다.
 2. `config/site.ts` 에 실제 값을 다시 하드코딩하지 마라.
 3. 서비스 지역 목록을 손으로 관리하지 마라. CASE 가 결정한다.
+   시드(`keyword-tree.seed.json`)나 `data/areas.json` 을 직접 고치지 마라 — `areas` 테이블을 고쳐라.
 4. `stats` · `certifications` 를 채워서 게이트 F3·F7 을 우회하지 마라.
 5. 프로필 컬럼(`keyword_nodes.profile`)을 지금 미리 만들지 마라. 필요할 때 만든다.
 

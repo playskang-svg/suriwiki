@@ -6,7 +6,7 @@
     "site_url": "https://suriwiki.com"
   },
   "contact": {
-    "phone": "010-0000-0000",
+    "phone": "010-4684-8838",
     "kakao_url": "https://pf.kakao.com/placeholder",
     "email": "contact@suriwiki.com",
     "business_hours": "평일 09:00 - 18:00",
@@ -15,7 +15,7 @@
     "address": "부산광역시 해운대구"
   },
   "keyword_set": "default",
-  "area_scope": ["busan", "gimhae", "yangsan"],
+  "area_scope": ["busan", "gimhae", "yangsan", "seoul-gangnam", "seoul-seocho", "gyeonggi-pyeongtaek"],
   "certifications": [],
   "stats": null,
   "assets": {
