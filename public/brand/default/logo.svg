@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 168 40" width="168" height="40" role="img" aria-label="수리위키">
+  <title>수리위키</title>
+  <!-- 마크: 전체 교체가 아니라 '상한 곳만' 되살린다는 뜻으로, 한 조각만 채워 넣은 사각형 -->
+  <rect x="2" y="8" width="24" height="24" rx="5" fill="none" stroke="#00236f" stroke-width="2.5"/>
+  <rect x="8" y="14" width="12" height="12" rx="2" fill="#fea619"/>
+  <text x="36" y="27" font-family="'Noto Sans KR','Apple SD Gothic Neo',sans-serif"
+        font-size="20" font-weight="700" fill="#00236f" letter-spacing="-0.5">수리위키</text>
+</svg>

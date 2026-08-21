@@ -11,13 +11,29 @@ export default function Home() {
       <main className="flex flex-col relative w-full pt-16 pb-32 bg-surface">
         <div className="flex flex-col w-full bg-surface">
           {/* Hero Section */}
-          <section className="relative w-full h-[65vh] min-h-[500px] flex items-end pb-stack-lg" style={{ backgroundImage: "linear-gradient(to top, rgba(25, 28, 30, 0.8) 0%, rgba(25, 28, 30, 0.3) 50%, rgba(25, 28, 30, 0.1) 100%), url('/brand/default/placeholder.svg')", backgroundSize: "cover", backgroundPosition: "center" }}>
+          {/*
+            히어로 배경: 실제 사진이 준비될 때까지 이미지를 깔지 않는다.
+            자리표시자를 배경으로 쓰면 "이미지 준비 중" 도형이 헤드라인 위에 겹쳐 보이고,
+            시공 사진처럼 보이는 아무 이미지를 끼우는 것은 사실성 규칙 위반이다 (docs/17 §8-5).
+            프로필에 hero 가 채워지면 그때 배경으로 깐다.
+          */}
+          <section
+            className="relative w-full h-[65vh] min-h-[500px] flex items-end pb-stack-lg"
+            style={{
+              backgroundImage: siteConfig.assets?.hero
+                ? `linear-gradient(to top, rgba(0, 16, 56, 0.88) 0%, rgba(0, 35, 111, 0.55) 55%, rgba(0, 35, 111, 0.35) 100%), url('${siteConfig.assets.hero}')`
+                : "linear-gradient(to top, #001038 0%, #00236f 60%, #123a94 100%)",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          >
             <div className="w-full px-grid-margin-mobile md:px-grid-margin-desktop text-on-primary max-w-7xl mx-auto">
               <h1 className="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg mb-stack-md leading-tight">
                 전체 교체 없이,<br />상한 곳만 정확히 되살립니다
               </h1>
-              <p className="font-body-lg text-[18px] md:text-[24px] text-on-surface-variant font-medium mb-stack-md md:mb-12 break-keep text-center md:text-left drop-shadow-sm opacity-90 max-w-xl mx-auto md:mx-0">
-                <span className="text-primary font-bold">{siteConfig.brand.name}</span>는 비용이 많이 드는 전체 교체를 권하지 않습니다.<br />꼭 필요한 부분만 정확히 찾아내어 새것처럼 되살려 드립니다.
+              {/* 어두운 히어로 배경 위라 밝은 색을 쓴다. text-primary(#00236f)는 배경에 묻힌다. */}
+              <p className="font-body-lg text-[18px] md:text-[24px] text-on-primary font-medium mb-stack-md md:mb-12 break-keep text-center md:text-left drop-shadow-sm opacity-90 max-w-xl mx-auto md:mx-0">
+                <span className="text-primary-fixed-dim font-bold">{siteConfig.brand.name}</span>는 비용이 많이 드는 전체 교체를 권하지 않습니다.<br />꼭 필요한 부분만 정확히 찾아내어 새것처럼 되살려 드립니다.
               </p>
               <button className="bg-primary hover:bg-primary/90 text-on-primary px-6 py-4 rounded-xl font-headline-md text-[18px] flex items-center justify-center gap-2 w-full md:w-auto shadow-lg transition-transform active:scale-95">
                 <span>무료 상담 신청하기</span>

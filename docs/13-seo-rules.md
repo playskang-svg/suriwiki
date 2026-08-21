@@ -91,3 +91,60 @@ Page Type / CT 별로 다른 스키마를 씁니다.
 ```
 
 관련: [12 키워드 트리](12-keyword-tree.md) · [16 품질 게이트](16-quality-gate.md)
+
+---
+
+## 색인 엔드포인트 (2026-08-21 추가)
+
+| 주소 | 용도 | 제출처 |
+|---|---|---|
+| `/sitemap.xml` | **사이트맵 인덱스** — 분할본 목록 | 구글 서치콘솔 · 네이버 서치어드바이저 · 빙 |
+| `/sitemap/<id>.xml` | 분할 사이트맵 (`core` + 지역별) | 인덱스가 대신 가리킨다 |
+| `/rss.xml` | 최근 발행 50건 RSS 2.0 | 네이버 서치어드바이저 (RSS 제출) |
+| `/llms.txt` | 생성형 검색(AI 답변)용 사이트 안내 | 제출 없음. 크롤러가 직접 읽는다 |
+| `/indexnow-key.txt` | IndexNow 소유 확인 키 | 검색엔진이 직접 확인 |
+| `/opengraph-image` | OG 이미지 (브랜드명·태그라인에서 생성) | 메타태그로 자동 참조 |
+
+### 왜 사이트맵 인덱스가 따로 필요한가
+
+`app/sitemap.ts` 가 `generateSitemaps` 로 분할되면 실제 주소는 `/sitemap/<id>.xml` 이 되고
+**`/sitemap.xml` 은 생성되지 않는다.** robots.txt 와 각 콘솔은 주소를 하나만 받으므로
+분할본을 나열하는 인덱스를 `app/sitemap.xml/route.ts` 에서 직접 만든다.
+
+분할 목록은 `lib/seo/sitemap.ts` 하나에서 나온다. 인덱스와 본문이 각자 계산하면 반드시 어긋나고,
+인덱스에 있는데 본문이 404 이면 검색엔진은 사이트맵 전체를 신뢰하지 않는다.
+
+**발행된 페이지가 있는 분할만 낸다.** DB 의 모든 시도를 나열하면 빈 사이트맵이 20여 개 제출된다.
+
+### IndexNow
+
+네이버·빙·Yandex 가 참여한다. **구글은 참여하지 않으므로 구글은 사이트맵으로 간다.**
+
+- 키는 비밀값이 아니다. `/indexnow-key.txt` 로 공개 서빙돼야 소유 검증이 된다.
+- 키가 없으면 `pingIndexNow` 가 `null` 을 돌려준다. 성공한 척하지 않는다.
+- `POST /api/revalidate` 가 `record.status === 'published'` 일 때만 알린다.
+  draft·review 를 알리면 검색엔진이 404 를 가지러 온다.
+
+```bash
+openssl rand -hex 16   # INDEXNOW_KEY 생성
+```
+
+### 사이트 소유 확인
+
+프로필 `verification` 또는 환경변수로 넣는다. **값이 없으면 메타태그를 렌더하지 않는다** —
+빈 값으로 렌더하면 "확인 실패"가 아니라 "확인된 척"이 된다.
+
+| 환경변수 | 콘솔 |
+|---|---|
+| `NEXT_PUBLIC_NAVER_SITE_VERIFICATION` | 네이버 서치어드바이저 |
+| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | 구글 서치콘솔 |
+| `NEXT_PUBLIC_BING_SITE_VERIFICATION` | 빙 웹마스터 |
+
+### 생성형 검색(GEO)
+
+`app/layout.tsx` 가 `Organization` · `WebSite` 를 `@graph` 로 루트에 심는다.
+AI 검색은 출처를 고를 때 "이 사이트가 무엇을 하는 누구인가"를 먼저 보는데,
+페이지별 `Article` · `FAQPage` 만으로는 그 질문에 답이 안 되기 때문이다.
+
+`/llms.txt` 에는 **인용 시 주의사항**을 적는다 — 비용을 단정하지 말 것, 지역 페이지는
+실제 CASE 가 있을 때만 존재한다는 것. 사실성 규칙을 AI 인용 단계까지 끌고 가기 위한 것이다.

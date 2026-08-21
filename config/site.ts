@@ -32,6 +32,15 @@ const profileSchema = z.object({
   keyword_set: z.string(),
   area_scope: z.array(z.string()),
   certifications: z.array(z.string()),
+  // 검색엔진 사이트 소유 확인 코드. null 이면 그 메타태그를 아예 렌더하지 않는다.
+  // 빈 문자열로 렌더하면 소유 확인이 실패하는 게 아니라 "확인된 척"이 되므로 null 을 쓴다.
+  verification: z.object({
+    naver: z.string().nullable(),
+    google: z.string().nullable(),
+    bing: z.string().nullable(),
+  }).optional(),
+  // IndexNow 키. 비밀값이 아니다 — 키 파일을 사이트에 공개로 올려야 검증된다.
+  indexnow_key: z.string().nullable().optional(),
   stats: z.object({
     count: z.string(),
     satisfaction: z.string(),
@@ -73,6 +82,22 @@ function loadConfig(): SiteConfig {
   }
   if (process.env.NEXT_PUBLIC_SITE_KAKAO_URL) {
     raw.contact.kakao_url = process.env.NEXT_PUBLIC_SITE_KAKAO_URL;
+  }
+
+  // 검색엔진 소유 확인 코드 — 콘솔에서 받은 값을 배포 환경변수로 넣는 경로.
+  // NEXT_PUBLIC_ 접두사를 쓰는 이유는 이 값이 <head> 메타태그로 화면에 나가는 공개 정보이기 때문이다.
+  raw.verification = raw.verification ?? { naver: null, google: null, bing: null };
+  if (process.env.NEXT_PUBLIC_NAVER_SITE_VERIFICATION) {
+    raw.verification.naver = process.env.NEXT_PUBLIC_NAVER_SITE_VERIFICATION;
+  }
+  if (process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION) {
+    raw.verification.google = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
+  }
+  if (process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION) {
+    raw.verification.bing = process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION;
+  }
+  if (process.env.INDEXNOW_KEY) {
+    raw.indexnow_key = process.env.INDEXNOW_KEY;
   }
 
   const parsed = profileSchema.safeParse(raw);

@@ -17,10 +17,16 @@
   "keyword_set": "default",
   "area_scope": ["busan", "gimhae", "yangsan", "seoul-gangnam", "seoul-seocho", "gyeonggi-pyeongtaek"],
   "certifications": [],
+  "verification": {
+    "naver": null,
+    "google": null,
+    "bing": null
+  },
+  "indexnow_key": null,
   "stats": null,
   "assets": {
     "logo": "/brand/default/logo.svg",
-    "favicon": "/brand/default/favicon.ico",
+    "favicon": null,
     "og_image": null,
     "hero": null,
     "placeholder": "/brand/default/placeholder.svg"

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600" role="img" aria-label="이미지 없음">
+  <title>이미지 없음</title>
+  <!--
+    중립 자리표시자. 사진이 아니라 도형이다.
+    시공 사례 사진을 흉내내지 않는다 — 그건 사실성 규칙 위반이다 (docs/17 §8).
+  -->
+  <rect width="800" height="600" fill="#eceef0"/>
+  <g stroke="#c5c5d3" stroke-width="3" fill="none">
+    <rect x="300" y="230" width="200" height="150" rx="10"/>
+    <path d="M300 340 l55 -55 l45 45 l40 -40 l60 60"/>
+  </g>
+  <circle cx="355" cy="272" r="15" fill="#c5c5d3"/>
+  <text x="400" y="425" text-anchor="middle" font-family="'Noto Sans KR','Apple SD Gothic Neo',sans-serif"
+        font-size="22" fill="#757682">이미지 준비 중</text>
+</svg>
