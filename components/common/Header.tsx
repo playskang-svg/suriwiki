@@ -8,6 +8,7 @@ import MobileMenu, { type MenuItem } from "@/components/common/MobileMenu";
 const MENU: MenuItem[] = [
   { label: "홈", href: "/" },
   { label: "시공 사례", href: "/cases" },
+  { label: "시공 지역", href: "/#areas" },
 ];
 
 // 서비스 지역 표기. 최상위 지역(시도·독립시)만 쓴다 — 구·동까지 나열하면 헤더가 넘친다.

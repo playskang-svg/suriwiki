@@ -141,15 +141,17 @@ async function main() {
       .upsert({ page_id: page.id, module_code: 'M20', body, position: 90 }, { onConflict: 'page_id,module_code' });
     if (mErr) { console.log(`     ! page_modules 실패: ${mErr.message}`); continue; }
 
-    // module_order 에 M20 이 없으면 M08(공정) 뒤에 넣는다.
-    const order = [...(page.module_order ?? [])];
-    if (!order.includes('M20')) {
-      const at = order.indexOf('M08');
-      if (at >= 0) order.splice(at + 1, 0, 'M20');
-      else order.push('M20');
-      const { error: oErr } = await sb.from('pages').update({ module_order: order }).eq('id', page.id);
-      if (oErr) { console.log(`     ! module_order 실패: ${oErr.message}`); continue; }
-    }
+    // 사진을 본문 위쪽에 둔다.
+    // 시공 사례에서 방문자가 가장 먼저 확인하는 것은 "어떻게 좋아졌는가" 이고,
+    // 긴 설명이 먼저 나오면 그 답이 스크롤 아래로 밀린다.
+    // M02(요약) 바로 다음이 사진 자리다. M02 가 없으면 맨 앞에 놓는다.
+    const order = (page.module_order ?? []).filter((m: string) => m !== 'M20');
+    const anchor = order.indexOf('M02');
+    if (anchor >= 0) order.splice(anchor + 1, 0, 'M20');
+    else order.unshift('M20');
+
+    const { error: oErr } = await sb.from('pages').update({ module_order: order }).eq('id', page.id);
+    if (oErr) { console.log(`     ! module_order 실패: ${oErr.message}`); continue; }
     console.log(`     ✓ M20 연결 (사진 ${items.length}장${body.compare ? ', 비교 슬라이더 포함' : ''})`);
   }
 

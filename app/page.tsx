@@ -3,7 +3,8 @@ import BottomNav from "@/components/common/BottomNav";
 import StatStrip from "@/components/common/StatStrip";
 import Link from "next/link";
 import { siteConfig } from "@/config/site";
-import { fetchPublishedPages, pageLastModified } from "@/lib/seo/sitemap";
+import { fetchPublishedPages, pageLastModified, isAreaPage } from "@/lib/seo/sitemap";
+import areasData from "@/data/areas.json";
 
 export const revalidate = 3600;
 
@@ -13,6 +14,13 @@ export default async function Home() {
   // 정작 발행된 CASE 는 홈에서 갈 방법이 없었다.
   const published = (await fetchPublishedPages())
     .sort((a, b) => pageLastModified(b).getTime() - pageLastModified(a).getTime());
+
+  // 시공 지역. 발행된 AREA 페이지가 있는 지역만 링크한다.
+  // 페이지가 없는 지역까지 링크하면 눌러서 404 가 나는 링크가 다시 생긴다 (F1).
+  const areaPageSlugs = new Set(published.filter(isAreaPage).map(p => p.slug));
+  const serviceAreas = areasData.areas
+    .filter(a => a.parent === null)
+    .map(a => ({ ...a, href: areaPageSlugs.has(`area/${a.slug}`) ? `/area/${a.slug}` : null }));
 
   return (
     <>
@@ -92,6 +100,39 @@ export default async function Home() {
                 </p>
               </div>
             )}
+          </section>
+
+          {/* 시공 지역 */}
+          <section id="areas" className="w-full px-grid-margin-mobile md:px-grid-margin-desktop pb-section-gap max-w-7xl mx-auto">
+            <div className="mb-stack-md">
+              <h2 className="font-headline-lg text-headline-lg text-on-surface mb-2">시공 지역</h2>
+              <p className="font-body-md text-body-md text-on-surface-variant">
+                아래 지역에서 방문 시공하고 있습니다.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {serviceAreas.map(a =>
+                a.href ? (
+                  <Link
+                    key={a.slug}
+                    href={a.href}
+                    className="px-4 py-2.5 rounded-full bg-surface-clean border border-border-subtle font-status-label text-status-label text-on-surface hover:border-primary hover:text-primary transition-colors flex items-center gap-1"
+                  >
+                    <span className="material-symbols-outlined text-[16px] text-primary">location_on</span>
+                    {a.label}
+                  </Link>
+                ) : (
+                  /* 아직 사례가 없는 지역은 링크하지 않는다. 문의는 전화로 받는다. */
+                  <span
+                    key={a.slug}
+                    className="px-4 py-2.5 rounded-full bg-surface-container-low font-status-label text-status-label text-on-surface-variant flex items-center gap-1"
+                  >
+                    <span className="material-symbols-outlined text-[16px]">location_on</span>
+                    {a.label}
+                  </span>
+                )
+              )}
+            </div>
           </section>
 
           {/* Core Strengths */}
