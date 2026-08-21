@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-20T22:43:13+00:00",
+  "generated_at": "2026-08-21T15:32:14+00:00",
   "source": "supabase:areas",
   "profile": "default",
   "scope": [
@@ -125,6 +125,12 @@
       "label": "부산 연제구",
       "parent": "busan",
       "case_count": 0
+    },
+    {
+      "slug": "daegu-dong",
+      "label": "대구 동구",
+      "parent": null,
+      "case_count": 1
     },
     {
       "slug": "gyeonggi-pyeongtaek",

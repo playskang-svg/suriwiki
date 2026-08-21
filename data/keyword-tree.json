@@ -1,6 +1,6 @@
 {
   "version": "0.3",
-  "generated_at": "2026-08-20T22:43:13+00:00",
+  "generated_at": "2026-08-21T15:32:14+00:00",
   "areas": [
     {
       "slug": "busan",
@@ -115,6 +115,12 @@
       "label": "부산 연제구",
       "parent": "busan",
       "case_count": 0
+    },
+    {
+      "slug": "daegu-dong",
+      "label": "대구 동구",
+      "parent": null,
+      "case_count": 1
     },
     {
       "slug": "gyeonggi-pyeongtaek",
@@ -739,6 +745,31 @@
       "notes": ""
     },
     {
+      "id": "entrance.firedoor#area_daegu_dong",
+      "parent_id": "entrance.firedoor",
+      "level": 4,
+      "label": "대구 동구 방화문·현관문 수리",
+      "query_ko": "대구 동구 방화문·현관문 수리",
+      "aliases": [],
+      "intent": [
+        "area"
+      ],
+      "suggested_ct": "CT6",
+      "suggested_page_type": "AREA",
+      "area_expandable": true,
+      "volume_hint": "high",
+      "competition_hint": "low",
+      "evidence_case_ids": [],
+      "priority_score": 63.4,
+      "status": "HOLD",
+      "hold_reason": "대구 동구 실제 CASE 없음 (사실성 규칙 F1)",
+      "target_page_id": null,
+      "target_url": "/area/daegu-dong/firedoor",
+      "merged_into": null,
+      "dedupe_key": "e50cfc61d8fd3c4a",
+      "notes": ""
+    },
+    {
       "id": "entrance.firedoor#area_gimhae",
       "parent_id": "entrance.firedoor",
       "level": 4,
@@ -1311,6 +1342,31 @@
       "target_url": "/area/busan-yeonje/temperedglass",
       "merged_into": null,
       "dedupe_key": "c4bc5b027e488d84",
+      "notes": ""
+    },
+    {
+      "id": "entrance.temperedglass#area_daegu_dong",
+      "parent_id": "entrance.temperedglass",
+      "level": 4,
+      "label": "대구 동구 강화도어·유리문 수리",
+      "query_ko": "대구 동구 강화도어·유리문 수리",
+      "aliases": [],
+      "intent": [
+        "area"
+      ],
+      "suggested_ct": "CT6",
+      "suggested_page_type": "AREA",
+      "area_expandable": true,
+      "volume_hint": "high",
+      "competition_hint": "low",
+      "evidence_case_ids": [],
+      "priority_score": 63.4,
+      "status": "HOLD",
+      "hold_reason": "대구 동구 실제 CASE 없음 (사실성 규칙 F1)",
+      "target_page_id": null,
+      "target_url": "/area/daegu-dong/temperedglass",
+      "merged_into": null,
+      "dedupe_key": "f8426a8631ad4fa1",
       "notes": ""
     },
     {
@@ -2620,6 +2676,31 @@
       "notes": ""
     },
     {
+      "id": "bath.doorframe#area_daegu_dong",
+      "parent_id": "bath.doorframe",
+      "level": 4,
+      "label": "대구 동구 욕실 문틀 수리",
+      "query_ko": "대구 동구 욕실 문틀 수리",
+      "aliases": [],
+      "intent": [
+        "area"
+      ],
+      "suggested_ct": "CT6",
+      "suggested_page_type": "AREA",
+      "area_expandable": true,
+      "volume_hint": "mid",
+      "competition_hint": "low",
+      "evidence_case_ids": [],
+      "priority_score": 49.4,
+      "status": "HOLD",
+      "hold_reason": "대구 동구 실제 CASE 없음 (사실성 규칙 F1)",
+      "target_page_id": null,
+      "target_url": "/area/daegu-dong/doorframe",
+      "merged_into": null,
+      "dedupe_key": "b1596d9168ec9c66",
+      "notes": ""
+    },
+    {
       "id": "bath.doorframe#area_gimhae",
       "parent_id": "bath.doorframe",
       "level": 4,
@@ -3295,6 +3376,31 @@
       "notes": ""
     },
     {
+      "id": "kitchen.cabinet#area_daegu_dong",
+      "parent_id": "kitchen.cabinet",
+      "level": 4,
+      "label": "대구 동구 싱크대 문짝·상부장 수리",
+      "query_ko": "대구 동구 싱크대 문짝·상부장 수리",
+      "aliases": [],
+      "intent": [
+        "area"
+      ],
+      "suggested_ct": "CT6",
+      "suggested_page_type": "AREA",
+      "area_expandable": true,
+      "volume_hint": "mid",
+      "competition_hint": "low",
+      "evidence_case_ids": [],
+      "priority_score": 49.4,
+      "status": "HOLD",
+      "hold_reason": "대구 동구 실제 CASE 없음 (사실성 규칙 F1)",
+      "target_page_id": null,
+      "target_url": "/area/daegu-dong/cabinet",
+      "merged_into": null,
+      "dedupe_key": "d7f43793bb1448b3",
+      "notes": ""
+    },
+    {
       "id": "kitchen.cabinet#area_gimhae",
       "parent_id": "kitchen.cabinet",
       "level": 4,
@@ -3895,6 +4001,31 @@
       "notes": ""
     },
     {
+      "id": "kitchen.countertop#area_daegu_dong",
+      "parent_id": "kitchen.countertop",
+      "level": 4,
+      "label": "대구 동구 싱크대 상판 수리",
+      "query_ko": "대구 동구 싱크대 상판 수리",
+      "aliases": [],
+      "intent": [
+        "area"
+      ],
+      "suggested_ct": "CT6",
+      "suggested_page_type": "AREA",
+      "area_expandable": true,
+      "volume_hint": "mid",
+      "competition_hint": "low",
+      "evidence_case_ids": [],
+      "priority_score": 49.4,
+      "status": "HOLD",
+      "hold_reason": "대구 동구 실제 CASE 없음 (사실성 규칙 F1)",
+      "target_page_id": null,
+      "target_url": "/area/daegu-dong/countertop",
+      "merged_into": null,
+      "dedupe_key": "71600f5f6ecbccda",
+      "notes": ""
+    },
+    {
       "id": "kitchen.countertop#area_gimhae",
       "parent_id": "kitchen.countertop",
       "level": 4,
@@ -4467,6 +4598,31 @@
       "target_url": "/area/busan-yeonje/door",
       "merged_into": null,
       "dedupe_key": "22e3a1aca66af57f",
+      "notes": ""
+    },
+    {
+      "id": "room.door#area_daegu_dong",
+      "parent_id": "room.door",
+      "level": 4,
+      "label": "대구 동구 방문·문짝 수리",
+      "query_ko": "대구 동구 방문·문짝 수리",
+      "aliases": [],
+      "intent": [
+        "area"
+      ],
+      "suggested_ct": "CT6",
+      "suggested_page_type": "AREA",
+      "area_expandable": true,
+      "volume_hint": "mid",
+      "competition_hint": "low",
+      "evidence_case_ids": [],
+      "priority_score": 49.4,
+      "status": "HOLD",
+      "hold_reason": "대구 동구 실제 CASE 없음 (사실성 규칙 F1)",
+      "target_page_id": null,
+      "target_url": "/area/daegu-dong/door",
+      "merged_into": null,
+      "dedupe_key": "f044362072db6019",
       "notes": ""
     },
     {
@@ -5795,6 +5951,31 @@
       "notes": ""
     },
     {
+      "id": "bath.tile#area_daegu_dong",
+      "parent_id": "bath.tile",
+      "level": 4,
+      "label": "대구 동구 욕실 타일 수리",
+      "query_ko": "대구 동구 욕실 타일 수리",
+      "aliases": [],
+      "intent": [
+        "area"
+      ],
+      "suggested_ct": "CT6",
+      "suggested_page_type": "AREA",
+      "area_expandable": true,
+      "volume_hint": "mid",
+      "competition_hint": "mid",
+      "evidence_case_ids": [],
+      "priority_score": 40.4,
+      "status": "HOLD",
+      "hold_reason": "대구 동구 실제 CASE 없음 (사실성 규칙 F1)",
+      "target_page_id": null,
+      "target_url": "/area/daegu-dong/tile",
+      "merged_into": null,
+      "dedupe_key": "4ea46e831894d956",
+      "notes": ""
+    },
+    {
       "id": "bath.tile#area_gimhae",
       "parent_id": "bath.tile",
       "level": 4,
@@ -6395,6 +6576,31 @@
       "notes": ""
     },
     {
+      "id": "entrance.autodoor#area_daegu_dong",
+      "parent_id": "entrance.autodoor",
+      "level": 4,
+      "label": "대구 동구 자동문 수리",
+      "query_ko": "대구 동구 자동문 수리",
+      "aliases": [],
+      "intent": [
+        "area"
+      ],
+      "suggested_ct": "CT6",
+      "suggested_page_type": "AREA",
+      "area_expandable": true,
+      "volume_hint": "mid",
+      "competition_hint": "mid",
+      "evidence_case_ids": [],
+      "priority_score": 40.4,
+      "status": "HOLD",
+      "hold_reason": "대구 동구 실제 CASE 없음 (사실성 규칙 F1)",
+      "target_page_id": null,
+      "target_url": "/area/daegu-dong/autodoor",
+      "merged_into": null,
+      "dedupe_key": "c1643fda1a3085e7",
+      "notes": ""
+    },
+    {
       "id": "entrance.autodoor#area_gimhae",
       "parent_id": "entrance.autodoor",
       "level": 4,
@@ -6967,6 +7173,31 @@
       "target_url": "/area/busan-yeonje/window",
       "merged_into": null,
       "dedupe_key": "62cbe8c18a44b4a3",
+      "notes": ""
+    },
+    {
+      "id": "veranda.window#area_daegu_dong",
+      "parent_id": "veranda.window",
+      "level": 4,
+      "label": "대구 동구 창호·샤시 수리",
+      "query_ko": "대구 동구 창호·샤시 수리",
+      "aliases": [],
+      "intent": [
+        "area"
+      ],
+      "suggested_ct": "CT6",
+      "suggested_page_type": "AREA",
+      "area_expandable": true,
+      "volume_hint": "mid",
+      "competition_hint": "mid",
+      "evidence_case_ids": [],
+      "priority_score": 40.4,
+      "status": "HOLD",
+      "hold_reason": "대구 동구 실제 CASE 없음 (사실성 규칙 F1)",
+      "target_page_id": null,
+      "target_url": "/area/daegu-dong/window",
+      "merged_into": null,
+      "dedupe_key": "1741e22be150fabf",
       "notes": ""
     },
     {
@@ -7745,6 +7976,31 @@
       "notes": ""
     },
     {
+      "id": "store.cubicle#area_daegu_dong",
+      "parent_id": "store.cubicle",
+      "level": 4,
+      "label": "대구 동구 화장실 큐비클 수리",
+      "query_ko": "대구 동구 화장실 큐비클 수리",
+      "aliases": [],
+      "intent": [
+        "area"
+      ],
+      "suggested_ct": "CT6",
+      "suggested_page_type": "AREA",
+      "area_expandable": true,
+      "volume_hint": "low",
+      "competition_hint": "low",
+      "evidence_case_ids": [],
+      "priority_score": 38.9,
+      "status": "HOLD",
+      "hold_reason": "대구 동구 실제 CASE 없음 (사실성 규칙 F1)",
+      "target_page_id": null,
+      "target_url": "/area/daegu-dong/cubicle",
+      "merged_into": null,
+      "dedupe_key": "39d3739421d8a176",
+      "notes": ""
+    },
+    {
       "id": "store.cubicle#area_gimhae",
       "parent_id": "store.cubicle",
       "level": 4,
@@ -8320,6 +8576,31 @@
       "notes": ""
     },
     {
+      "id": "store.emergencydoor#area_daegu_dong",
+      "parent_id": "store.emergencydoor",
+      "level": 4,
+      "label": "대구 동구 비상구 방화문 수리",
+      "query_ko": "대구 동구 비상구 방화문 수리",
+      "aliases": [],
+      "intent": [
+        "area"
+      ],
+      "suggested_ct": "CT6",
+      "suggested_page_type": "AREA",
+      "area_expandable": true,
+      "volume_hint": "low",
+      "competition_hint": "low",
+      "evidence_case_ids": [],
+      "priority_score": 38.9,
+      "status": "HOLD",
+      "hold_reason": "대구 동구 실제 CASE 없음 (사실성 규칙 F1)",
+      "target_page_id": null,
+      "target_url": "/area/daegu-dong/emergencydoor",
+      "merged_into": null,
+      "dedupe_key": "193f24c0fa2bdf70",
+      "notes": ""
+    },
+    {
       "id": "store.emergencydoor#area_gimhae",
       "parent_id": "store.emergencydoor",
       "level": 4,
@@ -8892,6 +9173,31 @@
       "target_url": "/area/busan-yeonje/outdoor_unit",
       "merged_into": null,
       "dedupe_key": "0e6027ab224d8ad9",
+      "notes": ""
+    },
+    {
+      "id": "veranda.outdoor_unit#area_daegu_dong",
+      "parent_id": "veranda.outdoor_unit",
+      "level": 4,
+      "label": "대구 동구 실외기실 수리",
+      "query_ko": "대구 동구 실외기실 수리",
+      "aliases": [],
+      "intent": [
+        "area"
+      ],
+      "suggested_ct": "CT6",
+      "suggested_page_type": "AREA",
+      "area_expandable": true,
+      "volume_hint": "low",
+      "competition_hint": "low",
+      "evidence_case_ids": [],
+      "priority_score": 38.9,
+      "status": "HOLD",
+      "hold_reason": "대구 동구 실제 CASE 없음 (사실성 규칙 F1)",
+      "target_page_id": null,
+      "target_url": "/area/daegu-dong/outdoor_unit",
+      "merged_into": null,
+      "dedupe_key": "42b05e5d71d06114",
       "notes": ""
     },
     {

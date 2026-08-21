@@ -150,9 +150,9 @@ npm test             # vitest 25건
 | 항목 | 수량 | 비고 |
 |---|---|---|
 | 발행 페이지 | **3건** (전부 CASE) | 사이트의 실질 콘텐츠 전부 |
-| 승인 CASE | 6건 | **전부 `area_slug` 가 비어 있다** ← 최대 병목 |
-| 키워드 노드 | 442 (OPEN 145 · HOLD 292 · CLAIMED 5) | HOLD 대부분 "그 지역 CASE 없음" |
-| 지역(areas) | 3,811 (시도 21 · 시군구 253 · 동 3,535) | |
+| 승인 CASE | 6건 | **5건이 `area_slug` 비어 있음** ← 최대 병목 (1건은 `daegu-dong` 반영) |
+| 키워드 노드 | 454 (OPEN 145 · HOLD 304 · CLAIMED 5) | HOLD 대부분 "그 지역 CASE 없음" |
+| 지역(areas) | 3,811 (시도 21 · 시군구 253 · 동 3,535) · 트리 반영 23개 | |
 | CASE 사진 | 원본 25장 → 공개 13장 | 1장은 `is_private` 로 차단됨(정상) |
 
 ### 페이지 구조
@@ -284,6 +284,7 @@ npm run areas:export         # DB areas → data/areas.json
 npm run gate:all             # 사실성·구조·중복·링크 게이트 전체
 npm run env:push -- --apply  # .env.local → Vercel 3개 환경 일괄 반영
 
+npx tsx scripts/set-case-area.ts             # CASE 지역 현황 / 지정
 npx tsx scripts/publish-pages.ts --apply     # review → published
 npx tsx scripts/publish-images.ts --apply    # 사진을 공개 버킷으로 + M20 연결
 npx tsx scripts/ping-indexnow.ts --apply     # 검색엔진에 URL 통보
@@ -295,15 +296,23 @@ npx tsx scripts/ping-indexnow.ts --apply     # 검색엔진에 URL 통보
 
 ## 7. 지금 막혀 있는 것 (우선순위)
 
-### 🔴 1. `cases.area_slug` 가 전부 비어 있다 — 최대 병목
+### 🔴 1. `cases.area_slug` — 6건 중 5건이 아직 비어 있다
 
-승인 CASE 6건 전부 지역이 비어 있다. 이것 때문에:
+**진행**: 욕조 트랩 건은 사진 캡션("각산서한이다음 · 대구 동구 반야월")을 근거로
+`daegu-dong` 을 채웠다. 그러자 `export-areas` 가 "승인 CASE 가 있는 지역은 범위 무관 포함"
+규칙으로 대구 동구를 자동으로 끌어왔다 — 프로필 `area_scope` 에 대구가 없는데도 들어온다.
+지역 23개 · 트리 454노드가 됐다.
 
-- 지역 페이지 292개가 HOLD 상태로 안 열린다
-- 지역 페이지가 "실제 시공 기록" 대신 "안내 문서" 로만 나온다
+**남은 것**: 비둘기 실외기실 5건. **이 사진들은 편집 전 촬영 원본이라 지역 정보가 없다.**
+현장 기록에서 확인해 채워야 한다.
 
-**사진에는 지역이 찍혀 있다.** 욕조 트랩 건 사진에 "각산서한이다음 · 대구 동구 반야월".
-나머지 5건(비둘기 실외기실)의 지역만 확인하면 된다. 값을 채우면 해당 지역이 자동 승격된다.
+```bash
+npx tsx scripts/set-case-area.ts                                   # 현황 확인
+npx tsx scripts/set-case-area.ts --case <id|slug> --area <slug> --apply
+npm run tree:build && npm run tree:sync                            # 지역 노드 갱신
+```
+
+⚠️ **실제로 시공한 곳만 넣어라.** 근거 없이 채우면 그 지역에 시공했다는 허위 표시가 된다.
 
 ### 🔴 2. 콘텐츠가 3건뿐
 
@@ -314,7 +323,26 @@ OPEN 키워드 145개가 조립 대기 중이지만 `composePage()` 가 **승인
 추가로 `generateRealDataForModule` 이 지원하는 모듈이 8종(M02·M03·M04·M06·M08·M11·M12·M18)
 뿐이다. M01(즉답)·M21(FAQ) 등은 생성기가 없어 비게 된다.
 
-### 🟡 3. 검색엔진 등록 (진행 중)
+### 🟡 3. 공개 버킷에 촬영 원본이 올라가 있다
+
+`docs/17 §8` 은 "`cases-private` → **편집본만** `public-assets`" 라고 정한다.
+그런데 `publish-images.ts` 를 처음 돌릴 때 사진 1장만 확인하고 전부 편집본이라 판단해
+비둘기 2건의 **촬영 원본 8장**이 공개 버킷에 올라갔다.
+
+```
+public-assets/bath-trap-1/       6장  ← 편집본 (정상)
+public-assets/pigeon-sample-1/   4장  ← 촬영 원본
+public-assets/pigeon-sample-2/   4장  ← 촬영 원본
+```
+
+담긴 것: 작업자 발·장갑 낀 손, 고객 집 베란다 내부, 창밖 건물.
+개인 식별은 어려운 수준이라 **운영 판단으로 유지하기로 했다**(2026-08-21).
+편집본이 준비되면 같은 경로로 덮어써서 교체하면 된다.
+
+> 교훈: `publish-images.ts` 는 사진이 편집본인지 **검사하지 않는다.**
+> 돌리기 전에 눈으로 확인해라.
+
+### 🟡 4. 검색엔진 등록 (진행 중)
 
 | 항목 | 상태 |
 |---|---|
@@ -328,7 +356,7 @@ OPEN 키워드 145개가 조립 대기 중이지만 `composePage()` 가 **승인
 인증코드를 받으면 `NEXT_PUBLIC_NAVER_SITE_VERIFICATION` /
 `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` 에 넣고 배포하면 된다. 코드는 이미 그 값을 읽는다.
 
-### 🟡 4. DB `areas` 에 중복 행 5쌍
+### 🟡 5. DB `areas` 에 중복 행 5쌍
 
 `migrate-areas.ts` 가 정식 계층을 넣으면서 초기 slug 와 겹쳤다.
 
@@ -343,7 +371,7 @@ OPEN 키워드 145개가 조립 대기 중이지만 `composePage()` 가 **승인
 동작에는 문제없다(`/area` 인덱스는 하위 지역이 있는 것만 광역으로 취급해 걸러낸다).
 정리하려면 `cases.area_slug` 참조까지 같이 옮겨야 한다.
 
-### 🟡 5. 원격 main 의 GitHub Actions
+### 🟡 6. 원격 main 의 GitHub Actions
 
 매일 06시에 구글시트 → Supabase 동기화가 돈다. **Secrets 에 옛 legacy 키가 있으면
 2026-08-20 부터 실패하고 있을 것이다.** [Actions 탭](https://github.com/playskang-svg/suriwiki/actions)에서
